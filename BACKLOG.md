@@ -92,6 +92,16 @@ Ya hay ABM de lugares, alojamientos, actividades, tareas y viajeros. Falta:
 - [ ] **JSON Schema** y validación de datos con mensajes claros cuando un archivo tiene errores.
 - [ ] Plantilla de viaje vacía y guía para crear uno.
 
+### Varios viajes: el storage sale del repo
+Hoy el viaje vive en `data/*.json` dentro del repo y cada viaje nuevo es un commit y un deploy. Para que escale:
+- [ ] **Datos del viaje en Redis**: un documento por archivo actual (`<REDIS_KEY_PREFIX>trip:<tripId>:itinerary`, etc.) y un índice de viajes. Endpoints en el backend (`GET /v1/trips`, `GET /v1/trips/:id`) y la app los pide en lugar de `data/`. `data/` queda como semilla, para importar un viaje y para los tests.
+- [ ] **Acceso por viaje**: hoy `data/*.json` es público para cualquiera que conozca la URL, y R2 acepta subidas o borrados de cualquiera que arme una ruta. Un token por viaje o grupo (ver "Autenticación en el relay") que se pida para leer el viaje y para usar `/v1/files`.
+- [ ] **Relay en Redis** en lugar de memoria + un JSON por grupo en el volumen `/data` (secuencia con `INCR`, registros por `seq`), así el contenedor no tiene estado y se puede reiniciar o escalar.
+- [ ] **Clima por viaje**: hoy el backend lo calcula solo para el `trip.json` que encuentra al arrancar.
+- [ ] **Archivos estáticos del viaje** (mapas de metro, adjuntos de recursos) en R2, bajo `<tripId>/`, no en el repo.
+- [ ] **Offline**: el service worker precarga `data/*.json` por nombre; con datos dinámicos tiene que guardar `/v1/trips/:id` (y la app su copia) para seguir andando sin conexión.
+- [ ] Decidir si los datos del viaje en Redis van **en claro** (el backend puede leerlos: clima, leer confirmaciones con IA) o **cifrados** con la clave del grupo, como el relay.
+
 ### Funciones con internet (opcionales)
 - [x] ~~Clima de la ciudad del día~~: pronóstico o clima típico, desde el relay.
 - [ ] Sincronizar **fotos** entre celulares (hoy la sincronización no incluye archivos).
