@@ -1,10 +1,10 @@
 # Arquitectura
 
-Travell es una **PWA estática**: HTML, CSS y JavaScript (módulos ES) sin framework ni paso de build, más archivos JSON con los datos del viaje. Se publica en cualquier hosting estático y, después de la primera visita, funciona sin conexión.
+Travell es una **PWA**: HTML, CSS y JavaScript (módulos ES) sin framework ni paso de build, más archivos JSON con los datos del viaje, servida por un **backend mínimo** (`server/relay.mjs`) que además sincroniza al grupo con datos cifrados, sube fotos y adjuntos a R2 y baja el clima. Después de la primera visita funciona sin conexión; lo que necesita al backend queda en cola hasta que vuelve la red.
 
 ```mermaid
 flowchart LR
-  subgraph Hosting estático
+  subgraph Archivos de la app
     HTML[index.html] --- JS[js/*.js] --- CSS[css/app.css]
     DATA[data/*.json]
     VENDOR[vendor/leaflet]
@@ -18,10 +18,10 @@ flowchart LR
   end
   TILES[Servidores de tiles<br/>AutoNavi / OSM]
   LINKS[Links externos]
-  RELAY[Relay opcional<br/>server/relay.mjs<br/>solo ve datos cifrados]
+  RELAY[Backend mínimo<br/>server/relay.mjs<br/>sync cifrada, R2, clima]
 
   APP -- fetch --> SW
-  SW -- red primero / caché si no hay --> Hosting estático
+  SW -- red primero / caché si no hay --> Archivos de la app
   SW <--> CS
   SW -- caché primero --> TILES
   APP <--> LS
@@ -98,7 +98,7 @@ js/
                       tasks (tareas y sugerencias), people (viajeros, ubicación, sync), places (ABM de lugares),
                       forms (formularios de ABM y selector de ubicación), search (buscador global),
                       inbox (lo compartido a la app: bandeja en Cache Storage que llena sw.js desde el share_target)
-server/relay.mjs      Relay opcional (Node, sin dependencias); con SERVE_STATIC también sirve la app, GET /v1/weather y
+server/relay.mjs      Backend mínimo (Node, sin dependencias): relay de sincronización; con SERVE_STATIC también sirve la app, GET /v1/weather y
                       redirige POST /share a #/compartido si todavía no hay service worker
 server/r2.mjs         Cliente mínimo de Cloudflare R2 (API S3, firma SigV4) para subir, leer y borrar archivos
 server/weather.mjs    Clima diario desde Open-Meteo (pronóstico o clima típico), guardado en Redis o en un archivo
@@ -312,8 +312,8 @@ Las pruebas de interfaz (dos celulares, sincronización, offline) se corrieron c
 | Sin framework ni build | Cero dependencias que mantener, se edita y publica directo | Plantillas con strings; hay que cuidar el escape (`esc()`) |
 | JSON en lugar de base de datos | Legible, versionable en git, generable desde Excel | Editar el viaje requiere tocar archivos |
 | localStorage para estado chico | Simple y síncrono | Límite de ~5 MB, que alcanza para gastos, tareas, lugares y marcas |
-| Overlay sobre JSON en vez de editar los archivos | Sin backend, y las actualizaciones del JSON no pisan lo cargado | Una edición local "congela" ese registro |
-| Relay propio con cifrado de punta a punta | Sin cuentas ni terceros que lean los datos; un archivo, sin dependencias | Hay que alojarlo; gana la última escritura, sin edición colaborativa fina |
+| Overlay sobre JSON en vez de editar los archivos | El backend no guarda el viaje, y las actualizaciones del JSON no pisan lo cargado | Una edición local "congela" ese registro |
+| Backend mínimo propio, con relay cifrado de punta a punta | Sin cuentas ni terceros que lean los datos; un archivo, sin dependencias | Hay que alojarlo; gana la última escritura, sin edición colaborativa fina |
 | IndexedDB para blobs | Fotos y PDFs sin límite práctico | API más verbosa (envoltorio en `store.js`) |
 | Tiles raster públicos | Simple, sin claves | Precarga limitada por los términos de uso; no hay mapas vectoriales offline completos |
 | Fotos reducidas a 1800 px | Ahorra espacio | No es un respaldo de los originales |

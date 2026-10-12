@@ -22,8 +22,10 @@ Ver lo que ya funciona en [FEATURES.md](FEATURES.md).
 
 ### Respaldo y publicación
 - [x] ~~Respaldo completo de datos locales~~: Ajustes → Respaldo completo (incluye fotos, adjuntos, códigos, marcas y checklists).
-- [ ] **Alojar el relay** (si se quiere la sincronización automática): un servidor con HTTPS accesible desde China y Japón. Probar la latencia desde China.
-- [ ] **Publicar en el lab**: la app ya está creada en Dokploy (https://travell.unab.dpdns.org) desde el repo `unab-lab/travell`, que todavía está vacío. Falta subir el código a su `main` (o apuntar Dokploy al repo de GitHub) y verificar el deploy. Después, probar la instalación en iOS y Android.
+- [x] ~~Alojar el relay~~: corre en el mismo contenedor que la app.
+- [ ] **Probar la latencia del relay desde China** (y que el dominio sea accesible desde China y Japón).
+- [x] ~~Publicar en el lab~~: https://travell.unab.dpdns.org, se despliega desde `main` del repo `unab-lab/travell`.
+- [ ] **Probar la instalación** en iOS y Android.
 - [x] ~~Aviso de nueva versión~~: barra "Hay una versión nueva de la app · Actualizar". La app busca versiones nuevas cada 30 minutos.
 
 ### Mapas offline
@@ -91,7 +93,7 @@ Ya hay ABM de lugares, alojamientos, actividades, tareas y viajeros. Falta:
 - [ ] Plantilla de viaje vacía y guía para crear uno.
 
 ### Funciones con internet (opcionales)
-- [ ] Clima de la ciudad del día.
+- [x] ~~Clima de la ciudad del día~~: pronóstico o clima típico, desde el relay.
 - [ ] Sincronizar **fotos** entre celulares (hoy la sincronización no incluye archivos).
 - [ ] Compartir el itinerario en solo lectura con familia o amigos.
 
@@ -100,13 +102,14 @@ Ya hay ABM de lugares, alojamientos, actividades, tareas y viajeros. Falta:
 - [ ] Rutas a pie o en transporte entre actividades.
 
 ### Otros
-- [ ] Frases útiles y traducciones offline (chino y japonés).
+- [x] ~~Frases útiles offline (chino y japonés)~~: cheat sheet con kanji/hanzi.
+- [ ] Traducciones offline.
 - [ ] Interfaz en otros idiomas (hoy solo español).
 - [ ] Auditoría de accesibilidad (lectores de pantalla, contraste en modo oscuro, tamaños de toque).
 
 ## Deuda técnica
 
-- [x] ~~Tests automatizados~~: `npm test` (23 tests con `node:test`, sin dependencias): gastos, GCJ-02, modelo de datos con overlay, sugerencias, fase del viaje y relay.
+- [x] ~~Tests automatizados~~: `npm test` (con `node:test`, sin dependencias): gastos, GCJ-02, modelo de datos con overlay, sugerencias, fase del viaje, relay, archivos y clima.
 - [ ] **Integración continua** (GitHub Actions corriendo `npm test`) y tests de interfaz automatizados (hoy las pruebas con Playwright se corren a mano).
 - [ ] Linter y formato (ESLint/Prettier).
 - [x] ~~Validar la lista de precarga del service worker~~: `tests/sw.test.mjs` falla si falta un archivo o si un módulo o JSON no está en `CORE`.

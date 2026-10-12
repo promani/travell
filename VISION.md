@@ -23,7 +23,7 @@ Nació para un viaje concreto (China y Japón, noviembre–diciembre 2026), plan
 ## Principios
 
 1. **Offline primero.** Lo que importa durante el viaje tiene que andar sin conexión. Internet suma (links, mapas nuevos), pero no es requisito.
-2. **Sin backend obligatorio.** Archivos estáticos que se publican en cualquier hosting, sin cuentas ni bases de datos. Lo que necesita compartirse entre viajeros (tareas asignadas, ubicación) usa un relay opcional mínimo que solo ve datos cifrados, o un link o archivo cuando no hay relay.
+2. **Backend mínimo.** Un solo servidor chico (`server/relay.mjs`, Node sin dependencias), sin cuentas de usuario. Sirve la app, sincroniza entre viajeros lo que hace falta compartir (tareas asignadas, ubicación) viendo solo datos cifrados, sube fotos y adjuntos a R2 y baja el clima. La app no depende de él para funcionar: sin conexión todo sigue andando y lo pendiente (sincronización, subidas) se manda al volver la conexión.
 3. **Los datos del viaje son JSON legibles.** Se editan a mano o se generan desde una planilla. La app no esconde el plan en un formato propio.
 4. **Todo está anclado a días.** Actividades, transportes, hospedajes, documentos, fotos y gastos se relacionan con un día del viaje. El día es la unidad de navegación.
 5. **Contexto según el momento.** La pantalla de inicio cambia antes, durante y después del viaje: cuenta regresiva, día de salida, llegada a una ciudad, lo que sigue hoy.
@@ -46,6 +46,6 @@ Nació para un viaje concreto (China y Japón, noviembre–diciembre 2026), plan
 
 ## Hacia dónde va
 
-A corto plazo: completar lo que falta para usarla de punta a punta en este viaje (códigos, hoteles, mapas offline, respaldo de datos). A mediano plazo: que armar un viaje nuevo sea fácil (importar desde planilla, selector de viajes, validación de datos) y sumar funciones opcionales con internet (clima, cotizaciones). Ver [BACKLOG.md](BACKLOG.md).
+A corto plazo: completar lo que falta para usarla de punta a punta en este viaje (códigos, hoteles, mapas offline, respaldo de datos). A mediano plazo: que armar un viaje nuevo sea fácil (importar desde planilla, selector de viajes, validación de datos) y sumar funciones opcionales con internet (cotizaciones). Ver [BACKLOG.md](BACKLOG.md).
 
 Documentos relacionados: [ARCHITECTURE.md](ARCHITECTURE.md) · [FEATURES.md](FEATURES.md) · [BACKLOG.md](BACKLOG.md)

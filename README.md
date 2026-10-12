@@ -1,6 +1,6 @@
 # Travell — asistente de viaje offline (PWA)
 
-App web estática (HTML + JavaScript, sin backend ni build). Lee JSON, funciona sin internet y se instala en el celular.
+PWA en HTML + JavaScript, sin framework ni build, con un backend mínimo (`server/relay.mjs`: sincronización cifrada, subida a R2 y clima). Lee JSON, funciona sin internet y se instala en el celular.
 Incluido: el viaje **China y Japón 2026** (convertido del Excel), pero sirve para cualquier viaje: solo cambian los JSON.
 
 ## Documentación
@@ -11,8 +11,7 @@ Incluido: el viaje **China y Japón 2026** (convertido del Excel), pero sirve pa
 
 ## Probarla
 ```bash
-python3 -m http.server 8123      # cualquier servidor estático sirve (también GitHub Pages, Netlify…)
-# abrir http://localhost:8123
+npm start       # app + relay en http://localhost:3000 (carga las credenciales de .env.local)
 ```
 Con HTTPS (o localhost) se registra el service worker: la primera visita con internet deja todo guardado y después anda offline.
 Para ver cada momento del viaje: **Más → Ajustes → Probar con otra fecha**.
@@ -20,7 +19,6 @@ Para ver cada momento del viaje: **Más → Ajustes → Probar con otra fecha**.
 ## Tests
 ```bash
 npm test        # node --test, sin dependencias
-npm start       # app + relay en http://localhost:3000 (carga las credenciales de .env.local)
 ```
 
 ## Variables de entorno
