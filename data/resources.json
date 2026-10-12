@@ -1,0 +1,26 @@
+[
+  {
+    "id": "r01",
+    "title": "Mapa del metro de Shanghai",
+    "kind": "mapa",
+    "cityId": "shanghai",
+    "url": "https://www.shmetro.com/",
+    "notes": "Mapa oficial de la red. Abrilo con wifi, sacale una captura y adjuntala acá para tenerlo sin internet."
+  },
+  {
+    "id": "r02",
+    "title": "Mapa del metro de Tokio",
+    "kind": "mapa",
+    "cityId": "tokyo",
+    "url": "https://www.tokyometro.jp/en/subwaymap/",
+    "notes": "Mapa oficial de Tokyo Metro. Adjuntá una captura para usarlo sin internet."
+  },
+  {
+    "id": "r03",
+    "title": "Mapa del metro de Pekín",
+    "kind": "mapa",
+    "cityId": "beijing",
+    "url": "https://www.bjsubway.com/",
+    "notes": "Sitio oficial del metro de Pekín. Adjuntá una captura del mapa para usarlo sin internet."
+  }
+]

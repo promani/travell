@@ -1,6 +1,7 @@
 // "Te falta…": things that look pending, derived from the data (not typed by anyone).
 // Skips anything a task already covers (task.covers / task.source = "sug:<key>") or that was marked done/ignored.
 import { D, I, cols, docCodes } from './store.js';
+import { passportOf, passportStatus } from './passport.js';
 import { parseDate, isoDate, fmtShort } from './util.js';
 
 const ICON = { salud: '💉', documentos: '🛂', dinero: '💳', 'tecnología': '📱', equipaje: '🧳' };
@@ -72,6 +73,14 @@ export function suggestions({ includeClosed = false } = {}) {
       add({ key: 'code:' + doc.id, kind: 'documento', icon: '🔑', title: `Cargá el código de reserva: ${doc.title}`, detail: 'Así lo tenés a mano sin internet en el aeropuerto.',
         day: doc.day, action: { href: `#/docs/${doc.type}`, label: 'Ir a documentos' } });
     }
+  }
+
+  // 7. pasaportes
+  const end = D.days[D.days.length - 1].date;
+  for (const t of D.travelers) {
+    const p = passportOf(t.id), st = passportStatus(p, end);
+    if (st.level === 'missing') add({ key: 'passport:' + t.id, kind: 'documento', icon: '🛂', title: `Cargá el pasaporte de ${t.name}`, detail: 'Número, vencimiento y una foto, para tenerlos sin internet.', due: addDays(start, -30), action: { href: '#/pasaportes', label: 'Cargar pasaporte' } });
+    else if (st.level !== 'ok') add({ key: 'passport-exp:' + t.id, kind: 'documento', icon: '⚠️', title: `Revisá el vencimiento del pasaporte de ${t.name}`, detail: st.text, due: addDays(start, -30), action: { href: '#/pasaportes', label: 'Ver pasaporte' } });
   }
 
   const rank = (s) => (s.due || (s.day && I.day[s.day]?.date) || '9999');

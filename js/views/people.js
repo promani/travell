@@ -48,6 +48,7 @@ export function render(_, ctx) {
     return `<li><span class="who big" style="--c:${esc(t.color || '#888')}">${esc(t.name.trim().slice(0, 2).toUpperCase())}</span>
       <div><b>${esc(t.name)}${t.id === mine ? ' (vos)' : ''}</b><small>${esc(where)}</small></div>
       ${pos && !pos.deleted && t.id !== mine ? `<a class="btn tiny" href="#/mapa?person=${esc(t.id)}">Mapa</a>` : ''}
+      <a class="btn tiny" href="#/pasaportes" title="Pasaporte">🛂</a>
       <button class="btn tiny" data-act="traveler-edit" data-id="${esc(t.id)}">Editar</button></li>`;
   }).join('');
 

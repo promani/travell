@@ -9,14 +9,14 @@ const params = new URLSearchParams(location.search);
 export const DATA_BASE = (params.get('data') || 'data').replace(/\/$/, '');
 
 const REQUIRED = ['trip', 'itinerary'];
-const OPTIONAL = ['transport', 'lodging', 'documents', 'travelers', 'tasks', 'notes', 'links', 'requirements'];
+const OPTIONAL = ['transport', 'lodging', 'documents', 'travelers', 'tasks', 'notes', 'links', 'requirements', 'resources'];
 /** Collections the user can create/edit in the app (merged over the JSON). */
-export const EDITABLE = ['places', 'lodging', 'activities', 'tasks', 'travelers'];
+export const EDITABLE = ['places', 'lodging', 'activities', 'tasks', 'travelers', 'resources'];
 /** Collections that only live in the overlay. */
-export const LOCAL_ONLY = ['expenses', 'positions', 'suggestions'];
+export const LOCAL_ONLY = ['expenses', 'positions', 'suggestions', 'passports'];
 
 export const BASE = {};
-export const D = { trip: null, days: [], transport: [], lodging: [], places: [], documents: [], travelers: [], tasks: [], notes: [], links: [], requirements: [] };
+export const D = { trip: null, days: [], transport: [], lodging: [], places: [], documents: [], travelers: [], tasks: [], notes: [], links: [], requirements: [], resources: [] };
 export const I = {};
 
 async function getJSON(name, required) {
@@ -140,7 +140,7 @@ const minutes = (hhmm) => { const x = /^(\d{1,2}):(\d{2})/.exec(hhmm || ''); ret
 /** Overlay records that change or hide something from the JSON files. */
 export function overriddenBase() {
   const baseActs = BASE.days.flatMap((d) => d.activities);
-  const base = { places: BASE.places, lodging: BASE.lodging, tasks: BASE.tasks, travelers: BASE.travelers, activities: baseActs };
+  const base = { places: BASE.places, lodging: BASE.lodging, tasks: BASE.tasks, travelers: BASE.travelers, resources: BASE.resources, activities: baseActs };
   const out = [];
   for (const [name, arr] of Object.entries(base)) {
     const ids = new Map(arr.map((x) => [x.id, x]));
@@ -156,6 +156,7 @@ export function rebuild() {
   D.travelers = merged(BASE.travelers, 'travelers');
   D.places = merged(BASE.places, 'places');
   D.tasks = merged(BASE.tasks, 'tasks');
+  D.resources = merged(BASE.resources, 'resources');
   D.lodging = merged(BASE.lodging, 'lodging').filter((l) => l.checkIn && l.checkOut).sort((a, b) => a.checkIn.localeCompare(b.checkIn));
 
   const dayByDate = Object.fromEntries(BASE.days.map((d) => [d.date, d]));
@@ -180,7 +181,7 @@ export function rebuild() {
     return { ...d, activities: list, lodgingId: l ? l.id : null };
   });
 
-  for (const k of ['day', 'dayByDate', 'place', 'lodging', 'transport', 'doc', 'traveler', 'city', 'activity', 'task']) I[k] = {};
+  for (const k of ['day', 'dayByDate', 'place', 'lodging', 'transport', 'doc', 'traveler', 'city', 'activity', 'task', 'resource']) I[k] = {};
   D.days.forEach((d) => { I.day[d.id] = d; I.dayByDate[d.date] = d; d.activities.forEach((a) => { I.activity[a.id] = a; }); });
   D.places.forEach((p) => { I.place[p.id] = p; p.days = []; });
   D.days.forEach((d) => d.activities.forEach((a) => { const p = I.place[a.placeId]; if (p && !p.days.includes(d.id)) p.days.push(d.id); }));
@@ -189,6 +190,7 @@ export function rebuild() {
   D.documents.forEach((x) => { I.doc[x.id] = x; });
   D.travelers.forEach((x) => { I.traveler[x.id] = x; });
   D.tasks.forEach((x) => { I.task[x.id] = x; });
+  D.resources.forEach((x) => { I.resource[x.id] = x; });
   D.trip.cities.forEach((c) => { I.city[c.id] = c; });
   bus.emit('data');
 }

@@ -4,6 +4,7 @@ import { tripPhase, activityNow, lodgingOfDay } from '../tripstate.js';
 import { heroImg, actRow, renderCards, notesFor, noteHtml, dayLabel, statusBadge, extLink, transportIcon, register, cat } from '../ui.js';
 import { thumbsFor } from './photos.js';
 import { dayTotalText } from './expenses.js';
+import { resourcesForDay, KINDS } from './resources.js';
 
 let onlyMust = false;
 
@@ -55,7 +56,8 @@ export function render({ id }, ctx) {
     <p>${esc(day.summary || '')}</p>
     ${day.sleepsAt ? `<p class="hero-sub">🛏 Dormís en: ${esc(l ? `${l.name}${l.area ? ' (' + l.area + ')' : ''}` : day.sleepsAt)}</p>` : ''}
     <div class="row-actions">${dayPlaces.length ? `<a class="btn small" href="#/mapa?day=${day.id}">🗺 Mapa del día</a>` : ''}
-      <a class="btn small" href="#/fotos?day=${day.id}">📷 Fotos</a><a class="btn small" href="#/gastos?day=${day.id}">💸 Gastos</a></div>
+      <a class="btn small" href="#/fotos?day=${day.id}">📷 Fotos</a><a class="btn small" href="#/gastos?day=${day.id}">💸 Gastos</a>
+      <button class="btn small" data-act="sim-this-day" data-d="${day.date}">🧪 Simular este día</button></div>
   </header>
 
   ${renderCards(day, ctx)}
@@ -78,6 +80,7 @@ export function render({ id }, ctx) {
       ${x.link ? `<small>${extLink(x.link, 'Hotel')}</small>` : ''}</div></li>`).join('')}</ul></section>` : ''}
 
   ${docs.length ? `<section class="card"><h3>📄 Documentos de este día</h3><ul class="doc-mini">${docs.map((x) => `<li><a href="#/docs/${esc(x.type)}"><b>${esc(x.title)}</b><small>${esc(docCodes.get(x) || x.subtitle || '')}</small></a></li>`).join('')}</ul></section>` : ''}
+  ${resourcesForDay(day).length ? `<section class="card"><h3>📚 Recursos${day.cityId ? ' · ' + esc(I.city[day.cityId].name) : ''}</h3><ul class="links">${resourcesForDay(day).map((r) => `<li><a href="#/recursos?city=${esc(r.cityId || '')}">${(KINDS[r.kind] || KINDS.otro)[0]} ${esc(r.title)}</a></li>`).join('')}</ul></section>` : ''}
   ${links.length ? `<section class="card"><h3>🔗 Links de interés</h3><ul class="links">${links.map((x) => `<li>${extLink(x.url, x.title)}</li>`).join('')}</ul></section>` : ''}
 
   <section class="card"><div class="card-head"><h3>📷 Fotos del día</h3><a href="#/fotos?day=${day.id}">Ver / agregar →</a></div><div class="thumbs" id="day-photos"></div></section>

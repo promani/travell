@@ -171,14 +171,26 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
 
 - Elegir la capa de mapa (automática, OSM o AutoNavi).
 - Editar cotizaciones.
-- **Probar con otra fecha**: simula fecha y hora para revisar la cuenta regresiva, el día de salida o cualquier día del viaje. Tiene atajos a los días con tarjetas.
+- **Simulador de día** 🧪: botón 🧪 en el encabezado (y “Simular este día” en cada día) para ver toda la app como si fuera cualquier día y hora del viaje, antes de salir o después de volver. Una barra naranja avisa que se está simulando y permite pasar al día anterior/siguiente, cambiar o salir. Es solo de este celular y no toca los datos.
 - **Mapas offline por ciudad**: descargar los tiles de cada ciudad (o de todas) con progreso y fecha de la última descarga.
 - **Respaldo completo**: exporta e importa todo lo que hay en el celular (fotos, adjuntos, códigos, tareas, lugares, gastos, marcas, checklists). Sirve para cambiar de celular. Al importar, se suma a lo que ya hay.
 - **Cambios sobre el JSON**: lista de registros del itinerario original editados o borrados en la app, con "Restaurar".
 - **Aviso de nueva versión** cuando se publica una actualización.
 - Espacio usado, actualizar app y datos, borrar datos locales.
 
-## 17. Multiviaje 🟡
+## 17. Pasaportes ✅
+
+- **Pasaportes** (Más → Pasaportes): por viajero, número, nombre completo, nacionalidad, nacimiento, emisión y vencimiento, más fotos del pasaporte guardadas offline.
+- Aviso si vence antes de terminar el viaje o a menos de 6 meses del regreso, y sugerencia “Cargá el pasaporte de…” mientras falte.
+- Modo pantalla completa con el número en grande para mostrar en migraciones.
+- Los datos se sincronizan cifrados con el grupo (si está configurado); las fotos quedan solo en el dispositivo.
+
+## 18. Recursos ✅
+
+- **Recursos** (Más → Recursos): mapas del metro, guías, apps o frases por ciudad, con enlace y/o imágenes y PDFs adjuntos que se ven sin internet. Vienen cargados los metros de Shanghai, Tokio y Pekín (enlace oficial: adjuntá una captura del mapa).
+- Se agregan, editan y borran desde la app; en cada día aparecen los de su ciudad.
+
+## 19. Multiviaje 🟡
 
 - La app es genérica: el viaje se define en `data/*.json` y `?data=carpeta` carga otro.
 - El estado local (fotos, gastos, códigos) se separa por viaje.

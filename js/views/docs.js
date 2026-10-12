@@ -44,10 +44,10 @@ export function render({ type }, ctx) {
   let body;
   if (t) body = docs.map(card).join('');
   else body = Object.keys(TYPES).map((k) => { const g = docs.filter((d) => d.type === k); return g.length ? `<h2 class="grp">${TYPES[k][0]} ${esc(TYPES[k][1])}</h2>${g.map(card).join('')}` : ''; }).join('');
-  return `<header class="pagehead"><h1>🎫 Documentos</h1><p class="muted">Códigos, visas, entradas y confirmaciones. Adjuntá PDFs o capturas (QR): quedan guardados en el dispositivo y se ven sin internet.</p></header>${tabs}${body || '<p class="muted">No hay documentos.</p>'}`;
+  return `<header class="pagehead"><h1>🎫 Documentos</h1><p class="muted">Códigos, visas, entradas y confirmaciones. Adjuntá PDFs o capturas (QR): quedan guardados en el dispositivo y se ven sin internet.</p><div class="row-actions"><a class="btn small" href="#/pasaportes">🛂 Pasaportes</a><a class="btn small" href="#/recursos">📚 Recursos</a></div></header>${tabs}${body || '<p class="muted">No hay documentos.</p>'}`;
 }
 
-async function paintAttachments() {
+export async function paintAttachments() {
   free();
   let files = [];
   try { files = await idb.all('files'); } catch { return; }

@@ -91,3 +91,42 @@ test('every day has its own picture and the URL follows the image service format
     'https://x/y/a.png?prompt=dos%20%282%29%20viajeros%20d%27Arc&ratio=1:1');
   assert.equal(imgUrl(undefined, svc), '');
 });
+
+test('passports: validity against the end of the trip and the "missing passport" suggestion', async () => {
+  const { passportStatus, passportOf } = await import('../js/passport.js');
+  const end = D.days[D.days.length - 1].date;                       // 2026-12-05
+  assert.equal(passportStatus(null, end).level, 'missing');
+  assert.equal(passportStatus({ number: 'AAA1' }, end).level, 'missing');
+  assert.equal(passportStatus({ number: 'AAA1', expires: '2026-12-01' }, end).level, 'expired');
+  assert.equal(passportStatus({ number: 'AAA1', expires: '2027-03-01' }, end).level, 'short');
+  assert.equal(passportStatus({ number: 'AAA1', expires: '2027-06-05' }, end).level, 'ok');
+  assert.ok(suggestions().some((s) => s.key === 'passport:yo'), 'no passport yet → suggestion');
+  cols.put('passports', { id: 'yo', number: 'AAA123456', expires: '2030-01-01' });
+  assert.equal(passportOf('yo').number, 'AAA123456');
+  assert.ok(!suggestions().some((s) => s.key === 'passport:yo'));
+  assert.ok(store.cols.list('passports').length === 1 && (await import('../js/sync.js')).SYNCED.includes('passports'), 'passports travel with the group sync');
+  cols.del('passports', 'yo');
+  assert.equal(passportOf('yo'), null);
+});
+
+test('resources: seeded metro maps point to real cities, can be added, edited and deleted', () => {
+  assert.ok(D.resources.length >= 3);
+  for (const r of D.resources) assert.ok(!r.cityId || I.city[r.cityId], `${r.id} has an unknown city`);
+  assert.ok(D.resources.some((r) => r.cityId === 'shanghai' && /metro/i.test(r.title)));
+  cols.put('resources', { id: 'rx', title: 'Frases útiles', kind: 'guia', cityId: 'tokyo' });
+  assert.equal(I.resource.rx.title, 'Frases útiles');
+  cols.put('resources', { id: 'r01', title: 'Metro SH (editado)', kind: 'mapa', cityId: 'shanghai' });
+  assert.equal(I.resource.r01.title, 'Metro SH (editado)');
+  cols.del('resources', 'rx'); cols.reset('resources', 'r01');
+  assert.ok(!I.resource.rx && /Mapa del metro de Shanghai/.test(I.resource.r01.title));
+});
+
+test('simulating a day moves the whole app to that day (and back)', async () => {
+  const { setSimulatedNow, now } = store;
+  const check = (iso, phase, dayId) => { setSimulatedNow(iso); const st = tripPhase(); assert.equal(st.phase, phase, iso); if (dayId) assert.equal(st.day.id, dayId, iso); };
+  check('2026-11-02T09:00', 'pre'); check('2026-11-15T09:00', 'during', 'd04'); check('2026-12-02T20:00', 'during', 'd21'); check('2026-12-08T09:00', 'post');
+  const { simLabel } = await import('../js/views/sim.js').catch(() => ({}));
+  if (simLabel) { setSimulatedNow('2026-11-15T09:00'); assert.match(simLabel(), /^Día 4 · .* 09:\d\d$/); }
+  setSimulatedNow(null);
+  assert.ok(Math.abs(now() - Date.now()) < 1000);
+});

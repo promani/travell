@@ -14,6 +14,9 @@ import * as tasks from './views/tasks.js';
 import * as people from './views/people.js';
 import * as places from './views/places.js';
 import * as search from './views/search.js';
+import * as passports from './views/passports.js';
+import * as resources from './views/resources.js';
+import { paintSimBar } from './views/sim.js';
 import './views/forms.js';
 import { startSync } from './sync.js';
 
@@ -28,6 +31,7 @@ const ROUTES = {
   alojamientos: () => more.lodging(), enlaces: () => more.enlaces(),
   tareas: (p, c) => tasks.render(p, c), pendientes: (p, c) => tasks.render(p, c),
   viajeros: (p, c) => people.render(p, c), lugares: (p, c) => places.render(p, c),
+  pasaportes: (p, c) => passports.render(p, c), recursos: (p, c) => resources.render(p, c),
   ubicacion: (p) => receiveLocation(p), buscar: (p, c) => search.render(p, c),
   ajustes: (p, c) => { c.after(more.storageInfo); return more.ajustes(); },
 };
@@ -67,6 +71,7 @@ function route({ keepScroll = false } = {}) {
   ctx.afters.forEach((f) => { try { f(); } catch (e) { console.error(e); } });
   document.title = `${ctx.title ? ctx.title + ' · ' : ''}${D.trip.title}`;
   renderedToday = tripPhase().today;
+  paintSimBar($('#sim-bar'));
   const group = NAV_GROUP[name] || 'mas';
   $$('#nav a').forEach((a) => a.classList.toggle('on', a.dataset.nav === group));
   const dn = $('#nav [data-nav=dia]'); if (dn) dn.href = `#/dia/${(tripPhase().day || D.days[0]).id}`;
@@ -137,6 +142,7 @@ setInterval(() => {
   if (!location.hash) history.replaceState(null, '', '#/inicio');
   route();
   startSync();
+  bus.on('settings', (k) => { if (k === 'simOffset') route({ keepScroll: true }); });   // simulated date changed
   // data changed on another phone: redraw, unless the user is in the middle of a form
   bus.on('remote-change', () => { if (!document.querySelector('dialog[open]') && !document.activeElement?.matches('input, textarea, select')) route({ keepScroll: true }); });
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {

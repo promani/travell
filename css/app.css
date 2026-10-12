@@ -202,3 +202,12 @@ textarea { resize: vertical; min-height: 4.5rem; }
 #q { font-size: 1.05rem; margin-bottom: .6rem; }
 #update-bar { position: fixed; z-index: 90; left: 50%; transform: translateX(-50%); top: calc(.6rem + env(safe-area-inset-top)); display: flex; gap: .8rem; align-items: center;
   background: var(--text); color: var(--bg); padding: .5rem .6rem .5rem 1rem; border-radius: 14px; box-shadow: 0 8px 30px #0005; font-size: .9rem; max-width: calc(100vw - 2rem); }
+
+/* simulator */
+#top { flex-wrap: wrap; }
+#sim-bar { flex: 1 0 100%; display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin: .1rem -1rem -.55rem; padding: .4rem 1rem; background: #f59f00; color: #1f1500; font-size: .82rem; }
+#sim-bar[hidden] { display: none; } .sim-txt { flex: 1 1 10rem; } #sim-bar .btn { background: #fff8; border-color: #0003; color: #1f1500; }
+.top-sim { background: none; border: 0; font-size: 1.1rem; line-height: 1; padding: .2rem; cursor: pointer; }
+/* passports + key/value lists */
+.kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: .5rem .8rem; margin: .6rem 0 0; } .kv dt { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; } .kv dd { margin: 0; font-weight: 600; }
+.kv.big { grid-template-columns: 1fr; } .kv.big dd { font-size: 1.25rem; }

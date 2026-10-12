@@ -12,12 +12,14 @@ export function menu() {
     ['#/viajeros', '👥', 'Viajeros', 'Quién sos, ubicación del grupo, sincronización'],
     ['#/lugares', '📍', 'Lugares', 'Agregar, editar e importar lugares de interés'],
     ['#/docs', '🎫', 'Documentos', 'Pasajes, visas, entradas, códigos'],
+    ['#/pasaportes', '🛂', 'Pasaportes', 'Datos y foto del pasaporte de cada viajero'],
+    ['#/recursos', '📚', 'Recursos', 'Mapas del metro, guías y apps por ciudad'],
     ['#/alojamientos', '🏨', 'Alojamientos', 'Hoteles: agregar, editar, check-in'],
     ['#/transporte', '🚆', 'Transporte', 'Vuelos, trenes y traslados por día'],
     ['#/fotos', '📷', 'Fotos', 'Fotos por día, guardadas en el celular'],
     ['#/itinerario', '🗓️', 'Itinerario completo', 'Todos los días'],
     ['#/enlaces', '🔗', 'Enlaces y fuentes', 'Metros, trámites, fuentes consultadas'],
-    ['#/ajustes', '⚙️', 'Ajustes', 'Mapas, fecha de prueba, datos'],
+    ['#/ajustes', '⚙️', 'Ajustes', 'Mapas, simulador de fecha, datos'],
   ];
   return `<header class="pagehead"><h1>Más</h1></header><nav class="menu">${items.map(([h, i, t, s]) => `<a href="${h}"><span>${i}</span><div><b>${t}</b><small>${s}</small></div><em>›</em></a>`).join('')}</nav>`;
 }
@@ -89,7 +91,7 @@ export function ajustes() {
   <section class="card"><h3>🧪 Probar con otra fecha</h3>
     <p class="hint">Simula la fecha y hora para ver cómo se comporta la pantalla de inicio en cada momento del viaje (cuenta regresiva, día de salida, llegada…).</p>
     <label class="field">Fecha y hora simuladas<input type="datetime-local" id="sim-input" value="${simDate ? loc(simDate) : ''}"></label>
-    <div class="row-actions"><button class="btn primary" data-act="sim-set">Aplicar</button><button class="btn" data-act="sim-clear">Volver a la fecha real</button>
+    <div class="row-actions"><button class="btn primary" data-act="sim-open">🧪 Simular un día</button><button class="btn" data-act="sim-set">Aplicar fecha de arriba</button><button class="btn" data-act="sim-clear">Volver a la fecha real</button>
       ${D.days.slice(0, 1).concat(D.days.filter((d) => d.cards.length)).map((d) => `<button class="btn small" data-act="sim-day" data-d="${d.date}">${esc(fmtShort(d.date))}</button>`).join('')}</div>
     ${simDate ? `<p class="note warn">Fecha simulada activa: ${esc(simDate.toLocaleString('es-AR'))}</p>` : ''}</section>
   <section class="card"><h3>🗺 Mapas offline por ciudad</h3>
@@ -171,9 +173,9 @@ register({
     const r = {}; new FormData(form).forEach((v, k) => { if (+v > 0) r[k] = +v; });
     settings.set('rates', r); toast('Cotizaciones guardadas');
   },
-  'sim-set': (_, __, app) => { const v = document.getElementById('sim-input').value; if (v) { setSimulatedNow(v); toast('Fecha simulada'); app.rerender(); } },
-  'sim-clear': (_, __, app) => { setSimulatedNow(null); toast('Fecha real'); app.rerender(); },
-  'sim-day': (el, _, app) => { setSimulatedNow(`${el.dataset.d}T09:00`); app.rerender(); },
+  'sim-set': () => { const v = document.getElementById('sim-input').value; if (v) { setSimulatedNow(v); toast('Fecha simulada'); } },
+  'sim-clear': () => { setSimulatedNow(null); toast('Fecha real'); },
+  'sim-day': (el) => { setSimulatedNow(`${el.dataset.d}T09:00`); },
   'sw-refresh': async () => {
     const regs = await navigator.serviceWorker?.getRegistrations?.() || [];
     for (const r of regs) await r.update();
