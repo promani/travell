@@ -1,5 +1,5 @@
 // Boot, hash router, event delegation, clock tick. Everything is static: no backend.
-import { loadData, D, I, now, checks, cols, bus, me } from './store.js';
+import { loadData, D, I, now, checks, cols, bus, me, brandColor } from './store.js';
 import { esc, $, $$, closeModal, openModal, toast, fmtDuration } from './util.js';
 import { actions } from './ui.js';
 import { tripPhase } from './tripstate.js';
@@ -71,7 +71,10 @@ function route({ keepScroll = false } = {}) {
   const y = window.scrollY;
   cleanup();
   const { name, params } = parseHash();
-  const view = ROUTES[name] || ROUTES[''];
+  // first run: nothing else until we know who uses this phone (a received location link still opens)
+  const onboarding = people.needsMe() && name !== 'ubicacion';
+  document.body.classList.toggle('onboarding', onboarding);
+  const view = onboarding ? people.onboarding : ROUTES[name] || ROUTES[''];
   const ctx = { afters: [], cleanups: [], title: null, after(f) { this.afters.push(f); }, cleanup(f) { this.cleanups.push(f); } };
   active = ctx;
   try { main.innerHTML = view(params, ctx); }
@@ -102,6 +105,15 @@ function showPictures() {
     im.src = url;
   });
 }
+// App colour on the top bar and the phone's status bar. The text on it turns dark when the colour is light.
+function applyBrand() {
+  const c = brandColor(), n = parseInt(c.slice(1), 16);
+  const lum = (0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255)) / 255;
+  document.documentElement.style.setProperty('--brand', c);
+  document.documentElement.style.setProperty('--brand-ink', lum > 0.62 ? '#17242d' : '#fff');
+  document.querySelector('meta[name=theme-color]')?.setAttribute('content', c);
+}
+
 const app = { rerender: () => route({ keepScroll: true }), navigate: (h) => { location.hash = h; } };
 
 // ------------------------------------------------------------------ events
@@ -164,12 +176,13 @@ setInterval(() => {
   }
   document.title = D.trip.title;
   $('#brand').textContent = D.trip.title;
+  applyBrand();
   if (!location.hash) history.replaceState(null, '', '#/inicio');
   await migrateDocuments().catch((e) => console.warn('migrate', e));
   route();
   startSync();
   startUploads();
-  bus.on('settings', (k) => { if (k === 'simOffset') route({ keepScroll: true }); });   // simulated date changed
+  bus.on('settings', (k) => { if (k === 'simOffset') route({ keepScroll: true }); if (k === 'brand') applyBrand(); });   // simulated date / app colour changed
   // data changed on another phone: redraw, unless the user is in the middle of a form
   bus.on('remote-change', () => { if (!document.querySelector('dialog[open]') && !document.activeElement?.matches('input, textarea, select')) route({ keepScroll: true }); });
   // weather: at most one download a day (the relay refreshes it daily); kept on the device for offline use

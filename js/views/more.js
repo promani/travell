@@ -1,5 +1,5 @@
 // Secondary screens: menu, transport, lodging, to-do list, links, settings.
-import { D, I, settings, DATA_BASE, kv, cols, bus, overriddenBase } from '../store.js';
+import { D, I, settings, DATA_BASE, kv, cols, bus, overriddenBase, brandColor, DEFAULT_BRAND } from '../store.js';
 import { exportBackup, importBackup } from '../share.js';
 import { uploads, uploadPending, uploadSoon } from '../upload.js';
 import { tileUrls, prefetchTiles } from '../map.js';
@@ -80,7 +80,12 @@ export function lodging(_, ctx) {
 export function ajustes() {
   const rates = { ...D.trip.currencies.rates, ...settings.get('rates', {}) };
   const simulating = !!settings.get('simOffset', 0);
+  const custom = settings.get('brand', null), tripBrand = D.trip.brand || DEFAULT_BRAND;
   return `<header class="pagehead"><h1>${ic('gear')} Ajustes</h1></header>
+  <section class="card"><h3>${ic('palette')} Color de la app</h3>
+    <div class="color-row"><input type="color" data-change="set-brand" value="${esc(brandColor())}" aria-label="Color de la barra de arriba">
+      <span class="hint">La barra de arriba. ${custom ? 'Elegido en este celular.' : 'El del viaje.'}</span>
+      ${custom && custom !== tripBrand ? '<button class="btn small" data-act="reset-brand">Restablecer</button>' : ''}</div></section>
   <section class="card"><h3>${ic('map')} Mapa</h3>
     <label class="field">Capa de mapa<select data-change="set-provider">
       <option value="auto" ${settings.get('mapProvider', 'auto') === 'auto' ? 'selected' : ''}>Automática (según la ciudad)</option>
@@ -181,6 +186,8 @@ register({
   },
   'restore-one': (el, _, app) => { cols.reset(el.dataset.col, el.dataset.id); toast('Restaurado'); app.rerender(); },
   'ics-export': () => { download(`${D.trip.id}.ics`, new Blob([buildIcs()], { type: 'text/calendar;charset=utf-8' })); toast('Calendario exportado'); },
+  'set-brand': (el, _, app) => { settings.set('brand', el.value === (D.trip.brand || DEFAULT_BRAND) ? null : el.value); app.rerender(); },
+  'reset-brand': (_, __, app) => { settings.set('brand', null); app.rerender(); },
   'set-provider': (el) => { settings.set('mapProvider', el.value); toast('Listo'); },
   'save-rates': (form) => {
     const r = {}; new FormData(form).forEach((v, k) => { if (+v > 0) r[k] = +v; });

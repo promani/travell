@@ -21,7 +21,7 @@ En todos los casos hay:
 
 - un **mapa con puntos de interés cercanos** y los **otros viajeros**, con una lista ordenada por distancia;
 - **Mis tareas** (asignadas a mí o sin asignar) y **💡 Te falta…** (sugerencias automáticas);
-- al principio, el pedido de **permiso de ubicación** y la pregunta **"¿Quién usa este celular?"**.
+- la primera vez, antes que cualquier pantalla, la pregunta **"¿Quién usa este celular?"** (onboarding); los permisos que faltan quedan en Más → Falta configurar.
 
 ## 2. Agenda de viaje ✅
 
@@ -136,7 +136,7 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
 
 ## 11. Viajeros y ubicación del grupo ✅
 
-- **¿Quién usa este celular?**: define "mis tareas" y de quién es la ubicación que se comparte.
+- **¿Quién usa este celular?**: define "mis tareas" y de quién es la ubicación que se comparte. Se elige en un onboarding la primera vez que se abre la app (o "Soy otra persona" para sumarse) y se cambia en Viajeros.
 - **Permiso de ubicación**: la app lo pide con una explicación (banner en el inicio y en Viajeros). Si está bloqueado, explica cómo habilitarlo.
 - **Compartir mi ubicación** (opcional y desactivado por defecto): se actualiza cada ~2 minutos, o al moverse más de 50 m, mientras la app está abierta.
 - **Dónde está cada uno**: mapa y lista con "hace X min" y la distancia a vos. Los datos viejos se ven atenuados.
@@ -170,6 +170,7 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
 
 ## 16. Ajustes y herramientas ✅
 
+- **Color de la app**: el de la barra de arriba (y la del celular). Por defecto el `brand` de `trip.json`; cada celular puede elegir otro. El texto pasa a oscuro si el color es claro.
 - Elegir la capa de mapa (automática, OSM o AutoNavi).
 - Editar cotizaciones.
 - **Simulador de día** 🧪: en Ajustes, para ver toda la app como si fuera cualquier día y hora del viaje, antes de salir o después de volver. Una barra naranja avisa que se está simulando y permite pasar al día anterior/siguiente, cambiar o salir. Usa la hora local de donde vas a estar ese día. Es solo de este celular y no toca los datos.

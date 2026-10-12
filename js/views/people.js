@@ -20,24 +20,36 @@ export async function permBanner(el) {
   el.innerHTML = st === 'denied'
     ? `<div class="note warn"><b>${ic('location-dot')} La ubicación está bloqueada</b><p>Habilitala en los permisos del sitio del navegador para ver lugares cercanos y compartir dónde estás.</p></div>`
     : `<div class="note perm"><b>${ic('location-dot')} Activá tu ubicación</b><p>Para ordenar los lugares por cercanía, cargar lugares desde donde estás y mostrarle al grupo dónde estás (solo si lo activás).</p>
-       <div class="row-actions"><button class="btn primary small" data-act="perm-ask">Permitir ubicación</button></div></div>`;
+       <div class="row-actions"><button class="btn primary small" data-act="perm-ask">Permitir</button></div></div>`;
 }
 
-/** Everything still missing on this phone (who am I, permissions). Shown in "Más", never on the home screen. */
+/** True while this phone doesn't know who uses it: the app then shows the onboarding instead of any screen. */
+export const needsMe = () => !(me() && I.traveler[me()]);
+
+/** First run: pick who uses this phone. Every screen waits for this (see route() in main.js). */
+export function onboarding(_, ctx) {
+  ctx.title = 'Bienvenida';
+  const initials = (t) => esc(t.name.trim().slice(0, 2).toUpperCase());
+  return `<section class="onboard">
+    <h1>¿Quién usa este celular?</h1>
+    <p class="muted">Así la app te muestra tus tareas, comparte tu ubicación con el grupo (si la activás) y sabe de quién son los gastos que cargás.</p>
+    <ul class="onboard-list">${D.travelers.map((t) => `<li><button class="onboard-pick" data-act="set-me" data-id="${esc(t.id)}">
+      <span class="who big" style="--c:${esc(t.color || '#888')}">${initials(t)}</span><b>${esc(t.name)}</b><em>${ic('chevron-right')}</em></button></li>`).join('')}</ul>
+    <button class="btn" data-act="traveler-new">${ic('plus')} Soy otra persona</button>
+    <p class="hint">Queda guardado solo en este celular. Lo podés cambiar después en Más → Viajeros.</p>
+  </section>`;
+}
+
+/** Everything still missing on this phone (permissions). Shown in "Más", never on the home screen. */
 export async function pendingSetup() {
   const items = [];
-  if (!(me() && I.traveler[me()])) {
-    items.push({ ic: 'hand', title: '¿Quién usa este celular?', text: 'Para tus tareas, compartir tu ubicación y sincronizar con el grupo.',
-      actions: `${D.travelers.map((t) => `<button class="btn small" data-act="set-me" data-id="${esc(t.id)}"><span class="dot" style="--c:${esc(t.color)}"></span>${esc(t.name)}</button>`).join('')}
-        <button class="btn small" data-act="traveler-new">${ic('plus')} Otro</button>` });
-  }
   const loc = await permissionState();
   if (loc === 'denied') items.push({ ic: 'location-dot', title: 'Ubicación bloqueada', text: 'Habilitala en los permisos del sitio del navegador para ver lugares cercanos y compartir dónde estás.' });
   else if (loc !== 'granted') items.push({ ic: 'location-dot', title: 'Ubicación', text: 'Para ordenar lugares por cercanía y mostrarle al grupo dónde estás (solo si lo activás).',
-    actions: '<button class="btn small primary" data-act="perm-ask">Permitir ubicación</button>' });
+    actions: '<button class="btn small primary" data-act="perm-ask">Permitir</button>' });
   if (syncConfigured() && 'Notification' in window && Notification.permission === 'default') {
     items.push({ ic: 'bell', title: 'Avisos', text: 'Para enterarte cuando alguien del grupo te asigna una tarea.',
-      actions: '<button class="btn small primary" data-act="notif-ask">Permitir avisos</button>' });
+      actions: '<button class="btn small primary" data-act="notif-ask">Permitir</button>' });
   }
   try {
     if (navigator.storage?.persisted && !(await navigator.storage.persisted())) {
@@ -52,7 +64,7 @@ export async function setupCard(el) {
   if (!el) return;
   const items = await pendingSetup();
   el.innerHTML = items.length ? `<section class="card"><h3>${ic('wrench')} Falta configurar</h3><ul class="setup">${items.map((it) => `<li><span class="o-ic">${ic(it.ic)}</span>
-    <div><b>${esc(it.title)}</b><small>${esc(it.text)}</small>${it.actions ? `<div class="row-actions">${it.actions}</div>` : ''}</div></li>`).join('')}</ul></section>` : '';
+    <div><b>${esc(it.title)}</b><small>${esc(it.text)}</small></div>${it.actions ? `<span class="setup-act">${it.actions}</span>` : ''}</li>`).join('')}</ul></section>` : '';
 }
 
 function syncStatus() {

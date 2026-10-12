@@ -75,6 +75,9 @@ export const settings = {
 };
 /** Traveler id of whoever uses this device. */
 export const me = () => settings.get('me', null);
+// App colour (top bar): this phone's choice in Ajustes, else the trip's "brand" in trip.json
+export const DEFAULT_BRAND = '#0b6e7f';
+export const brandColor = () => settings.get('brand', null) || D.trip?.brand || DEFAULT_BRAND;
 
 // ------------------------------------------------------------------ overlay collections
 // Each record: { id, updatedAt, by, deleted?, ...fields }. Last write (updatedAt) wins when merging.
