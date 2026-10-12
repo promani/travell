@@ -92,6 +92,8 @@ export const cols = {
     return r;
   },
   del(name, id) { return cols.put(name, { id, deleted: true }); },
+  /** Undo local edits/deletes of a record that comes from the JSON (synced like any other change). */
+  reset(name, id) { return cols.put(name, { id, reset: true }); },
   /** Merge records coming from another device. Returns the records that changed. */
   merge(name, recs) {
     const m = cols.map(name), changed = [];
@@ -126,6 +128,7 @@ function migrateLegacy() {
 function merged(base, name) {
   const m = new Map((base || []).map((x) => [x.id, x]));
   for (const r of cols.list(name)) {
+    if (r.reset) continue;                     // "restaurar original": back to the JSON version
     if (r.deleted) m.delete(r.id);
     else m.set(r.id, { ...(m.get(r.id) || {}), ...r, edited: m.has(r.id) });
   }
@@ -133,6 +136,18 @@ function merged(base, name) {
 }
 
 const minutes = (hhmm) => { const x = /^(\d{1,2}):(\d{2})/.exec(hhmm || ''); return x ? +x[1] * 60 + +x[2] : null; };
+
+/** Overlay records that change or hide something from the JSON files. */
+export function overriddenBase() {
+  const baseActs = BASE.days.flatMap((d) => d.activities);
+  const base = { places: BASE.places, lodging: BASE.lodging, tasks: BASE.tasks, travelers: BASE.travelers, activities: baseActs };
+  const out = [];
+  for (const [name, arr] of Object.entries(base)) {
+    const ids = new Map(arr.map((x) => [x.id, x]));
+    for (const r of cols.list(name)) if (ids.has(r.id) && !r.reset) out.push({ col: name, id: r.id, deleted: !!r.deleted, title: ids.get(r.id).name || ids.get(r.id).title || r.id });
+  }
+  return out;
+}
 
 /** Recompute D and I from BASE + overlay. Cheap enough to run after every edit. */
 export function rebuild() {

@@ -162,14 +162,23 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
 - Aviso de **sin conexión** en el encabezado y mensajes al perder o recuperar la señal.
 - Almacenamiento persistente solicitado al guardar fotos o archivos.
 
-## 15. Ajustes y herramientas ✅
+## 15. Buscador ✅
+
+- 🔎 en el encabezado. Busca en todo el viaje: días, actividades, lugares (también por nombre en idioma local), tareas, documentos (también por código), alojamientos, transporte, alertas, sugerencias y preparativos.
+- Ignora tildes y mayúsculas. Varias palabras se combinan (por ejemplo "kioto templo"). Los resultados se agrupan por tipo y llevan a la pantalla correspondiente.
+
+## 16. Ajustes y herramientas ✅
 
 - Elegir la capa de mapa (automática, OSM o AutoNavi).
 - Editar cotizaciones.
 - **Probar con otra fecha**: simula fecha y hora para revisar la cuenta regresiva, el día de salida o cualquier día del viaje. Tiene atajos a los días con tarjetas.
+- **Mapas offline por ciudad**: descargar los tiles de cada ciudad (o de todas) con progreso y fecha de la última descarga.
+- **Respaldo completo**: exporta e importa todo lo que hay en el celular (fotos, adjuntos, códigos, tareas, lugares, gastos, marcas, checklists). Sirve para cambiar de celular. Al importar, se suma a lo que ya hay.
+- **Cambios sobre el JSON**: lista de registros del itinerario original editados o borrados en la app, con "Restaurar".
+- **Aviso de nueva versión** cuando se publica una actualización.
 - Espacio usado, actualizar app y datos, borrar datos locales.
 
-## 16. Multiviaje 🟡
+## 17. Multiviaje 🟡
 
 - La app es genérica: el viaje se define en `data/*.json` y `?data=carpeta` carga otro.
 - El estado local (fotos, gastos, códigos) se separa por viaje.

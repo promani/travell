@@ -81,15 +81,18 @@ js/
   ui.js               Fragmentos compartidos (badges, filas de actividad, tarjetas de día) y registro de acciones
   sync.js             Sincronización cifrada con el relay, compartir ubicación, link de ubicación
   suggest.js          Reglas de "te falta…" (hospedajes, noches sin alojamiento, compras, reservas, preparativos)
-  share.js            Exportar e importar todos los datos cargados en la app (sin servidor)
+  share.js            Exportar e importar los datos cargados en la app, y el respaldo completo (con fotos y adjuntos)
+  money.js            Cálculo de gastos puro (división, saldos, transferencias), testeable sin navegador
   map.js              Envoltorio de Leaflet: proveedor de tiles por región, GCJ-02, marcadores, rutas, precarga
   geo.js              WGS-84 → GCJ-02, GPS compartido, links a apps de mapas
   nearby.js           Selección de "puntos de interés cercanos"
   util.js             Fechas, formato, escape HTML, toasts, modales
   views/              Una pantalla por archivo: home, day, mapview, photos, expenses, docs, more,
                       tasks (tareas y sugerencias), people (viajeros, ubicación, sync), places (ABM de lugares),
-                      forms (formularios de ABM y selector de ubicación)
-server/relay.mjs      Relay opcional (Node, sin dependencias)
+                      forms (formularios de ABM y selector de ubicación), search (buscador global)
+server/relay.mjs      Relay opcional (Node, sin dependencias); con SERVE_STATIC también sirve la app
+tests/                Tests con node:test (npm test)
+Dockerfile            Imagen para Dokploy u otra plataforma: app + relay en el puerto 3000
 vendor/leaflet/       Leaflet 1.9.4 vendorizado (sin CDN, para que funcione offline y en China)
 data/                 El viaje (ver "Modelo de datos")
 ```
@@ -251,6 +254,25 @@ sequenceDiagram
 - preparativos de `requirements.json` filtrados por los países de `trip.cities`.
 
 Cada sugerencia tiene una clave estable (`lodging:l04`, `gap:2026-11-25`, `req:fiebre-amarilla`). Se oculta si una tarea la cubre (`covers` o `source: "sug:<clave>"`) o si se marcó "ya está" o "no aplica" (colección `suggestions`, que también se sincroniza).
+
+## Tests
+
+`npm test` corre los tests con `node --test`, sin dependencias. Los módulos de la app son ES modules sin build, así que se importan directamente. `tests/helpers.mjs` simula `localStorage`, `location` y un `fetch` que lee de `data/`.
+
+| Archivo | Cubre |
+|---|---|
+| `money.test.mjs` | División igual o a medida, conversión de monedas, saldos y transferencias mínimas |
+| `geo.test.mjs` | Desfasaje GCJ-02 e ida y vuelta con error menor a 1 m |
+| `data.test.mjs` | Carga de JSON + `placeFiles`, overlay (alta, baja, modificación, restaurar), hospedaje por noche, orden de actividades, sugerencias, "gana la última escritura", fase del viaje |
+| `sw.test.mjs` | La lista de precarga offline (`CORE`) está completa y apunta a archivos reales |
+| `relay.test.mjs` | Relay real en un puerto al azar: cursor, "gana la última escritura", validaciones, lista blanca de archivos estáticos |
+
+Las pruebas de interfaz (dos celulares, sincronización, offline) se corrieron con Playwright y Chromium, pero todavía no forman parte del repo.
+
+## Deploy en el lab
+
+- La app está creada en Dokploy como **travell** (https://travell.unab.dpdns.org). Construye el `Dockerfile` del repo `unab-lab/travell` en cada push a `main`, en el puerto 3000.
+- El volumen `/data` guarda los datos cifrados del relay.
 
 ## Decisiones y alternativas
 

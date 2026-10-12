@@ -13,6 +13,7 @@ import * as more from './views/more.js';
 import * as tasks from './views/tasks.js';
 import * as people from './views/people.js';
 import * as places from './views/places.js';
+import * as search from './views/search.js';
 import './views/forms.js';
 import { startSync } from './sync.js';
 
@@ -27,7 +28,7 @@ const ROUTES = {
   alojamientos: () => more.lodging(), enlaces: () => more.enlaces(),
   tareas: (p, c) => tasks.render(p, c), pendientes: (p, c) => tasks.render(p, c),
   viajeros: (p, c) => people.render(p, c), lugares: (p, c) => places.render(p, c),
-  ubicacion: (p) => receiveLocation(p),
+  ubicacion: (p) => receiveLocation(p), buscar: (p, c) => search.render(p, c),
   ajustes: (p, c) => { c.after(more.storageInfo); return more.ajustes(); },
 };
 const NAV_GROUP = { '': 'inicio', inicio: 'inicio', dia: 'dia', itinerario: 'dia', mapa: 'mapa', lugar: 'mapa', lugares: 'mapa', fotos: 'fotos', gastos: 'gastos', tareas: 'tareas', pendientes: 'tareas' };
@@ -139,7 +140,17 @@ setInterval(() => {
   // data changed on another phone: redraw, unless the user is in the middle of a form
   bus.on('remote-change', () => { if (!document.querySelector('dialog[open]') && !document.activeElement?.matches('input, textarea, select')) route({ keepScroll: true }); });
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
-    navigator.serviceWorker.register('sw.js').catch((e) => console.warn('SW', e));
+    const hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.register('sw.js').then((reg) => setInterval(() => reg.update().catch(() => null), 30 * 60000)).catch((e) => console.warn('SW', e));
+    // a new version took over (sw.js calls skipWaiting): offer a reload instead of mixing old and new code
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadController || $('#update-bar')) return;
+      const bar = document.createElement('div');
+      bar.id = 'update-bar';
+      bar.innerHTML = '<span>Hay una versión nueva de la app.</span><button class="btn small" id="update-go">Actualizar</button>';
+      document.body.appendChild(bar);
+      $('#update-go').onclick = () => location.reload();
+    });
   }
   window.addEventListener('online', () => toast('Volvió la conexión'));
   window.addEventListener('offline', () => toast('Sin conexión: seguís viendo todo lo guardado'));

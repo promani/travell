@@ -1,0 +1,11 @@
+{
+  "name": "travell",
+  "private": true,
+  "type": "module",
+  "description": "PWA de viaje offline: itinerario, mapa, documentos, fotos, gastos y tareas.",
+  "scripts": {
+    "start": "SERVE_STATIC=. node server/relay.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "engines": { "node": ">=18" }
+}

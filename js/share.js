@@ -34,3 +34,59 @@ export function exportAsJsonFile(name) {
   download(`${name}-app.json`, new Blob([JSON.stringify(recs, null, 2) + '\n'], { type: 'application/json' }));
 }
 export { EDITABLE };
+
+// ------------------------------------------------------------------ full backup (everything on this device, photos included)
+import { idb, BASE } from './store.js';
+
+const toDataURL = (blob) => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(blob); });
+const fromDataURL = async (s) => (await fetch(s)).blob();
+const prefix = () => `travell:${BASE.trip.id}:`;
+
+export async function exportBackup(onProgress) {
+  const kv = {};
+  for (const k of Object.keys(localStorage)) if (k.startsWith(prefix())) kv[k.slice(prefix().length)] = localStorage.getItem(k);
+  const stores = {};
+  for (const s of ['photos', 'photoFull', 'files']) {
+    let rows = [];
+    try { rows = await idb.all(s); } catch { /* no IndexedDB */ }
+    stores[s] = [];
+    for (const r of rows) {
+      const o = { ...r };
+      for (const f of ['blob', 'thumb']) if (o[f] instanceof Blob) o[f] = { dataURL: await toDataURL(o[f]) };
+      stores[s].push(o);
+      onProgress?.(s, stores[s].length, rows.length);
+    }
+  }
+  const data = { app: 'travell', kind: 'backup', version: 2, tripId: BASE.trip.id, exportedAt: new Date().toISOString(), kv, stores };
+  const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+  const name = `travell-respaldo-${BASE.trip.id}-${new Date().toISOString().slice(0, 10)}.json`;
+  const file = new File([blob], name, { type: 'application/json' });
+  if (navigator.canShare?.({ files: [file] })) { try { await navigator.share({ files: [file], title: 'Respaldo del viaje' }); return blob.size; } catch { /* cancelled: download instead */ } }
+  download(name, blob);
+  return blob.size;
+}
+
+/** Merges a backup into this device: records by id (newest wins), marks and codes added, photos/files added. Local settings win. */
+export async function importBackup(file) {
+  const data = JSON.parse(await file.text());
+  if (data.kind !== 'backup' || data.tripId !== BASE.trip.id) throw new Error('No es un respaldo de este viaje');
+  const P = prefix();
+  for (const [k, raw] of Object.entries(data.kv || {})) {
+    let v; try { v = JSON.parse(raw); } catch { continue; }
+    if (k.startsWith('col:')) { cols.merge(k.slice(4), Object.values(v || {})); continue; }
+    if (k.startsWith('sync:')) continue;                         // cursors belong to each device
+    const cur = (() => { try { return JSON.parse(localStorage.getItem(P + k)); } catch { return null; } })();
+    const merged = k === 'settings' ? { ...v, ...(cur || {}) } : (v && typeof v === 'object' && !Array.isArray(v) ? { ...(cur || {}), ...v } : v);
+    localStorage.setItem(P + k, JSON.stringify(merged));
+  }
+  let n = 0;
+  for (const [s, rows] of Object.entries(data.stores || {})) {
+    for (const r of rows || []) {
+      const o = { ...r };
+      for (const f of ['blob', 'thumb']) if (o[f]?.dataURL) o[f] = await fromDataURL(o[f].dataURL);
+      await idb.put(s, o); if (s !== 'photoFull') n++;
+    }
+  }
+  rebuild(); bus.emit('positions'); bus.emit('local-change', 'backup');
+  return n;
+}

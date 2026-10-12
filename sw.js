@@ -1,7 +1,7 @@
 // Service worker: makes the app work with no connection.
 //  - app shell + data JSON: precached, then network-first (fresh when online, cached when not)
 //  - map tiles: cache-first, filled while browsing or by "Guardar zona offline"
-const VERSION = 'v2';
+const VERSION = 'v3';
 const SHELL = `travell-shell-${VERSION}`;
 const TILES = 'travell-tiles-v1';
 const MAX_TILES = 2500;
@@ -9,7 +9,7 @@ const MAX_TILES = 2500;
 const CORE = [
   './', 'index.html', 'manifest.webmanifest', 'css/app.css',
   'js/main.js', 'js/util.js', 'js/store.js', 'js/geo.js', 'js/map.js', 'js/tripstate.js', 'js/nearby.js', 'js/ui.js',
-  'js/sync.js', 'js/suggest.js', 'js/share.js',
+  'js/sync.js', 'js/suggest.js', 'js/share.js', 'js/money.js', 'js/views/search.js',
   'js/views/tasks.js', 'js/views/people.js', 'js/views/places.js', 'js/views/forms.js',
   'js/views/home.js', 'js/views/day.js', 'js/views/mapview.js', 'js/views/photos.js', 'js/views/expenses.js', 'js/views/docs.js', 'js/views/more.js',
   'vendor/leaflet/leaflet.js', 'vendor/leaflet/leaflet.css',

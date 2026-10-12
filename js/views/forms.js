@@ -15,9 +15,10 @@ const select = (label, name, options, cur, attrs = '') => `<label class="field">
 const cityOptions = () => D.trip.cities.map((c) => [c.id, c.name]);
 const dayOptions = (blank = '—') => [['', blank], ...D.days.map((d) => [d.id, `Día ${d.n} · ${fmtShort(d.date)} · ${d.title}`])];
 const travelerOptions = (blank) => [...(blank ? [['', blank]] : []), ...D.travelers.map((t) => [t.id, t.name])];
-const buttons = (delAct, id) => `<div class="row-actions"><button class="btn primary" type="submit">Guardar</button>
+const buttons = (delAct, id, rec, col) => `<div class="row-actions"><button class="btn primary" type="submit">Guardar</button>
   <button class="btn" type="button" data-act="close-modal">Cancelar</button>
-  ${delAct && id ? `<button class="btn danger" type="button" data-act="${delAct}" data-id="${esc(id)}">Borrar</button>` : ''}</div>`;
+  ${delAct && id ? `<button class="btn danger" type="button" data-act="${delAct}" data-id="${esc(id)}">Borrar</button>` : ''}
+  ${rec?.edited ? `<button class="btn" type="button" data-act="restore-original" data-col="${col}" data-id="${esc(id)}" title="Descarta los cambios hechos en la app">↺ Restaurar original</button>` : ''}</div>`;
 const val = (f, k) => { const v = (f.get(k) ?? '').toString().trim(); return v === '' ? null : v; };
 
 function nearestCity(lat, lon) {
@@ -97,7 +98,7 @@ export function openPlaceForm(p = {}) {
     ${textarea('Descripción', 'description', p.description)}
     <div class="two">${input('Costo aprox.', 'cost', p.cost)}${input('Link', 'link', p.link, 'type="url" placeholder="https://"')}</div>
     ${p.id ? '' : `<div class="two">${select('Agregar al itinerario del día', 'addDay', dayOptions('No agregar'), '')}${input('Hora', 'addTime', '', 'type="time"')}</div>`}
-    ${buttons('place-del', p.id)}</form>`, { lat: p.lat, lon: p.lon, cityId: p.cityId });
+    ${buttons('place-del', p.id, p, 'places')}</form>`, { lat: p.lat, lon: p.lon, cityId: p.cityId });
 }
 
 // ------------------------------------------------------------------ lodging
@@ -114,7 +115,7 @@ export function openLodgingForm(l = {}) {
     ${locBlock(l.lat, l.lon, false)}
     <div class="two">${input('N° de reserva', 'confirmation', l.confirmation)}${input('Link', 'link', l.link, 'type="url" placeholder="https://"')}</div>
     ${textarea('Notas', 'notes', l.notes)}
-    ${buttons('lodging-del', l.id)}</form>`, { lat: l.lat, lon: l.lon, cityId: l.cityId });
+    ${buttons('lodging-del', l.id, l, 'lodging')}</form>`, { lat: l.lat, lon: l.lon, cityId: l.cityId });
 }
 
 // ------------------------------------------------------------------ activities
@@ -134,7 +135,7 @@ export function openActivityForm(a = {}) {
     <div class="two">${input('Zona', 'area', a.area)}${input('Cómo llegar', 'how', a.how)}</div>
     <div class="two">${input('Costo', 'cost', a.cost)}${input('Link', 'link', a.link, 'type="url" placeholder="https://"')}</div>
     <div class="two">${select('Reserva', 'reservation', [['', 'No hace falta'], ['recomendada', 'Recomendada'], ['requerida', 'Necesaria']], a.reservation)}${select('Estado', 'status', [['', '—'], ['pendiente', '⏳ Pendiente'], ['reservado', '✔ Reservado']], a.status)}</div>
-    ${buttons('act-del', a.id)}</form>`);
+    ${buttons('act-del', a.id, a, 'activities')}</form>`);
 }
 
 // ------------------------------------------------------------------ tasks
@@ -152,7 +153,7 @@ export function openTaskForm(t = {}) {
     <div class="two">${select('Prioridad', 'priority', [['normal', 'Normal'], ['alta', '🔥 Alta']], t.priority || 'normal')}${select('Estado', 'status', [['pendiente', '⏳ Pendiente'], ['hecho', '✔ Hecha']], t.status || 'pendiente')}</div>
     ${select('Para el día', 'day', dayOptions(), t.day)}
     ${textarea('Notas', 'notes', t.notes)}
-    ${buttons('task-del', t.id)}</form>`);
+    ${buttons('task-del', t.id, t, 'tasks')}</form>`);
 }
 
 // ------------------------------------------------------------------ travelers
@@ -163,12 +164,16 @@ export function openTravelerForm(t = {}) {
     <input type="hidden" name="id" value="${esc(t.id || '')}">
     ${input('Nombre *', 'name', t.name, 'required maxlength="40"')}
     <label class="field">Color<input type="color" name="color" value="${esc(color)}"></label>
-    ${buttons('traveler-del', t.id)}</form>`);
+    ${buttons('traveler-del', t.id, t, 'travelers')}</form>`);
 }
 
 // ------------------------------------------------------------------ actions
 const parsePrefill = (el) => { try { return JSON.parse(el.dataset.prefill || '{}'); } catch { return {}; } };
 register({
+  'restore-original': (el, _, app) => {
+    if (!confirm('¿Descartar los cambios hechos en la app y volver a la versión del JSON?')) return;
+    cols.reset(el.dataset.col, el.dataset.id); closeModal(el); toast('Restaurado'); app.rerender();
+  },
   'place-new': (el) => openPlaceForm(parsePrefill(el)),
   'place-edit': (el) => openPlaceForm(I.place[el.dataset.id]),
   'place-save': (form, _, app) => {

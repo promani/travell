@@ -1,5 +1,7 @@
 // Secondary screens: menu, transport, lodging, to-do list, links, settings.
-import { D, I, settings, setSimulatedNow, DATA_BASE } from '../store.js';
+import { D, I, settings, setSimulatedNow, DATA_BASE, kv, cols, overriddenBase } from '../store.js';
+import { exportBackup, importBackup } from '../share.js';
+import { tileUrls, prefetchTiles } from '../map.js';
 import { esc, fmtShort, fmtDate, toast, isoDate, cap } from '../util.js';
 import { register, statusBadge, extLink, transportIcon, cat } from '../ui.js';
 import { tripPhase } from '../tripstate.js';
@@ -90,10 +92,40 @@ export function ajustes() {
     <div class="row-actions"><button class="btn primary" data-act="sim-set">Aplicar</button><button class="btn" data-act="sim-clear">Volver a la fecha real</button>
       ${D.days.slice(0, 1).concat(D.days.filter((d) => d.cards.length)).map((d) => `<button class="btn small" data-act="sim-day" data-d="${d.date}">${esc(fmtShort(d.date))}</button>`).join('')}</div>
     ${simDate ? `<p class="note warn">Fecha simulada activa: ${esc(simDate.toLocaleString('es-AR'))}</p>` : ''}</section>
+  <section class="card"><h3>🗺 Mapas offline por ciudad</h3>
+    <p class="hint">Descarga las teselas alrededor de los lugares de cada ciudad (zooms 12–15) para usar el mapa sin internet. Hacelo con wifi antes de viajar.</p>
+    <ul class="people">${D.trip.cities.filter((c) => D.places.some((p) => p.cityId === c.id)).map((c) => {
+      const saved = kv.get('offlineMaps', {})[c.id];
+      return `<li><span class="o-ic">${c.tiles === 'gaode' ? '🇨🇳' : '🗾'}</span><div><b>${esc(c.name)}</b><small>${esc(D.trip.tileProviders[c.tiles]?.name || c.tiles)} · ~${cityTiles(c).length} teselas${saved ? ` · guardado el ${esc(new Date(saved).toLocaleDateString('es-AR'))}` : ''}</small></div>
+        <button class="btn tiny ${saved ? '' : 'primary'}" data-act="offline-city" data-id="${esc(c.id)}">${saved ? 'Actualizar' : 'Descargar'}</button></li>`;
+    }).join('')}</ul>
+    <div class="row-actions"><button class="btn small" data-act="offline-all">⬇ Descargar todas</button></div></section>
+
+  <section class="card"><h3>🧳 Respaldo completo</h3>
+    <p class="hint">Un archivo con <b>todo</b> lo que está en este celular: fotos, adjuntos (PDFs, QR), códigos, tareas, lugares, gastos, actividades hechas y checklists. Sirve para cambiar de celular o por si se pierde. Al importarlo se suma a lo que ya hay.</p>
+    <div class="row-actions"><button class="btn small primary" data-act="backup-export">⬆ Exportar respaldo</button>
+      <label class="btn small">⬇ Importar respaldo<input type="file" accept="application/json,.json" hidden data-change="backup-import"></label></div></section>
+
+  ${(() => { const ov = overriddenBase(); return ov.length ? `<section class="card"><h3>↺ Cambios sobre el JSON</h3>
+    <p class="hint">Registros del itinerario original que editaste o borraste en la app. Restaurar vuelve a la versión del JSON (en todos los celulares sincronizados).</p>
+    <ul class="people">${ov.map((o) => `<li><div><b>${esc(o.title)}</b><small>${esc({ places: 'Lugar', lodging: 'Alojamiento', tasks: 'Tarea', travelers: 'Viajero', activities: 'Actividad' }[o.col])} · ${o.deleted ? 'borrado' : 'editado'}</small></div>
+      <button class="btn tiny" data-act="restore-one" data-col="${o.col}" data-id="${esc(o.id)}">Restaurar</button></li>`).join('')}</ul></section>` : ''; })()}
+
   <section class="card"><h3>💾 Datos del dispositivo</h3><p id="storage-info" class="muted">…</p>
     <p class="hint">Viaje: <b>${esc(D.trip.title)}</b> · datos en <code>${esc(DATA_BASE)}/</code>. Editá los JSON para cambiar el itinerario; lo que cargues en la app (fotos, gastos, códigos) queda en este dispositivo.</p>
     <div class="row-actions"><button class="btn" data-act="sw-refresh">Actualizar app y datos</button><button class="btn danger" data-act="wipe">Borrar datos locales</button></div></section>
   <p class="muted center">Travell · app web sin backend</p>`;
+}
+
+function cityTiles(c) {
+  const pts = [c.center, ...D.places.filter((p) => p.cityId === c.id).map((p) => [p.lat, p.lon]), ...D.lodging.filter((l) => l.cityId === c.id && Number.isFinite(l.lat)).map((l) => [l.lat, l.lon])];
+  return tileUrls(c.tiles, pts);
+}
+async function downloadCity(c, btn) {
+  const urls = cityTiles(c);
+  const ok = await prefetchTiles(urls, (n, tot) => { if (btn) btn.textContent = `${Math.round((n / tot) * 100)} %`; });
+  if (ok) { const m = kv.get('offlineMaps', {}); m[c.id] = Date.now(); kv.set('offlineMaps', m); }
+  return ok;
 }
 
 export async function storageInfo() {
@@ -107,6 +139,33 @@ export async function storageInfo() {
 }
 
 register({
+  'offline-city': async (el, _, app) => {
+    el.disabled = true;
+    const ok = await downloadCity(I.city[el.dataset.id], el);
+    toast(ok ? `Mapa de ${I.city[el.dataset.id].name} guardado (${ok} teselas)` : 'No se pudo descargar (¿sin internet?)'); app.rerender();
+  },
+  'offline-all': async (el, _, app) => {
+    el.disabled = true;
+    const cities = D.trip.cities.filter((c) => D.places.some((p) => p.cityId === c.id));
+    let total = 0;
+    for (const [i, c] of cities.entries()) { el.textContent = `${i + 1}/${cities.length} · ${c.name}`; total += await downloadCity(c); }
+    toast(total ? `Listo: ${total} teselas guardadas` : 'No se pudo descargar (¿sin internet?)'); app.rerender();
+  },
+  'backup-export': async (el) => {
+    el.disabled = true; const label = el.textContent;
+    try {
+      const size = await exportBackup((s, n, tot) => { el.textContent = `${s === 'photoFull' ? 'Fotos' : s === 'files' ? 'Archivos' : 'Miniaturas'} ${n}/${tot}`; });
+      toast(`Respaldo listo (${(size / 1048576).toFixed(1)} MB)`);
+    } catch { toast('No se pudo generar el respaldo'); }
+    el.disabled = false; el.textContent = label;
+  },
+  'backup-import': async (el, _, app) => {
+    const file = el.files[0]; el.value = '';
+    if (!file) return;
+    toast('Importando…');
+    try { const n = await importBackup(file); toast(`Respaldo importado (${n} fotos/archivos)`); app.rerender(); } catch (e) { toast(e.message || 'Archivo inválido'); }
+  },
+  'restore-one': (el, _, app) => { cols.reset(el.dataset.col, el.dataset.id); toast('Restaurado'); app.rerender(); },
   'set-provider': (el) => { settings.set('mapProvider', el.value); toast('Listo'); },
   'save-rates': (form) => {
     const r = {}; new FormData(form).forEach((v, k) => { if (+v > 0) r[k] = +v; });

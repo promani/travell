@@ -4,6 +4,7 @@ import { exportShared, importShared } from '../share.js';
 import { esc, uid, toast, openModal, fmtMoney, fmtShort, closeModal } from '../util.js';
 import { tripPhase } from '../tripstate.js';
 import { register } from '../ui.js';
+import { owedMap as owedMapOf, balances as balancesOf, settlements, converter } from '../money.js';
 
 const CATS = { comida: '🍜 Comida', transporte: '🚆 Transporte', alojamiento: '🏨 Alojamiento', entradas: '🎟️ Entradas', compras: '🛍️ Compras', otros: '🧾 Otros' };
 let filterDay = null;
@@ -13,47 +14,12 @@ const live = () => cols.live('expenses');
 const rates = () => ({ ...D.trip.currencies.rates, ...settings.get('rates', {}) });
 export const baseCur = () => D.trip.currencies.base;
 export const settleCur = () => settings.get('settleCur', baseCur());
-const rate = (c) => rates()[c] || 1;
+const ids = () => D.travelers.map((t) => t.id);
 /** Convert `amt` of currency `from` into currency `to` through the base currency. */
-const conv = (amt, from, to) => amt / rate(from) * rate(to);
-
-function owedMap(e) {
-  const m = {};
-  if (e.split.mode === 'exact') {
-    const tot = Object.values(e.split.shares).reduce((a, b) => a + (+b || 0), 0) || 1;
-    for (const [id, v] of Object.entries(e.split.shares)) m[id] = e.amount * ((+v || 0) / tot);
-  } else {
-    const among = e.split.among?.length ? e.split.among : D.travelers.map((t) => t.id);
-    among.forEach((id) => { m[id] = e.amount / among.length; });
-  }
-  return m;                                    // in the expense's own currency
-}
-
-export function balances(list = live(), cur = settleCur()) {
-  const net = Object.fromEntries(D.travelers.map((t) => [t.id, { paid: 0, owed: 0 }]));
-  for (const e of list) {
-    (net[e.paidBy] ||= { paid: 0, owed: 0 }).paid += conv(e.amount, e.currency, cur);
-    for (const [id, v] of Object.entries(owedMap(e))) (net[id] ||= { paid: 0, owed: 0 }).owed += conv(v, e.currency, cur);
-  }
-  return net;
-}
-export function settlements(net) {
-  const debtors = [], creditors = [];
-  for (const [id, v] of Object.entries(net)) {
-    const bal = v.paid - v.owed;
-    if (bal < -0.005) debtors.push({ id, amt: -bal }); else if (bal > 0.005) creditors.push({ id, amt: bal });
-  }
-  debtors.sort((a, b) => b.amt - a.amt); creditors.sort((a, b) => b.amt - a.amt);
-  const out = [];
-  while (debtors.length && creditors.length) {
-    const d = debtors[0], c = creditors[0], x = Math.min(d.amt, c.amt);
-    out.push({ from: d.id, to: c.id, amt: x });
-    d.amt -= x; c.amt -= x;
-    if (d.amt < 0.005) debtors.shift();
-    if (c.amt < 0.005) creditors.shift();
-  }
-  return out;
-}
+const conv = (amt, from, to) => converter(rates())(amt, from, to);
+const owedMap = (e) => owedMapOf(e, ids());
+export const balances = (list = live(), cur = settleCur()) => balancesOf(list, ids(), cur, conv);
+export { settlements };
 
 const tName = (id) => I.traveler[id]?.name || id;
 

@@ -21,13 +21,13 @@ Ver lo que ya funciona en [FEATURES.md](FEATURES.md).
 - [ ] **Horarios pendientes**: vuelo Kansai → Pekín (1/12) y Pekín → Pudong (4/12, hoy estimado a las 15:00).
 
 ### Respaldo y publicación
-- [ ] **Respaldo completo de datos locales**: hoy "Exportar datos" incluye tareas, lugares, alojamientos, actividades, viajeros, gastos y ubicaciones, pero no **fotos, adjuntos, códigos cargados, actividades hechas ni checklists**.
+- [x] ~~Respaldo completo de datos locales~~: Ajustes → Respaldo completo (incluye fotos, adjuntos, códigos, marcas y checklists).
 - [ ] **Alojar el relay** (si se quiere la sincronización automática): un servidor con HTTPS accesible desde China y Japón. Probar la latencia desde China.
-- [ ] **Publicar en HTTPS** (GitHub Pages, Netlify o similar) para que el service worker funcione en el celular. Probar la instalación en iOS y Android.
-- [ ] **Aviso de nueva versión** cuando el service worker se actualiza ("Hay datos nuevos, tocá para recargar"). Hoy se toma en la siguiente apertura o desde Ajustes.
+- [ ] **Publicar en el lab**: la app ya está creada en Dokploy (https://travell.unab.dpdns.org) desde el repo `unab-lab/travell`, que todavía está vacío. Falta subir el código a su `main` (o apuntar Dokploy al repo de GitHub) y verificar el deploy. Después, probar la instalación en iOS y Android.
+- [x] ~~Aviso de nueva versión~~: barra "Hay una versión nueva de la app · Actualizar". La app busca versiones nuevas cada 30 minutos.
 
 ### Mapas offline
-- [ ] **Precargar mapas de cada ciudad** desde Ajustes, con un botón por ciudad y progreso, en lugar de hacerlo zona por zona desde el mapa.
+- [x] ~~Precargar mapas de cada ciudad~~: Ajustes → Mapas offline por ciudad (una ciudad o todas, con progreso).
 - [ ] **Imágenes offline de los mapas de metro** (Shanghai, Tokio, Osaka, Pekín) como adjuntos o archivos en `data/`.
 
 ### Pruebas en condiciones reales
@@ -44,7 +44,7 @@ Ver lo que ya funciona en [FEATURES.md](FEATURES.md).
 Ya hay ABM de lugares, alojamientos, actividades, tareas y viajeros. Falta:
 - [ ] ABM de **transportes**, **documentos**, **alertas** y **tarjetas de día** (llegada / salida).
 - [ ] Editar la **checklist** de salida.
-- [ ] **Restaurar** un registro del JSON que se editó o borró en la app (hoy hay que borrar los datos locales).
+- [x] ~~Restaurar un registro del JSON~~: botón "↺ Restaurar original" en el formulario, y lista de cambios en Ajustes (se sincroniza).
 - [ ] Ver el **historial** de un registro (quién lo cambió y cuándo; hoy solo se guarda la última edición).
 
 ### Tareas y grupo
@@ -75,7 +75,7 @@ Ya hay ABM de lugares, alojamientos, actividades, tareas y viajeros. Falta:
 - [ ] Exportar el álbum de un día o del viaje (zip).
 
 ### Búsqueda y navegación
-- [ ] **Buscador global** de actividades, lugares, tareas y documentos (hoy solo se busca en Lugares).
+- [x] ~~Buscador global~~ (🔎 en el encabezado): días, actividades, lugares, tareas, documentos, alojamientos, transporte, alertas y sugerencias.
 - [ ] Atajo "Cómo vuelvo al hotel" desde la ubicación actual.
 
 ## P3 — A futuro
@@ -102,9 +102,10 @@ Ya hay ABM de lugares, alojamientos, actividades, tareas y viajeros. Falta:
 
 ## Deuda técnica
 
-- [ ] **Tests automatizados** (fase del viaje, saldos de gastos, GCJ-02 ida y vuelta, `rebuild()` del overlay, reglas de sugerencias, sincronización con el relay) e integración continua. Hoy solo hubo pruebas manuales con Playwright, con dos celulares simulados y el relay local.
+- [x] ~~Tests automatizados~~: `npm test` (23 tests con `node:test`, sin dependencias): gastos, GCJ-02, modelo de datos con overlay, sugerencias, fase del viaje y relay.
+- [ ] **Integración continua** (GitHub Actions corriendo `npm test`) y tests de interfaz automatizados (hoy las pruebas con Playwright se corren a mano).
 - [ ] Linter y formato (ESLint/Prettier).
-- [ ] La lista de precarga del service worker (`CORE` en `sw.js`) se mantiene a mano: generarla o validarla.
+- [x] ~~Validar la lista de precarga del service worker~~: `tests/sw.test.mjs` falla si falta un archivo o si un módulo o JSON no está en `CORE`.
 - [ ] Límite de tiles en caché por cantidad (2500) en lugar de por tamaño; las respuestas opacas ocupan más cuota de la real.
 - [ ] Revisar el modo oscuro: no se probó visualmente.
 - [ ] Al volver a dibujar una vista se recrean sus mapas; se podría actualizar solo lo que cambió.

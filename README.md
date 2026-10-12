@@ -17,6 +17,12 @@ python3 -m http.server 8123      # cualquier servidor estático sirve (también 
 Con HTTPS (o localhost) se registra el service worker: la primera visita con internet deja todo guardado y después anda offline.
 Para ver cada momento del viaje: **Más → Ajustes → Probar con otra fecha**.
 
+## Tests
+```bash
+npm test        # node --test, sin dependencias
+npm start       # app + relay en http://localhost:3000
+```
+
 ## Deploy con Docker (app + sincronización en un contenedor)
 ```bash
 docker build -t travell . && docker run -p 3000:3000 -v travell-data:/data travell
