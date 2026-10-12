@@ -8,6 +8,14 @@ export const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
 export const uid = (p = 'x') => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
+// URL of an AI-generated picture: {name, prompt} + trip.imageService {base, ratio, style}.
+export function imgUrl(img, svc) {
+  if (!img?.name || !img.prompt || !svc?.base) return '';
+  const enc = (s) => encodeURIComponent(s).replace(/['()!*]/g, (c) => '%' + c.charCodeAt(0).toString(16).toUpperCase());
+  const prompt = [img.prompt, svc.style].filter(Boolean).join(', ');
+  return `${svc.base}/${enc(img.name)}.png?prompt=${enc(prompt)}&ratio=${img.ratio || svc.ratio || '16:9'}`;
+}
+
 const pad = (n) => String(n).padStart(2, '0');
 
 /** Local YYYY-MM-DD of a Date. */

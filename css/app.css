@@ -93,6 +93,11 @@ main { max-width: 760px; margin: 0 auto; padding: 1rem 1rem calc(var(--nav-h) + 
 .dayhead-nav { display: flex; align-items: center; justify-content: space-between; gap: .6rem; } .dayhead-nav > div { flex: 1; text-align: center; }
 .dayhead > p { text-align: center; }
 
+/* pictures (AI-generated): hero background + day banner. The gradient/colour is the fallback while offline. */
+.hero-img { background-color: var(--pri); background-image: linear-gradient(180deg, #0005 0%, #000b 100%), var(--hero-img); background-size: cover; background-position: center; text-shadow: 0 1px 6px #0008; }
+.hero-img.hero-go, .hero-img.hero-post { background-color: #c2255c; }
+.day-banner { aspect-ratio: 16 / 9; max-height: 220px; width: 100%; border-radius: 18px; margin: 0 0 .7rem; background: var(--pri) var(--hero-img) center / cover; box-shadow: var(--shadow); }
+
 /* activities */
 .act { display: grid; grid-template-columns: auto 1fr; gap: 0 .6rem; padding: .55rem 0; border-top: 1px solid var(--line); align-items: start; }
 .act:first-child { border-top: 0; }

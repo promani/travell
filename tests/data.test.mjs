@@ -73,3 +73,21 @@ test('trip phase follows the (simulated) clock', () => {
   at('2026-12-06T10:00'); assert.equal(tripPhase().phase, 'post');
   settings.set('simOffset', 0);
 });
+
+test('every day has its own picture and the URL follows the image service format', async () => {
+  const { imgUrl } = await import('../js/util.js');
+  const svc = D.trip.imageService;
+  const names = new Set();
+  for (const d of D.days) {
+    assert.ok(d.image?.name && d.image?.prompt, `${d.id} without image`);
+    assert.ok(!names.has(d.image.name), `${d.id} repeats image name ${d.image.name}`);
+    names.add(d.image.name);
+    const u = imgUrl(d.image, svc);
+    assert.ok(u.startsWith(`${svc.base}/${d.image.name}.png?prompt=`) && u.endsWith('&ratio=16:9'), u);
+    assert.ok(!/[ '()]/.test(u), `unsafe chars in ${u}`);
+  }
+  assert.ok(D.trip.images.pre && D.trip.images.post);
+  assert.equal(imgUrl({ name: 'a', prompt: "dos (2) viajeros d'Arc" }, { base: 'https://x/y', ratio: '1:1' }),
+    'https://x/y/a.png?prompt=dos%20%282%29%20viajeros%20d%27Arc&ratio=1:1');
+  assert.equal(imgUrl(undefined, svc), '');
+});

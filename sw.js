@@ -1,9 +1,12 @@
 // Service worker: makes the app work with no connection.
 //  - app shell + data JSON: precached, then network-first (fresh when online, cached when not)
 //  - map tiles: cache-first, filled while browsing or by "Guardar zona offline"
-const VERSION = 'v3';
+//  - AI-generated pictures (imgg host): stale-while-revalidate, filled the first time each one is seen
+const VERSION = 'v4';
 const SHELL = `travell-shell-${VERSION}`;
 const TILES = 'travell-tiles-v1';
+const PICS = 'travell-pics-v1';
+const MAX_PICS = 80;
 const MAX_TILES = 2500;
 
 const CORE = [
@@ -27,12 +30,14 @@ self.addEventListener('activate', (e) => {
   e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k.startsWith('travell-shell-') && k !== SHELL).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
 });
 
+const isPic = (url) => url.hostname === 'imgg.unab.dpdns.org';
 const isTile = (url) => /appmaptile|\/\d{1,2}\/\d+\/\d+\.(png|jpg|jpeg|webp)(\?|$)/.test(url);
 
-async function trimTiles(cache) {
+async function trim(cache, max) {
   const keys = await cache.keys();
-  if (keys.length > MAX_TILES) await Promise.all(keys.slice(0, keys.length - MAX_TILES).map((k) => cache.delete(k)));
+  if (keys.length > max) await Promise.all(keys.slice(0, keys.length - max).map((k) => cache.delete(k)));
 }
+const trimTiles = (cache) => trim(cache, MAX_TILES);
 
 self.addEventListener('fetch', (e) => {
   const req = e.request;
@@ -49,6 +54,23 @@ self.addEventListener('fetch', (e) => {
         if (res.ok || res.type === 'opaque') { cache.put(req.url, res.clone()); trimTiles(cache); }
         return res;
       } catch { return new Response('', { status: 504 }); }
+    })());
+    return;
+  }
+
+  if (isPic(url)) {
+    e.respondWith((async () => {
+      const cache = await caches.open(PICS);
+      // Stale-while-revalidate: the service answers a gray placeholder while it is still generating a new picture
+      // (opaque, so it can't be inspected); refreshing in the background replaces it once the real one exists.
+      // Real pictures are immutable, so the refresh is a free HTTP-cache hit.
+      const hit = await cache.match(req.url);
+      const fresh = fetch(req).then((res) => {
+        if (res.ok || res.type === 'opaque') { cache.put(req.url, res.clone()); trim(cache, MAX_PICS); }
+        return res;
+      });
+      if (hit) { fresh.catch(() => null); return hit; }
+      try { return await fresh; } catch { return new Response('', { status: 504 }); }
     })());
     return;
   }

@@ -7,6 +7,10 @@
       "cityId": "buenos-aires",
       "title": "Salida",
       "summary": "Noche a Ezeiza para el MU746 de las 02:00 del 13/11.",
+      "image": {
+        "name": "d01-salida-ezeiza",
+        "prompt": "Dos viajeros argentinos con valijas saliendo de noche hacia el aeropuerto de Ezeiza, Buenos Aires"
+      },
       "sleepsAt": "Avión",
       "lodgingId": null,
       "cards": [
@@ -64,6 +68,10 @@
       "cityId": null,
       "title": "En vuelo",
       "summary": "Escala en Auckland. Cruce de la línea de cambio de fecha.",
+      "image": {
+        "name": "d02-en-vuelo",
+        "prompt": "Ventanilla de un avión de pasajeros volando sobre el océano al amanecer, con las alas y las nubes"
+      },
       "sleepsAt": "Avión",
       "lodgingId": null,
       "cards": [],
@@ -95,6 +103,10 @@
       "cityId": "shanghai",
       "title": "Llegada a China",
       "summary": "Llegada a Pudong ~18:10, traslado y primera cena.",
+      "image": {
+        "name": "d03-llegada-shanghai",
+        "prompt": "Skyline de Pudong en Shanghai con la Torre Perla Oriental al atardecer, llegada a China"
+      },
       "sleepsAt": "Shanghai (hotel a reservar)",
       "lodgingId": "l01",
       "cards": [
@@ -280,6 +292,10 @@
       "cityId": "shanghai",
       "title": "Shanghai clásico",
       "summary": "Bund, Nanjing Road, Yu Garden, ferry a Lujiazui y Bund iluminado.",
+      "image": {
+        "name": "d04-shanghai-bund",
+        "prompt": "El Bund de Shanghai de noche iluminado frente al río Huangpu y los rascacielos de Pudong"
+      },
       "sleepsAt": "Shanghai",
       "lodgingId": "l01",
       "cards": [],
@@ -383,6 +399,10 @@
       "cityId": "shanghai",
       "title": "Concesión Francesa",
       "summary": "Calles arboladas, Tianzifang, Xintiandi y bares.",
+      "image": {
+        "name": "d05-concesion-francesa",
+        "prompt": "Calles arboladas de la Concesión Francesa de Shanghai con cafés, plátanos y casas históricas en otoño"
+      },
       "sleepsAt": "Shanghai",
       "lodgingId": "l01",
       "cards": [],
@@ -468,6 +488,10 @@
       "cityId": "suzhou",
       "title": "Suzhou en el día",
       "summary": "Jardines clásicos, Museo de Suzhou, canales de Pingjiang.",
+      "image": {
+        "name": "d06-suzhou",
+        "prompt": "Jardín clásico chino de Suzhou con estanque, puente de piedra y casas blancas con tejas grises"
+      },
       "sleepsAt": "Shanghai",
       "lodgingId": "l01",
       "cards": [],
@@ -589,6 +613,10 @@
       "cityId": "tokyo",
       "title": "Shanghai → Tokio",
       "summary": "Vuelo 9C6217 15:00 → Narita 18:40. Cena tardía en Shinjuku.",
+      "image": {
+        "name": "d07-shanghai-tokio",
+        "prompt": "Avión despegando de Shanghai rumbo a Tokio, con el skyline de Tokio y la Torre de Tokio al atardecer"
+      },
       "sleepsAt": "Tokio (hotel a reservar; sugerido Shinjuku)",
       "lodgingId": "l02",
       "cards": [
@@ -805,6 +833,10 @@
       "cityId": "tokyo",
       "title": "Tokio tradicional",
       "summary": "Tsukiji, jardín Hama-rikyu, water bus a Asakusa, Senso-ji, Kappabashi, Ueno de noche.",
+      "image": {
+        "name": "d08-tokio-sensoji",
+        "prompt": "Templo Senso-ji en Asakusa con la puerta Kaminarimon y su gran linterna roja, Tokio"
+      },
       "sleepsAt": "Tokio",
       "lodgingId": "l02",
       "cards": [],
@@ -962,6 +994,10 @@
       "cityId": "kawaguchiko",
       "title": "Monte Fuji",
       "summary": "Pagoda Chureito, lago Kawaguchi, festival de hojas rojas; noche en Golden Gai.",
+      "image": {
+        "name": "d09-monte-fuji",
+        "prompt": "Monte Fuji con la pagoda Chureito y hojas rojas de arce en otoño, Kawaguchiko"
+      },
       "sleepsAt": "Tokio",
       "lodgingId": "l02",
       "cards": [],
@@ -1101,6 +1137,10 @@
       "cityId": "tokyo",
       "title": "Tokio pop y moderno",
       "summary": "Meiji Jingu, Harajuku, avenida de ginkgos, Shibuya Sky al atardecer, noche en Shimokitazawa o Shibuya.",
+      "image": {
+        "name": "d10-tokio-shibuya",
+        "prompt": "Cruce de Shibuya de noche con multitud y carteles de neón, Tokio"
+      },
       "sleepsAt": "Tokio",
       "lodgingId": "l02",
       "cards": [],
@@ -1240,6 +1280,10 @@
       "cityId": "tokyo",
       "title": "Tokio antiguo y digital",
       "summary": "Yanaka, Ueno, Akihabara peatonal, teamLab Borderless, Roppongi.",
+      "image": {
+        "name": "d11-tokio-akihabara",
+        "prompt": "Akihabara de noche con carteles de neón y una sala de arte digital inmersivo con luces de colores"
+      },
       "sleepsAt": "Tokio",
       "lodgingId": "l02",
       "cards": [],
@@ -1361,6 +1405,10 @@
       "cityId": "hakone",
       "title": "Tokio → Hakone (feriado)",
       "summary": "Mirador gratis del Tocho, Romancecar a Hakone, onsen con vista al Fuji.",
+      "image": {
+        "name": "d12-romancecar-hakone",
+        "prompt": "Tren Romancecar atravesando las montañas otoñales de Hakone, Japón"
+      },
       "sleepsAt": "Hakone — Hotel Green Plaza",
       "lodgingId": "l03",
       "cards": [],
@@ -1500,6 +1548,10 @@
       "cityId": "hakone",
       "title": "Recorrido de Hakone",
       "summary": "Teleférico a Owakudani, barco por el lago Ashi, torii, santuario.",
+      "image": {
+        "name": "d13-hakone-lago-ashi",
+        "prompt": "Lago Ashi en Hakone con el torii rojo en el agua, un barco y el Monte Fuji al fondo"
+      },
       "sleepsAt": "Hakone — Hotel Green Plaza",
       "lodgingId": "l03",
       "cards": [],
@@ -1639,6 +1691,10 @@
       "cityId": "osaka",
       "title": "Hakone → Osaka",
       "summary": "Shinkansen desde Odawara. Noche en Dotonbori.",
+      "image": {
+        "name": "d14-osaka-dotonbori",
+        "prompt": "Dotonbori en Osaka de noche con el canal, los carteles luminosos y el cartel de Glico"
+      },
       "sleepsAt": "Osaka (hotel a reservar; sugerido Namba)",
       "lodgingId": "l04",
       "cards": [],
@@ -1742,6 +1798,10 @@
       "cityId": "kobe",
       "title": "Osaka → Kobe",
       "summary": "Castillo de Osaka, Shinsekai; tarde a Kobe; cena de carne de Kobe.",
+      "image": {
+        "name": "d15-osaka-kobe",
+        "prompt": "Castillo de Osaka en otoño y puerto de Kobe iluminado al atardecer"
+      },
       "sleepsAt": "Kobe — Portopia Hotel",
       "lodgingId": "l05",
       "cards": [],
@@ -1845,6 +1905,10 @@
       "cityId": "kyoto",
       "title": "Kioto 1",
       "summary": "Fushimi Inari, Kiyomizu-dera, Higashiyama, Gion y Pontocho.",
+      "image": {
+        "name": "d16-kioto-fushimi-inari",
+        "prompt": "Fushimi Inari en Kioto: miles de torii rojos formando un túnel en el bosque"
+      },
       "sleepsAt": "Kobe — Portopia Hotel",
       "lodgingId": "l05",
       "cards": [],
@@ -1966,6 +2030,10 @@
       "cityId": "nara",
       "title": "Nara",
       "summary": "Ciervos, Todai-ji, Kasuga Taisha.",
+      "image": {
+        "name": "d17-nara",
+        "prompt": "Ciervos de Nara en un parque otoñal frente a la pagoda y el templo Todai-ji"
+      },
       "sleepsAt": "Kobe — Portopia Hotel",
       "lodgingId": "l05",
       "cards": [],
@@ -2051,6 +2119,10 @@
       "cityId": "himeji",
       "title": "Himeji + Arima Onsen",
       "summary": "Castillo de Himeji y Kokoen; tarde de onsen en Arima.",
+      "image": {
+        "name": "d18-himeji",
+        "prompt": "Castillo blanco de Himeji, el castillo de la garza blanca, con árboles de otoño"
+      },
       "sleepsAt": "Kobe — Portopia Hotel",
       "lodgingId": "l05",
       "cards": [],
@@ -2136,6 +2208,10 @@
       "cityId": "kyoto",
       "title": "Kioto 2",
       "summary": "Arashiyama, Tenryu-ji, Kinkaku-ji.",
+      "image": {
+        "name": "d19-kioto-arashiyama",
+        "prompt": "Bosque de bambú de Arashiyama en Kioto y el Pabellón Dorado Kinkaku-ji junto a un estanque"
+      },
       "sleepsAt": "Kobe — Portopia Hotel (noche a extender)",
       "lodgingId": "l06",
       "cards": [],
@@ -2221,6 +2297,10 @@
       "cityId": "beijing",
       "title": "Japón → Pekín",
       "summary": "Ferry a Kansai, vuelo a Pekín, pato laqueado.",
+      "image": {
+        "name": "d20-pekin-pato",
+        "prompt": "Pato laqueado de Pekín servido en un restaurante tradicional, luces cálidas"
+      },
       "sleepsAt": "Pekín (hotel a reservar; sugerido Dongcheng)",
       "lodgingId": "l07",
       "cards": [
@@ -2375,6 +2455,10 @@
       "cityId": "beijing",
       "title": "Gran Muralla",
       "summary": "Mutianyu: teleférico, caminata y tobogán. Noche en Wangfujing.",
+      "image": {
+        "name": "d21-gran-muralla",
+        "prompt": "Gran Muralla China en Mutianyu serpenteando por montañas con colores de otoño"
+      },
       "sleepsAt": "Pekín",
       "lodgingId": "l07",
       "cards": [],
@@ -2460,6 +2544,10 @@
       "cityId": "beijing",
       "title": "Pekín imperial",
       "summary": "Tiananmen, Ciudad Prohibida, Jingshan, hutongs y bares de Houhai.",
+      "image": {
+        "name": "d22-ciudad-prohibida",
+        "prompt": "Ciudad Prohibida de Pekín con techos amarillos y muros rojos vista desde el parque Jingshan"
+      },
       "sleepsAt": "Pekín",
       "lodgingId": "l07",
       "cards": [],
@@ -2563,6 +2651,10 @@
       "cityId": "beijing",
       "title": "Pekín → Shanghai → vuelta",
       "summary": "Templo del Cielo, Templo Lama; vuelo a Pudong; MU745 01:50 del 5/12.",
+      "image": {
+        "name": "d23-templo-del-cielo",
+        "prompt": "Templo del Cielo en Pekín, edificio circular de tejas azules sobre una base de mármol blanco"
+      },
       "sleepsAt": "Avión",
       "lodgingId": null,
       "cards": [
@@ -2681,6 +2773,10 @@
       "cityId": null,
       "title": "Vuelta",
       "summary": "MU745 vía Auckland, llegada a Ezeiza ~16:45.",
+      "image": {
+        "name": "d24-vuelta",
+        "prompt": "Dos viajeros volviendo a Argentina en avión, ventanilla con atardecer sobre las nubes"
+      },
       "sleepsAt": "Avión",
       "lodgingId": null,
       "cards": [],

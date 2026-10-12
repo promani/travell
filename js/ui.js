@@ -1,6 +1,6 @@
 // Shared rendering pieces: badges, activity rows, day cards (departure / arrival / info), map boxes, action registry.
 import { D, I, done, checks } from './store.js';
-import { esc, fmtDate, fmtShort, hhmm, cap, isoDate } from './util.js';
+import { esc, fmtDate, fmtShort, hhmm, cap, isoDate, imgUrl } from './util.js';
 import { departureTimes, lodgingOfDay } from './tripstate.js';
 import { TripMap } from './map.js';
 
@@ -9,6 +9,13 @@ export const actions = {};
 export const register = (map) => Object.assign(actions, map);
 
 // ------------------------------------------------------------------ small fragments
+// Picture of a day / of the trip (AI-generated, see trip.imageService). Empty string when there is none.
+export const tripImgUrl = (img) => imgUrl(img, D.trip.imageService);
+// Hero with a background picture: ' hero-img' class + inline CSS variable (the gradient stays as the fallback while offline).
+export function heroImg(img) {
+  const u = tripImgUrl(img);
+  return u ? { cls: ' hero-img', style: ` style="--hero-img:url('${esc(u)}')"` } : { cls: '', style: '' };
+}
 export const cat = (id) => D.trip.categories[id] || { icon: '📍', label: id, color: '#666' };
 export const catChip = (id) => `<span class="tag" style="--c:${cat(id).color}">${cat(id).icon} ${esc(cat(id).label)}</span>`;
 export const PRIO = { imperdible: ['⭐', 'Imperdible', 'must'], recomendado: ['👍', 'Recomendado', 'rec'], opcional: ['◦', 'Opcional', 'opt'] };
@@ -97,7 +104,7 @@ export function departureCard(card, day, { hero = false } = {}) {
   const count = target ? `<p class="countdown" data-countdown="${target.getTime()}" data-label="${leave ? 'para salir de casa' : 'para llegar al aeropuerto'}"></p>` : '';
   const body = `${grid}${count}${card.note ? `<p class="note-line">${esc(card.note)}</p>` : ''}${checklistHtml(card, day)}
     <div class="row-actions">${docButtons(card.docTypes)}${place ? `<a class="btn" href="#/mapa?focus=${esc(place.id)}">🗺 Aeropuerto</a>` : ''}</div>`;
-  if (hero) return `<section class="hero hero-go"><div class="hero-emoji">${card.icon || '🛫'}</div><h1>${esc(card.title)}</h1>${body}</section>`;
+  if (hero) { const g = heroImg(day.image); return `<section class="hero hero-go${g.cls}"${g.style}><div class="hero-emoji">${card.icon || '🛫'}</div><h1>${esc(card.title)}</h1>${body}</section>`; }
   return `<section class="card card-go"><h3>${card.icon || '🛫'} ${esc(card.title)}</h3>${body}</section>`;
 }
 

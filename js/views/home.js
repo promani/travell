@@ -1,7 +1,7 @@
 import { D, I, done, docCodes, settings, me, bus } from '../store.js';
 import { toast, esc, fmtDate, fmtShort, parseDate, daysBetween, isoDate, cap, fmtDist } from '../util.js';
 import { tripPhase, activityNow, lodgingOfDay } from '../tripstate.js';
-import { departureCard, renderCards, mapBox, cat, actRow, notesFor, noteHtml, dayLabel, register } from '../ui.js';
+import { departureCard, heroImg, renderCards, mapBox, cat, actRow, notesFor, noteHtml, dayLabel, register } from '../ui.js';
 import { computeNearby, lodgingsNear } from '../nearby.js';
 import { gps, onPosition, startGps, autoStartGpsIfGranted } from '../geo.js';
 import { now } from '../store.js';
@@ -14,7 +14,8 @@ const plural = (n, s, p) => `${n} ${n === 1 ? s : p}`;
 function heroPre(st) {
   const n = st.daysToGo;
   const first = D.days[0], last = D.days[D.days.length - 1];
-  return `<section class="hero hero-pre">
+  const g = heroImg(D.trip.images?.pre);
+  return `<section class="hero hero-pre${g.cls}"${g.style}>
     <div class="hero-kicker">${esc(D.trip.subtitle || '')}</div>
     <h1>${n === 1 ? 'Falta' : 'Faltan'} <span class="big">${n}</span> ${n === 1 ? 'día' : 'días'} para tu viaje</h1>
     <p>${esc(D.trip.title)} · ${fmtShort(first.date)} → ${fmtShort(last.date)} · ${plural(D.days.length, 'día', 'días')}</p>
@@ -24,7 +25,8 @@ function heroPre(st) {
 
 function heroDuring(st) {
   const d = st.day, l = lodgingOfDay(d);
-  return `<section class="hero">
+  const g = heroImg(d.image);
+  return `<section class="hero${g.cls}"${g.style}>
     <div class="hero-kicker">Día ${d.n} de ${st.total}${d.cityId ? ' · ' + esc(I.city[d.cityId]?.name || '') : ''}</div>
     <h1>${esc(d.title)}</h1>
     <p>${esc(d.summary || '')}</p>
@@ -34,7 +36,8 @@ function heroDuring(st) {
 
 function heroPost() {
   const total = D.days.length;
-  return `<section class="hero hero-post"><div class="hero-emoji">🎉</div><h1>¡Volviste!</h1>
+  const g = heroImg(D.trip.images?.post);
+  return `<section class="hero hero-post${g.cls}"${g.style}><div class="hero-emoji">🎉</div><h1>¡Volviste!</h1>
     <p>Fueron ${total} días. Repasá las fotos y cerrá las cuentas.</p>
     <div class="row-actions center"><a class="btn" href="#/fotos">📷 Fotos</a><a class="btn" href="#/gastos">💸 Gastos</a></div></section>`;
 }

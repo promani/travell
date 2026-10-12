@@ -1,7 +1,7 @@
 import { D, I, done, settings, now, docCodes } from '../store.js';
 import { esc, fmtShort, fmtWeekdayShort, cap } from '../util.js';
 import { tripPhase, activityNow, lodgingOfDay } from '../tripstate.js';
-import { actRow, renderCards, notesFor, noteHtml, dayLabel, statusBadge, extLink, transportIcon, register, cat } from '../ui.js';
+import { heroImg, actRow, renderCards, notesFor, noteHtml, dayLabel, statusBadge, extLink, transportIcon, register, cat } from '../ui.js';
 import { thumbsFor } from './photos.js';
 import { dayTotalText } from './expenses.js';
 
@@ -45,8 +45,10 @@ export function render({ id }, ctx) {
   });
   ctx.title = `Día ${day.n} · ${day.title}`;
 
+  const g = heroImg(day.image);
   return `${strip(day.id, todayId)}
-  <header class="dayhead">
+  <header class="dayhead${g.cls ? ' has-img' : ''}">
+    ${g.cls ? `<div class="day-banner"${g.style} role="img" aria-label="${esc(day.image.prompt)}"></div>` : ''}
     <div class="dayhead-nav">${prev ? `<a class="icon-btn" href="#/dia/${prev.id}" aria-label="Día anterior">‹</a>` : '<span></span>'}
       <div><small>Día ${day.n} de ${D.days.length}${isToday ? ' · <b>hoy</b>' : ''}</small><h1>${esc(day.title)}</h1><small>${esc(dayLabel(day))}${day.cityId ? ' · ' + esc(I.city[day.cityId].name) : ''}</small></div>
       ${next ? `<a class="icon-btn" href="#/dia/${next.id}" aria-label="Día siguiente">›</a>` : '<span></span>'}</div>
