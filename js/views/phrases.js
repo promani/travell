@@ -1,5 +1,6 @@
-// Phrase cheatsheet: how to say the basics in the local languages (data/phrases.json). Each phrase has the local
-// script (to show it to someone, big) and the romanization (to try saying it); the phone's voice can read it aloud.
+// Cheat sheet (data/phrases.json): how to say the basics in the local languages, and the kanji / hanzi you see on
+// signs, menus and stations. Each entry has the local script (to show it to someone, big) and the romanization
+// (to try saying it); the phone's voice can read it aloud.
 import { D, I } from '../store.js';
 import { esc, ic, openModal } from '../util.js';
 import { register } from '../ui.js';
@@ -28,12 +29,19 @@ function row(p, l, gi, pi) {
     ${canSpeak() ? `<button class="icon-btn sm" data-act="phrase-say" data-l="${l.id}" data-text="${esc(speakable(text))}" aria-label="Escuchar">${ic('volume-high')}</button>` : ''}</li>`;
 }
 
+function kanjiTile(k, l, gi, ki) {
+  const [text, roman] = k[l.id];
+  const n = [...text.replace(/ · /g, '·')].length;   // long signs get a smaller font so they stay on one line
+  return `<li><button class="kanji" data-act="kanji-show" data-l="${l.id}" data-g="${gi}" data-k="${ki}">
+    <b lang="${esc(l.speech)}" class="${n > 4 ? 'xl' : n > 2 ? 'l' : ''}">${esc(text)}</b><span>${esc(k.es)}</span><em>${esc(roman)}</em></button></li>`;
+}
+
 export function render(params, ctx) {
-  ctx.title = 'Frases útiles';
+  ctx.title = 'Cheat sheet';
   const langs = D.phrases.languages;
-  if (!langs.length) return '<header class="pagehead"><h1>Frases útiles</h1></header><p class="muted">No hay frases cargadas.</p>';
+  if (!langs.length) return '<header class="pagehead"><h1>Cheat sheet</h1></header><p class="muted">No hay nada cargado.</p>';
   const l = lang(params.lang) || lang(defaultLang()) || langs[0];
-  const chips = `<div class="chips">${langs.map((x) => `<a class="chip ${x.id === l.id ? 'on' : ''}" href="#/frases?lang=${x.id}">${esc(x.name)} <span lang="${esc(x.speech)}">${esc(x.native)}</span></a>`).join('')}</div>`;
+  const chips = `<div class="chips">${langs.map((x) => `<a class="chip ${x.id === l.id ? 'on' : ''}" href="#/cheatsheet?lang=${x.id}">${esc(x.name)} <span lang="${esc(x.speech)}">${esc(x.native)}</span></a>`).join('')}</div>`;
   const groups = D.phrases.groups.map((g, gi) => {
     const rows = g.phrases.map((p, pi) => (p[l.id] ? row(p, l, gi, pi) : '')).join('');
     if (!rows) return '';
@@ -41,9 +49,18 @@ export function render(params, ctx) {
       ${g.id === 'emergencias' && l.emergency ? `<p class="note warn inline">${ic('phone')} ${esc(l.emergency)}</p>` : ''}
       <ul class="phrases">${rows}</ul></section>`;
   }).join('');
-  return `<header class="pagehead"><h1>${ic('language')} Frases útiles</h1>
-    <p class="muted">Tocá una frase para mostrarla en grande. Abajo de cada una está cómo se pronuncia (${esc(l.romanization || '')}).</p></header>
-  ${chips}${groups}`;
+  const script = l.scriptName || 'Kanji';
+  const kanji = D.phrases.kanji.map((g, gi) => {
+    const tiles = g.items.map((k, ki) => (k[l.id] ? kanjiTile(k, l, gi, ki) : '')).join('');
+    return tiles ? `<section class="card"><h3>${ic(g.icon || 'language')} ${esc(g.title)}</h3><ul class="kanji-grid">${tiles}</ul></section>` : '';
+  }).join('');
+  return `<header class="pagehead"><h1>${ic('language')} Cheat sheet</h1>
+    <p class="muted">Tocá una frase o un ${esc(script.toLowerCase())} para verlo en grande. Abajo está cómo se pronuncia (${esc(l.romanization || '')}).</p></header>
+  ${chips}
+  ${kanji ? `<div class="chips"><button class="chip" data-act="cs-jump" data-to="cs-phrases">${ic('comments')} Phrases</button><button class="chip" data-act="cs-jump" data-to="cs-kanji">${ic('language')} ${esc(script)}</button></div>` : ''}
+  <h2 class="grp" id="cs-phrases">${ic('comments')} Phrases</h2>${groups}
+  ${kanji ? `<h2 class="grp" id="cs-kanji">${ic('language')} ${esc(script)} útiles</h2>
+    <p class="hint">Lo que más aparece en carteles, estaciones y menús.${l.id === 'zh' ? ' En China continental se usan caracteres simplificados.' : ''}</p>${kanji}` : ''}`;
 }
 
 function say(text, langId) {
@@ -56,6 +73,16 @@ function say(text, langId) {
 }
 
 register({
+  'cs-jump': (el) => { document.getElementById(el.dataset.to)?.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
+  'kanji-show': (el) => {
+    const l = lang(el.dataset.l), k = D.phrases.kanji[+el.dataset.g]?.items[+el.dataset.k];
+    if (!l || !k?.[l.id]) return;
+    const [text, roman, tip] = k[l.id];
+    openModal(`<div class="phrase-big"><small>${esc(k.es)}</small><p class="bigtext kanji-big" lang="${esc(l.speech)}">${esc(text)}</p><em>${esc(roman)}</em>
+      ${tip ? `<p class="hint">${esc(tip)}</p>` : ''}
+      <div class="row-actions">${canSpeak() ? `<button class="btn primary" data-act="phrase-say" data-l="${l.id}" data-text="${esc(speakable(text.replace(/ · /g, '、')))}">${ic('volume-high')} Escuchar</button>` : ''}
+      <button class="btn" data-act="close-modal">Cerrar</button></div></div>`, { cls: 'wide' });
+  },
   'phrase-say': (el) => say(el.dataset.text, el.dataset.l),
   'phrase-show': (el) => {
     const l = lang(el.dataset.l), p = D.phrases.groups[+el.dataset.g]?.phrases[+el.dataset.p];

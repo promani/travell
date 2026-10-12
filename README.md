@@ -20,8 +20,17 @@ Para ver cada momento del viaje: **Más → Ajustes → Probar con otra fecha**.
 ## Tests
 ```bash
 npm test        # node --test, sin dependencias
-npm start       # app + relay en http://localhost:3000
+npm start       # app + relay en http://localhost:3000 (carga las credenciales de .env.local)
 ```
+
+## Variables de entorno
+Localmente van en `.env.local` (ignorado por git); en el servidor, en el ambiente (Dokploy).
+
+| Variable | Para qué |
+|---|---|
+| `R2_ENDPOINT`, `R2_KEY`, `R2_SECRET`, `R2_BUCKET` | Cloudflare R2: ahí se suben **siempre** las fotos y los adjuntos |
+| `REDIS_URL`, `REDIS_KEY_PREFIX` | Redis (hoy: el clima). Prefijo por defecto `travell:` |
+| `PORT`, `RELAY_DATA`, `SERVE_STATIC`, `WEATHER` | Puerto, carpeta de datos del relay, servir la app, apagar el clima (`0`) |
 
 ## Deploy con Docker (app + sincronización en un contenedor)
 ```bash
@@ -31,7 +40,7 @@ docker build -t travell . && docker run -p 3000:3000 -v travell-data:/data trave
 
 ## Sincronización opcional (relay)
 ```bash
-PORT=8787 RELAY_DATA=./relay-data node server/relay.mjs   # Node 18+, sin dependencias
+PORT=8787 RELAY_DATA=./relay-data node server/relay.mjs   # Node 22+, sin dependencias
 ```
 ## Clima
 El relay descarga el clima de cada día del viaje de [Open-Meteo](https://open-meteo.com) (gratis, sin clave) **una vez por día** y lo guarda en Redis:
@@ -45,12 +54,12 @@ REDIS_URL=redis://:password@host:6379/0 npm start   # sin REDIS_URL lo guarda en
 En la app: **Más → Viajeros → Sincronizar con el grupo**, con la URL del relay (HTTPS en producción) y el mismo código de grupo en todos los celulares. Los datos viajan cifrados. Sin relay, todo funciona igual en cada celular y se comparte por archivo o link.
 
 ## Qué hace
-- **Inicio**: "Faltan N días para tu viaje" + accesos a *Pasajes y códigos* y *Visas y documentos*. El día de salida: "Hoy es el día del viaje", hora de salir, hora de estar en el aeropuerto y cuenta regresiva. En cada día con tarjeta (p. ej. llegada a Shanghai) muestra cómo llegar al hospedaje, mapa con la ruta y links de interés (red de metro, etc.). Muestra el clima del día.
+- **Inicio**: "Faltan N días para tu viaje" + accesos a *Pasajes y QR* y *Visas y documentos*. El día de salida: "Hoy es el día del viaje", hora de salir, hora de estar en el aeropuerto y cuenta regresiva. En cada día con tarjeta (p. ej. llegada a Shanghai) muestra cómo llegar al hospedaje, mapa con la ruta y links de interés (red de metro, etc.). Muestra el clima del día.
 - **Día**: actividades con horario, detalle, marcado como hecho, alertas, logística, documentos, fotos y gastos del día.
 - **Mapa**: Leaflet (no usa Google). En China continental usa tiles de AutoNavi/Gaode (con conversión GCJ-02), fuera de China OpenStreetMap. Filtros por categoría (gastronomía, cultura…), cerca/día/todo, GPS y "Guardar zona offline".
-- **Fotos**: se guardan en el dispositivo (IndexedDB), por día.
+- **Fotos**: se guardan en el dispositivo (IndexedDB), por día, y se suben a R2 (igual que los adjuntos de documentos y pasaportes).
 - **Gastos**: multi-moneda, división igual o a medida, saldos y "quién le paga a quién". Exportar/Importar JSON para juntar las cuentas de todos sin servidor.
-- **Documentos**: códigos de reserva en pantalla completa, adjuntar PDFs/capturas (QR) offline.
+- **Pasajes, entradas y reservas**: en su transporte, actividad u hotel, con código de reserva en pantalla completa, QR escaneados con la cámara, link a la reserva y PDFs adjuntos, todo offline. **Documentos** queda para visas, trámites y seguro.
 - **Tareas** asignables a cada viajero, y **sugerencias** de lo que falta (noches sin hotel, reservas, preparativos como el certificado de fiebre amarilla).
 - **ABM** de lugares, alojamientos, actividades, tareas y viajeros, con la ubicación tomada del GPS o del mapa.
 - **Viajeros**: permiso de ubicación, compartirla (opcional y cifrada) y ver dónde están los demás.
@@ -71,10 +80,10 @@ Todo está anclado a días (`"day": "d03"`). `?data=trips/otro` carga otra carpe
 | `requirements.json` | preparativos sugeridos por país (salud, documentos, dinero…) |
 | `notes.json` | alertas |
 | `resources.json` | recursos por ciudad: enlaces (metro, trámites, fuentes), mapas, apps; con adjuntos offline |
-| `phrases.json` | frases útiles en mandarín y japonés (escritura local + pinyin / romaji) |
+| `phrases.json` | cheat sheet: frases y kanji/hanzi útiles en mandarín y japonés (escritura local + pinyin / romaji) |
 
 ## Cosas a completar / revisar
-- Códigos de reserva y adjuntos: cargarlos en la app (Documentos) o en `documents.json`.
+- Códigos de reserva, QR y adjuntos: cargarlos en la app, en el pasaje, la entrada o el hotel (o `code` en `transport.json` / `documents.json`).
 - Viajeros: `travelers.json` trae "Yo" y "Viajero 2" de ejemplo (se editan en la app).
 - Cotizaciones de `trip.json` y de Ajustes son de ejemplo.
 - Coordenadas con `"approx": true` (hoteles por reservar, algunos lugares y las "sugerencias") son aproximadas.

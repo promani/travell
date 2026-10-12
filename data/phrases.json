@@ -1,8 +1,8 @@
 {
   "languages": [
-    { "id": "zh", "name": "Mandarín", "native": "中文", "speech": "zh-CN", "countries": ["China"], "romanization": "pinyin",
+    { "id": "zh", "name": "Mandarín", "native": "中文", "speech": "zh-CN", "countries": ["China"], "romanization": "pinyin", "scriptName": "Hanzi",
       "emergency": "Policía 110 · Ambulancia 120 · Bomberos 119" },
-    { "id": "ja", "name": "Japonés", "native": "日本語", "speech": "ja-JP", "countries": ["Japón"], "romanization": "romaji",
+    { "id": "ja", "name": "Japonés", "native": "日本語", "speech": "ja-JP", "countries": ["Japón"], "romanization": "romaji", "scriptName": "Kanji",
       "emergency": "Policía 110 · Ambulancia y bomberos 119" }
   ],
   "groups": [
@@ -66,6 +66,57 @@
       { "es": "Necesito un médico", "zh": ["我需要看医生", "wǒ xūyào kàn yīshēng"], "ja": ["医者が必要です", "isha ga hitsuyō desu"] },
       { "es": "Me perdí", "zh": ["我迷路了", "wǒ mílù le"], "ja": ["道に迷いました", "michi ni mayoimashita"] },
       { "es": "Perdí mi pasaporte", "zh": ["我的护照丢了", "wǒ de hùzhào diū le"], "ja": ["パスポートをなくしました", "pasupōto o nakushimashita"] }
+    ] }
+  ],
+  "kanji": [
+    { "id": "carteles", "title": "Carteles", "icon": "sign-hanging", "items": [
+      { "es": "Entrada", "zh": ["入口", "rùkǒu"], "ja": ["入口", "iriguchi"] },
+      { "es": "Salida", "zh": ["出口", "chūkǒu"], "ja": ["出口", "deguchi"] },
+      { "es": "Salida de emergencia", "zh": ["安全出口", "ānquán chūkǒu"], "ja": ["非常口", "hijōguchi"] },
+      { "es": "Hombres", "zh": ["男", "nán", "En baños."], "ja": ["男", "otoko", "En baños y vestuarios."] },
+      { "es": "Mujeres", "zh": ["女", "nǚ", "En baños."], "ja": ["女", "onna", "En baños y vestuarios."] },
+      { "es": "Baño", "zh": ["厕所", "cèsuǒ", "También dice 洗手间 (xǐshǒujiān) o 卫生间 (wèishēngjiān)."], "ja": ["お手洗い", "otearai", "También dice トイレ (toire)."] },
+      { "es": "Empujar", "zh": ["推", "tuī"], "ja": ["押", "osu"] },
+      { "es": "Tirar", "zh": ["拉", "lā"], "ja": ["引", "hiku"] },
+      { "es": "Abierto (atendiendo)", "zh": ["营业中", "yíngyè zhōng"], "ja": ["営業中", "eigyōchū"] },
+      { "es": "Cerrado por ahora", "zh": ["暂停营业", "zàntíng yíngyè"], "ja": ["準備中", "junbichū", "Se ve en restaurantes entre turnos."] },
+      { "es": "Prohibido", "zh": ["禁止", "jìnzhǐ"], "ja": ["禁止", "kinshi"] },
+      { "es": "Prohibido fumar", "zh": ["禁止吸烟", "jìnzhǐ xīyān"], "ja": ["禁煙", "kin'en"] },
+      { "es": "Peligro", "zh": ["危险", "wēixiǎn"], "ja": ["危険", "kiken"] },
+      { "es": "Izquierda · derecha", "zh": ["左 · 右", "zuǒ · yòu"], "ja": ["左 · 右", "hidari · migi"] },
+      { "es": "Norte · sur · este · oeste", "zh": ["北 · 南 · 东 · 西", "běi · nán · dōng · xī", "En el metro: 东口 = salida este; las salidas también van con letras (A, B…)."], "ja": ["北 · 南 · 東 · 西", "kita · minami · higashi · nishi", "En las salidas de estaciones: 東口 = salida este."] }
+    ] },
+    { "id": "transporte", "title": "Transporte", "icon": "train-subway", "items": [
+      { "es": "Estación", "zh": ["站", "zhàn"], "ja": ["駅", "eki"] },
+      { "es": "Metro", "zh": ["地铁", "dìtiě"], "ja": ["地下鉄", "chikatetsu"] },
+      { "es": "Andén", "zh": ["站台", "zhàntái"], "ja": ["番線", "bansen", "3番線 = andén 3."] },
+      { "es": "Molinetes / control de boletos", "zh": ["检票口", "jiǎnpiàokǒu"], "ja": ["改札", "kaisatsu"] },
+      { "es": "Boleto", "zh": ["票", "piào"], "ja": ["切符", "kippu"] },
+      { "es": "Asiento reservado", "zh": ["对号入座", "duìhào rùzuò"], "ja": ["指定席", "shiteiseki"] },
+      { "es": "Asiento libre (sin reserva)", "ja": ["自由席", "jiyūseki", "Vagones sin reserva del Shinkansen."] },
+      { "es": "Vagón solo para mujeres", "ja": ["女性専用車", "josei sen'yōsha", "En hora pico."] },
+      { "es": "Aeropuerto", "zh": ["机场", "jīchǎng"], "ja": ["空港", "kūkō"] }
+    ] },
+    { "id": "comida", "title": "Comida", "icon": "bowl-food", "items": [
+      { "es": "Carne de vaca", "zh": ["牛肉", "niúròu"], "ja": ["牛", "gyū"] },
+      { "es": "Cerdo", "zh": ["猪肉", "zhūròu"], "ja": ["豚", "buta"] },
+      { "es": "Pollo", "zh": ["鸡肉", "jīròu"], "ja": ["鶏", "tori"] },
+      { "es": "Pescado", "zh": ["鱼", "yú"], "ja": ["魚", "sakana"] },
+      { "es": "Picante", "zh": ["辣", "là"], "ja": ["辛い", "karai"] },
+      { "es": "Agua", "zh": ["水", "shuǐ"], "ja": ["水", "mizu"] },
+      { "es": "Té", "zh": ["茶", "chá"], "ja": ["茶", "cha"] },
+      { "es": "Arroz", "zh": ["米饭", "mǐfàn"], "ja": ["ご飯", "gohan"] }
+    ] },
+    { "id": "servicios", "title": "Plata y servicios", "icon": "coins", "items": [
+      { "es": "Yen · Yuan", "zh": ["元", "yuán", "Al hablar se dice 块 (kuài)."], "ja": ["円", "en"] },
+      { "es": "Gratis", "zh": ["免费", "miǎnfèi"], "ja": ["無料", "muryō"] },
+      { "es": "Efectivo", "zh": ["现金", "xiànjīn"], "ja": ["現金", "genkin"] },
+      { "es": "Reserva", "zh": ["预约", "yùyuē"], "ja": ["予約", "yoyaku"] },
+      { "es": "Hospital", "zh": ["医院", "yīyuàn"], "ja": ["病院", "byōin"] },
+      { "es": "Farmacia", "zh": ["药店", "yàodiàn", "Remedio: 药 (yào)."], "ja": ["薬局", "yakkyoku", "Remedio: 薬 (kusuri)."] },
+      { "es": "Aguas termales", "zh": ["温泉", "wēnquán"], "ja": ["温泉", "onsen", "Baño de hombres 男湯, de mujeres 女湯."] },
+      { "es": "Templo", "zh": ["寺", "sì"], "ja": ["寺", "tera"] },
+      { "es": "Santuario sintoísta", "ja": ["神社", "jinja"] }
     ] }
   ]
 }

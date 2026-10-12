@@ -1,8 +1,9 @@
 // Shared rendering pieces: badges, activity rows, day cards (departure / arrival / info), map boxes, action registry.
 import { D, I, done, checks } from './store.js';
-import { esc, ic, icon, fmtDate, fmtShort, hhmm, cap, isoDate, imgUrl } from './util.js';
+import { esc, ic, icon, fmtDate, fmtShort, hhmm, cap, isoDate, imgUrl, extLink } from './util.js';
 import { departureTimes, lodgingOfDay } from './tripstate.js';
 import { TripMap } from './map.js';
+import { ticketBox, ticketOf } from './ticket.js';
 import { weatherLine } from './weather.js';
 
 // ------------------------------------------------------------------ click-action registry (event delegation)
@@ -29,7 +30,15 @@ export function statusBadge(s) {
 }
 export const resvBadge = (r) => r === 'requerida' ? '<span class="badge warn">Reserva necesaria</span>'
   : r === 'recomendada' ? '<span class="badge info">Reserva recomendada</span>' : '';
-export const extLink = (url, text) => `<a href="${esc(url)}" target="_blank" rel="noopener" class="ext">${esc(text)} ${ic('arrow-up-right-from-square')}<span class="net" title="Requiere internet">${ic('globe')}</span></a>`;
+export { extLink };
+/** "Reserva en Booking.com" from a booking URL (the site's name, or a generic label). */
+export function bookingSite(url) {
+  let host = '';
+  try { host = new URL(url).hostname.replace(/^(www|secure|m)\./, ''); } catch { return 'Ver la reserva'; }
+  const known = { 'booking.com': 'Booking.com', 'trip.com': 'Trip.com', 'airbnb.com': 'Airbnb', 'agoda.com': 'Agoda', 'expedia.com': 'Expedia', 'hotels.com': 'Hotels.com', 'ctrip.com': 'Ctrip', 'jalan.net': 'Jalan', 'travel.rakuten.co.jp': 'Rakuten Travel' };
+  const name = Object.entries(known).find(([d]) => host === d || host.endsWith('.' + d))?.[1];
+  return name ? `Reserva en ${name}` : 'Ver la reserva';
+}
 export const dayLabel = (day) => cap(fmtDate(day.date, { weekday: 'long', day: 'numeric', month: 'long' }));
 export const transportIcon = (k) => ic({ vuelo: 'plane', tren: 'train', bus: 'bus', auto: 'car' }[k] || 'route');
 
@@ -74,14 +83,15 @@ export function actRow(a, { current = false, next = false } = {}) {
         <button class="btn small" data-act="act-edit" data-id="${esc(a.id)}">${ic('pen')} Editar</button>
         ${a.link ? extLink(a.link, 'Más info') : ''}
       </div>
+      ${a.reservation || ticketOf(`activity:${a.id}`) ? `<h4>${ic('ticket')} Entrada / reserva</h4>${ticketBox(`activity:${a.id}`, { codeLabel: 'Código o N° de reserva', title: a.title })}` : ''}
     </div>
   </article>`;
 }
 
 // ------------------------------------------------------------------ day cards
 function docButtons(types) {
-  const names = { pasaje: ['ticket', 'Pasajes y códigos'], visa: ['passport', 'Visas y documentos'] };
-  return (types || []).map((t) => `<a class="btn" href="#/docs${t === 'pasaje' ? '/pasaje' : ''}">${ic(names[t]?.[0] || 'file-lines')} ${esc(names[t]?.[1] || t)}</a>`).join('');
+  const names = { pasaje: ['ticket', 'Pasajes y QR', '#/transporte'], visa: ['passport', 'Visas y documentos', '#/docs'] };
+  return (types || []).map((t) => `<a class="btn" href="${names[t]?.[2] || '#/docs'}">${ic(names[t]?.[0] || 'file-lines')} ${esc(names[t]?.[1] || t)}</a>`).join('');
 }
 
 export function checklistHtml(card, day) {
@@ -149,6 +159,7 @@ export function arrivalCard(card, day, ctx) {
     ${lodging ? `<div class="lodging-line"><b>${ic('hotel')} ${esc(lodging.name)}</b>${lodging.area ? `<span>${esc(lodging.area)}</span>` : ''}
       ${lodging.status === 'pendiente' ? '<span class="badge warn">Hotel por reservar</span>' : ''}
       <button class="btn small" data-act="lodging-edit" data-id="${esc(lodging.id)}">${ic('pen')} Editar</button>
+      ${lodging.bookingUrl ? extLink(lodging.bookingUrl, bookingSite(lodging.bookingUrl)) : ''}
       ${lodging.addressLocal ? `<button class="btn small" data-act="show-address" data-id="${esc(lodging.id)}">Mostrar dirección al taxista</button>` : ''}</div>` : ''}
     ${(card.links || []).length ? `<h4>Links de interés</h4><ul class="links">${card.links.map((l) => `<li>${extLink(l.url, l.title)}</li>`).join('')}</ul>
       <p class="hint">Los links necesitan internet. Para tener un mapa de metro offline, guardá una captura y adjuntala en Documentos.</p>` : ''}

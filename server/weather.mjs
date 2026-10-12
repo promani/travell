@@ -113,8 +113,8 @@ export async function buildWeather({ trip, days, today = iso(new Date()), fetchJ
 
 // ------------------------------------------------------------------ storage + daily refresh
 
-export function weatherStore({ tripId, redisUrl, dir }) {
-  const key = `travell:weather:${tripId}`;
+export function weatherStore({ tripId, redisUrl, prefix, dir }) {
+  const key = `${prefix || 'travell:'}weather:${tripId}`;
   if (redisUrl) {
     const r = redis(redisUrl);
     return { kind: 'redis', load: async () => JSON.parse((await r.get(key)) || 'null'), save: (doc) => r.set(key, JSON.stringify(doc)) };

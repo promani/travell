@@ -1,16 +1,14 @@
-// Passports: data of each traveler (number, dates) + photos of the passport page, big mode for immigration, validity warning.
+// Passports: traveler data (number, dates) + photos of the passport page, big mode for immigration, validity warning.
+// Shown inside the travelers screen (people.js), one card per traveler.
 import { D, I, cols, me, idb } from '../store.js';
 import { esc, ic, toast, openModal, closeModal, fmtDate, copyText } from '../util.js';
 import { register } from '../ui.js';
 import { passportOf, passportStatus } from '../passport.js';
-import { paintAttachments } from './docs.js';
+import { blobUrl as url } from '../ticket.js';
 
 const LEVEL = { ok: 'ok', short: 'warn', expired: 'now', missing: 'warn' };
 const tripEnd = () => D.days[D.days.length - 1].date;
 const date = (iso) => (iso ? esc(fmtDate(iso, { day: 'numeric', month: 'short', year: 'numeric' })) : '—');
-const urls = [];
-const url = (b) => { const u = URL.createObjectURL(b); urls.push(u); return u; };
-const free = () => { while (urls.length) URL.revokeObjectURL(urls.pop()); };
 
 function fields(p) {
   return [['Nombre completo', esc(p.fullName || '—')], ['Nacionalidad', esc(p.nationality || '—')], ['Nacimiento', date(p.birth)],
@@ -33,16 +31,9 @@ function card(t) {
     </div></article>`;
 }
 
-export function render(_, ctx) {
-  ctx.title = 'Pasaportes';
-  ctx.cleanup(free);
-  ctx.after(paintAttachments);
-  return `<header class="pagehead"><h1>${ic('passport')} Pasaportes</h1>
-    <p class="muted">Datos y foto del pasaporte de cada viajero, para tenerlos a mano sin internet (migraciones, reservas, formularios de visa).</p></header>
-  <p class="hint">Los datos se guardan en este celular. Si sincronizás con el grupo, viajan <b>cifrados</b> con el código del grupo y los ven todos los viajeros. Las fotos quedan solo en el dispositivo donde las adjuntes.</p>
-  ${D.travelers.map(card).join('')}
-  <div class="row-actions"><button class="btn small" data-act="traveler-new">${ic('plus')} Agregar viajero</button></div>`;
-}
+/** One card per traveler, for the travelers screen (which paints the attachments). */
+export const passportCards = () => `<div id="pasaportes">${D.travelers.map(card).join('')}</div>
+  <p class="hint">Los datos se guardan en este celular y, si sincronizás con el grupo, viajan cifrados. Las fotos y escaneos se suben a la nube (R2) sin cifrar.</p>`;
 
 register({
   'pass-edit': (el) => {
@@ -73,12 +64,11 @@ register({
   'pass-big': async (el) => {
     const t = I.traveler[el.dataset.id], p = passportOf(t.id);
     if (!p) return;
-    free();
     const files = (await idb.all('files')).filter((f) => f.docId === `passport:${t.id}` && f.type.startsWith('image/'));
     openModal(`<h3>${ic('passport')} ${esc(t.name)}</h3><small>Número de pasaporte</small>
       <div class="bigcode">${esc(p.number).split('').map((c) => `<span>${esc(c)}</span>`).join('')}</div>
       <dl class="kv big">${fields(p).map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
       ${files.map((f) => `<img class="lightbox" alt="${esc(f.name)}" src="${url(f.blob)}">`).join('')}
-      <div class="row-actions"><button class="btn" data-act="copy" data-text="${esc(p.number)}">Copiar número</button><button class="btn" data-act="close-modal">Cerrar</button></div>`, { cls: 'wide bigmodal', onClose: free });
+      <div class="row-actions"><button class="btn" data-act="copy" data-text="${esc(p.number)}">Copiar número</button><button class="btn" data-act="close-modal">Cerrar</button></div>`, { cls: 'wide bigmodal' });
   },
 });

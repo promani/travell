@@ -2,7 +2,7 @@
 //  - app shell + data JSON: precached, then network-first (fresh when online, cached when not)
 //  - map tiles: cache-first, filled while browsing or by "Guardar zona offline"
 //  - AI-generated pictures (imgg host): stale-while-revalidate, filled the first time each one is seen
-const VERSION = 'v4';
+const VERSION = 'v6';
 const SHELL = `travell-shell-${VERSION}`;
 const TILES = 'travell-tiles-v1';
 const PICS = 'travell-pics-v1';
@@ -12,11 +12,12 @@ const MAX_TILES = 2500;
 const CORE = [
   './', 'index.html', 'manifest.webmanifest', 'css/app.css',
   'js/main.js', 'js/util.js', 'js/store.js', 'js/geo.js', 'js/map.js', 'js/tripstate.js', 'js/nearby.js', 'js/ui.js',
-  'js/sync.js', 'js/weather.js', 'js/suggest.js', 'js/share.js', 'js/money.js', 'js/views/search.js',
+  'js/sync.js', 'js/upload.js', 'js/ticket.js', 'js/qr.js', 'js/weather.js', 'js/suggest.js', 'js/share.js', 'js/money.js', 'js/views/search.js',
   'js/views/tasks.js', 'js/views/people.js', 'js/views/places.js', 'js/views/forms.js',
   'js/passport.js', 'js/views/passports.js', 'js/views/resources.js', 'js/views/sim.js',
   'js/views/home.js', 'js/views/day.js', 'js/views/mapview.js', 'js/views/photos.js', 'js/views/expenses.js', 'js/views/docs.js', 'js/views/more.js', 'js/views/phrases.js',
   'vendor/leaflet/leaflet.js', 'vendor/leaflet/leaflet.css',
+  'vendor/jsqr/jsQR.min.js', 'vendor/qrcode/qrcode.js',
   'vendor/fontawesome/css/fontawesome.min.css', 'vendor/fontawesome/css/solid.min.css', 'vendor/fontawesome/webfonts/fa-solid-900.woff2',
   'vendor/leaflet/images/layers.png', 'vendor/leaflet/images/layers-2x.png', 'vendor/leaflet/images/marker-icon.png', 'vendor/leaflet/images/marker-shadow.png',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png',

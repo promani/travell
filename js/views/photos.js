@@ -1,5 +1,6 @@
 // Photos live in IndexedDB on the device (works offline). Each is anchored to a day.
 import { D, I, idb } from '../store.js';
+import { uploadSoon, removeRemote } from '../upload.js';
 import { esc, ic, uid, toast, openModal, download, fmtShort, cap } from '../util.js';
 import { tripPhase } from '../tripstate.js';
 import { register } from '../ui.js';
@@ -101,7 +102,7 @@ register({
     const files = [...el.files]; el.value = '';
     if (!files.length) return;
     toast(`Guardando ${files.length} foto${files.length > 1 ? 's' : ''}…`);
-    try { const n = await addFiles(files, dayId); toast(`${n} foto${n === 1 ? '' : 's'} guardada${n === 1 ? '' : 's'}`); }
+    try { const n = await addFiles(files, dayId); toast(`${n} foto${n === 1 ? '' : 's'} guardada${n === 1 ? '' : 's'}`); uploadSoon(); }
     catch { toast('No se pudo guardar (¿poco espacio?)'); }
     filterDay = dayId; app.rerender();
   },
@@ -120,6 +121,7 @@ register({
     dlg.querySelector('[data-x="dl"]').onclick = () => download(`foto-${rec.id}.jpg`, full.blob);
     dlg.querySelector('[data-x="del"]').onclick = async () => {
       if (!confirm('¿Eliminar esta foto?')) return;
+      removeRemote(await idb.get('photoFull', rec.id));
       await idb.del('photos', rec.id); await idb.del('photoFull', rec.id); dlg.close();
     };
   },

@@ -13,10 +13,10 @@ const OPTIONAL = ['transport', 'lodging', 'documents', 'travelers', 'tasks', 'no
 /** Collections the user can create/edit in the app (merged over the JSON). */
 export const EDITABLE = ['places', 'lodging', 'activities', 'tasks', 'travelers', 'resources'];
 /** Collections that only live in the overlay. */
-export const LOCAL_ONLY = ['expenses', 'positions', 'suggestions', 'passports'];
+export const LOCAL_ONLY = ['expenses', 'positions', 'suggestions', 'passports', 'tickets'];
 
 export const BASE = {};
-export const D = { trip: null, days: [], transport: [], lodging: [], places: [], documents: [], travelers: [], tasks: [], notes: [], requirements: [], resources: [], phrases: { languages: [], groups: [] } };
+export const D = { trip: null, days: [], transport: [], lodging: [], places: [], documents: [], travelers: [], tasks: [], notes: [], requirements: [], resources: [], phrases: { languages: [], groups: [], kanji: [] } };
 export const I = {};
 
 async function getJSON(name, required) {
@@ -153,7 +153,7 @@ export function overriddenBase() {
 export function rebuild() {
   D.trip = BASE.trip;
   for (const k of ['transport', 'documents', 'notes', 'requirements']) D[k] = BASE[k];
-  D.phrases = Array.isArray(BASE.phrases) ? { languages: [], groups: [] } : BASE.phrases;
+  D.phrases = { languages: [], groups: [], kanji: [], ...(Array.isArray(BASE.phrases) ? {} : BASE.phrases) };
   D.travelers = merged(BASE.travelers, 'travelers');
   D.places = merged(BASE.places, 'places');
   D.tasks = merged(BASE.tasks, 'tasks');
@@ -209,10 +209,6 @@ export function setSimulatedNow(localISO) {      // "2026-11-12T18:00" or null t
 export const done = {
   has: (id) => !!kv.get('done', {})[id],
   toggle(id) { const m = kv.get('done', {}); if (m[id]) delete m[id]; else m[id] = Date.now(); kv.set('done', m); return !!m[id]; },
-};
-export const docCodes = {       // codes typed in the app override the JSON (which is just the starting point)
-  get: (doc) => kv.get('docCodes', {})[doc.id] ?? doc.code ?? '',
-  set(id, v) { const m = kv.get('docCodes', {}); m[id] = v; kv.set('docCodes', m); },
 };
 export const checks = {          // departure checklists
   has: (key) => !!kv.get('checks', {})[key],

@@ -1,1 +1,5 @@
 relay-data/
+.env
+.env.*
+!.env.example
+.idea/

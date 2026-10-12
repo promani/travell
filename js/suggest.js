@@ -1,6 +1,7 @@
 // "Te falta…": things that look pending, derived from the data (not typed by anyone).
 // Skips anything a task already covers (task.covers / task.source = "sug:<key>") or that was marked done/ignored.
-import { D, I, cols, docCodes } from './store.js';
+import { D, I, cols } from './store.js';
+import { ticketCode } from './ticket.js';
 import { passportOf, passportStatus } from './passport.js';
 import { parseDate, isoDate, fmtShort } from './util.js';
 
@@ -66,13 +67,13 @@ export function suggestions({ includeClosed = false } = {}) {
   for (const d of D.days) for (const a of d.activities.filter((x) => x.reservation === 'requerida' && x.status === 'pendiente')) {
     add({ key: 'activity:' + a.id, kind: 'reserva', icon: 'ticket', title: `Reservar: ${a.title}`, detail: a.detail, day: d.id, link: a.link });
   }
-  // 6. documentos
+  // 6. documentos y códigos de los vuelos reservados
   for (const doc of D.documents) {
     if (doc.status === 'pendiente') add({ key: 'doc:' + doc.id, kind: 'documento', icon: 'file-lines', title: `Conseguir: ${doc.title}`, detail: doc.notes, day: doc.day, link: doc.url });
-    if (doc.type === 'pasaje' && doc.status === 'reservado' && !docCodes.get(doc)) {
-      add({ key: 'code:' + doc.id, kind: 'documento', icon: 'key', title: `Cargá el código de reserva: ${doc.title}`, detail: 'Así lo tenés a mano sin internet en el aeropuerto.',
-        day: doc.day, action: { href: `#/docs/${doc.type}`, label: 'Ir a documentos' } });
-    }
+  }
+  for (const t of D.transport.filter((x) => x.kind === 'vuelo' && x.status === 'reservado' && !ticketCode(`transport:${x.id}`, x.code))) {
+    add({ key: 'code:transport:' + t.id, kind: 'pasaje', icon: 'key', title: `Cargá el código de reserva: ${t.route}${t.service ? ' (' + t.service + ')' : ''}`,
+      detail: 'Y escaneá el QR de la tarjeta de embarque: así lo tenés sin internet en el aeropuerto.', day: t.day, action: { href: '#/transporte', label: 'Ir a transporte' } });
   }
 
   // 7. pasaportes

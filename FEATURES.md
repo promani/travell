@@ -12,7 +12,7 @@ La pantalla de inicio cambia según el momento del viaje.
 
 | Momento | Qué muestra |
 |---|---|
-| **Antes del viaje** | "Faltan **N** días para tu viaje", fechas y día de salida. Accesos a **Pasajes y códigos** y **Visas y documentos**. Documentos clave fijados. Próximos pendientes con su vencimiento. |
+| **Antes del viaje** | "Faltan **N** días para tu viaje", fechas y día de salida. Accesos a **Pasajes y QR** y **Visas y documentos**. Documentos clave fijados. Próximos pendientes con su vencimiento. |
 | **Día de salida** | "**Hoy es el día del viaje**" con hora de salir de casa, hora de estar en el aeropuerto (despegue menos la anticipación configurada), hora de despegue y vuelo. Cuenta regresiva en vivo y checklist "Antes de salir". |
 | **Durante el viaje** | "Día N de M · ciudad", título, resumen y dónde se duerme. Tarjetas del día (llegada, salida). La actividad **actual** y la **siguiente**. Alertas del día. |
 | **Después del viaje** | "¡Volviste!" con accesos a fotos y gastos. |
@@ -25,7 +25,7 @@ En todos los casos hay:
 
 ## 2. Agenda de viaje ✅
 
-- **Itinerario completo** (Más → Itinerario): lista de días con fecha, ciudad y resumen. El día actual aparece resaltado.
+- **Itinerario** (Más → Itinerario): lista de días con fecha, ciudad y resumen. El día actual aparece resaltado.
 - **Vista de día** (`#/dia/dNN`):
   - Tira de días deslizable y flechas de anterior/siguiente.
   - Título, fecha, ciudad, resumen y dónde se duerme.
@@ -58,14 +58,13 @@ Se configuran en el JSON del día.
 - **＋ Lugar acá**: crea un lugar en tu ubicación GPS o en el centro del mapa.
 - **Lugares en JSON extensibles**: `places.json` es el archivo inicial, con coordenadas. `trip.json → placeFiles` lista más archivos que lo extienden (incluido `places-extra.json` con 15 lugares más). En total hay 105 lugares cargados.
 
-## 5. Documentos ✅
+## 5. Documentos y comprobantes ✅
 
-- Tipos: 🎫 pasajes · 🛂 visas y trámites · 🎟️ entradas · 🏨 hospedaje · 🪪 identidad · 🛡️ seguro.
-- **Códigos de reserva**: se cargan en la app, se copian con un toque y se muestran en **pantalla completa** con letra grande (para el mostrador o la puerta).
-- **Adjuntos offline**: PDFs y capturas (por ejemplo el QR de Visit Japan Web o de una entrada) guardados en el dispositivo. Las imágenes aparecen junto al código en pantalla completa.
-- Estado (reservado o pendiente), día asociado, notas y link oficial.
-- Documentos **fijados** en la pantalla de inicio.
-- Incluidos: pasajes MU746, MU745 y 9C6217, NZeTA de Nueva Zelanda, entrada a China, Visit Japan Web, hoteles, entradas (teamLab, Shibuya Sky, Ciudad Prohibida, jardín de Suzhou), pasaporte y seguro.
+- **Documentos** (`#/docs`) solo tiene lo que no está modelado en otro lado: visas y trámites (NZeTA, entrada a China, Visit Japan Web) y seguro.
+- Los **pasajes** están en cada transporte (Más → Transporte y la logística del día), las **entradas** en su actividad (con reserva), las **reservas de hotel** en su alojamiento y el **pasaporte** en cada viajero.
+- Cada uno tiene un **comprobante**: código de reserva (se copia y se muestra en **pantalla completa**), **QR escaneados con la cámara** del celular o desde una captura (se vuelven a dibujar en grande, en blanco y negro, para mostrar en la puerta de embarque o el molinete; los códigos Aztec/PDF417 se guardan como foto), **link a la reserva** y PDFs/capturas adjuntos. Todo se ve sin internet.
+- Los QR se pueden marcar por viajero ("Yo", "Viajero 2"). El código y los QR se sincronizan con el grupo; los adjuntos se suben a R2.
+- Al actualizar, los códigos y adjuntos que estaban en los documentos viejos se mueven solos a su pasaje, entrada, hotel o pasaporte.
 
 ## 6. Fotos ✅
 
@@ -180,17 +179,18 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
 
 ## 17. Pasaportes ✅
 
-- **Pasaportes** (Más → Pasaportes): por viajero, número, nombre completo, nacionalidad, nacimiento, emisión y vencimiento, más fotos del pasaporte guardadas offline.
+- Son un dato de cada viajero: están en **Más → Viajeros** (`#/pasaportes` redirige ahí). Número, nombre completo, nacionalidad, nacimiento, emisión y vencimiento, más fotos o escaneos del pasaporte.
 - Aviso si vence antes de terminar el viaje o a menos de 6 meses del regreso, y sugerencia “Cargá el pasaporte de…” mientras falte.
 - Modo pantalla completa con el número en grande para mostrar en migraciones.
-- Los datos se sincronizan cifrados con el grupo (si está configurado); las fotos quedan solo en el dispositivo.
+- Los datos se sincronizan cifrados con el grupo (si está configurado); las fotos se suben a R2.
 
 ## 18. Recursos ✅
 
 - **Recursos** (Más → Recursos): enlaces, mapas del metro, guías, apps y trámites por ciudad, con enlace y/o imágenes y PDFs adjuntos que se ven sin internet. Vienen cargados los metros de Shanghai, Tokio y Pekín (enlace oficial: adjuntá una captura del mapa) y Visit Japan Web. Reemplaza a la vieja sección Enlaces (`#/enlaces` redirige acá). Las **fuentes consultadas** quedan plegadas al final. El día muestra los recursos de su ciudad.
 
-## 19. Frases útiles ✅
-- **Más → Frases útiles** (`#/frases`): cómo decir gracias, por favor, la cuenta, sin picante, ¿cuánto cuesta?, a esta dirección (taxi), emergencias, etc., en **mandarín** (hanzi + pinyin) y **japonés** (kana/kanji + romaji). Elige sola el idioma de la ciudad del día.
+## 19. Cheat sheet ✅
+- **Más → Cheat sheet** (`#/cheatsheet`; `#/frases` redirige): **phrases** para decir gracias, por favor, la cuenta, sin picante, ¿cuánto cuesta?, a esta dirección (taxi), emergencias, etc., en **mandarín** (hanzi + pinyin) y **japonés** (kana/kanji + romaji). Elige sola el idioma de la ciudad del día.
+- **Kanji / hanzi útiles**: los que aparecen en carteles (entrada, salida, baño, empujar/tirar, abierto, prohibido fumar), estaciones (andén, molinetes, asiento reservado), menús (cerdo, pollo, picante) y servicios (efectivo, farmacia, onsen). En chino, con caracteres simplificados.
 - Tocar una frase la muestra en grande para mostrársela a alguien; 🔊 la lee con la voz del celular. Incluye los números de emergencia de cada país. También aparecen en el buscador.
 - Se agregan, editan y borran desde la app; en cada día aparecen los de su ciudad.
 

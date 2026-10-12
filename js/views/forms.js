@@ -113,7 +113,8 @@ export function openLodgingForm(l = {}) {
     ${input('Dirección', 'address', l.address)}
     ${textarea('Dirección en idioma local (para el taxista)', 'addressLocal', l.addressLocal)}
     ${locBlock(l.lat, l.lon, false)}
-    <div class="two">${input('N° de reserva', 'confirmation', l.confirmation)}${input('Link', 'link', l.link, 'type="url" placeholder="https://"')}</div>
+    <div class="two">${input('N° de reserva', 'confirmation', l.confirmation)}${input('Link a la reserva', 'bookingUrl', l.bookingUrl, 'type="url" placeholder="Booking, Trip.com, Airbnb…"')}</div>
+    ${input('Sitio del hotel', 'link', l.link, 'type="url" placeholder="https://"')}
     ${textarea('Notas', 'notes', l.notes)}
     ${buttons('lodging-del', l.id, l, 'lodging')}</form>`, { lat: l.lat, lon: l.lon, cityId: l.cityId });
 }
@@ -199,7 +200,7 @@ register({
     const id = val(f, 'id') || uid('l-u-');
     cols.put('lodging', { id, name: val(f, 'name'), cityId: val(f, 'cityId'), status: val(f, 'status'), checkIn: val(f, 'checkIn'), checkOut: val(f, 'checkOut'),
       checkInTime: val(f, 'checkInTime'), checkOutTime: val(f, 'checkOutTime'), area: val(f, 'area'), address: val(f, 'address'), addressLocal: val(f, 'addressLocal'),
-      ...loc, approx: false, confirmation: val(f, 'confirmation'), link: val(f, 'link'), notes: val(f, 'notes') });
+      ...loc, approx: false, confirmation: val(f, 'confirmation'), bookingUrl: val(f, 'bookingUrl'), link: val(f, 'link'), notes: val(f, 'notes') });
     closeModal(form); toast('Alojamiento guardado'); app.rerender();
   },
   'lodging-del': (el, _, app) => { if (!confirmDel('este alojamiento')) return; cols.del('lodging', el.dataset.id); closeModal(el); app.rerender(); },

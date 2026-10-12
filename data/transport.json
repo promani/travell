@@ -16,7 +16,8 @@
     "link": "https://www.aeroroutes.com/eng/251030-muns26eze",
     "code": null,
     "departAt": "2026-11-13T02:00",
-    "arriveAt": "2026-11-14T18:10"
+    "arriveAt": "2026-11-14T18:10",
+    "notes": "Adjuntá el PDF o la captura del e-ticket y escaneá el QR de la tarjeta de embarque."
   },
   {
     "id": "t02",
@@ -73,7 +74,8 @@
     "link": null,
     "code": null,
     "departAt": "2026-11-18T15:00",
-    "arriveAt": "2026-11-18T18:40"
+    "arriveAt": "2026-11-18T18:40",
+    "notes": "Aerolínea china: chequear política de cambios."
   },
   {
     "id": "t05",
@@ -396,6 +398,7 @@
     "link": "https://www.aeroroutes.com/eng/260527-mudec26eze",
     "code": null,
     "departAt": "2026-12-05T01:50",
-    "arriveAt": "2026-12-05T16:45"
+    "arriveAt": "2026-12-05T16:45",
+    "notes": "Confirmar el horario exacto: desde el 5/12 cambia el cronograma."
   }
 ]

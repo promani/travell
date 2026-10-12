@@ -1,5 +1,6 @@
 // Global search over the whole trip: activities, places, tasks, documents, lodging, alerts, transport, resources, phrases.
-import { D, I, docCodes } from '../store.js';
+import { D, I } from '../store.js';
+import { ticketCode } from '../ticket.js';
 import { esc, ic, icon, fmtShort } from '../util.js';
 import { cat } from '../ui.js';
 import { suggestions } from '../suggest.js';
@@ -20,14 +21,17 @@ function search(q) {
   }
   for (const p of D.places) if (hit(p.name, p.nameLocal, p.area, p.description)) out.push({ g: 'Lugares', icon: cat(p.category).icon, title: p.name, sub: [I.city[p.cityId]?.name, p.area].filter(Boolean).join(' · '), href: `#/lugar/${p.id}` });
   for (const t of D.tasks) if (hit(t.title, t.notes)) out.push({ g: 'Tareas', icon: t.status === 'hecho' ? 'check' : 'square-check', title: t.title, sub: [I.traveler[t.assignee]?.name, t.status].filter(Boolean).join(' · '), href: '#/tareas?f=todas' });
-  for (const x of D.documents) if (hit(x.title, x.subtitle, x.notes, docCodes.get(x))) out.push({ g: 'Documentos', icon: 'ticket', title: x.title, sub: x.subtitle, href: `#/docs/${x.type}` });
-  for (const l of D.lodging) if (hit(l.name, l.area, l.address, l.notes, l.confirmation)) out.push({ g: 'Alojamientos', icon: 'hotel', title: l.name, sub: `${fmtShort(l.checkIn)} → ${fmtShort(l.checkOut)}`, href: '#/alojamientos' });
-  for (const t of D.transport) if (hit(t.route, t.service, t.medium)) out.push({ g: 'Transporte', icon: 'train', title: t.route, sub: [day(t.day), t.service].filter(Boolean).join(' · '), href: `#/dia/${t.day}` });
+  for (const x of D.documents) if (hit(x.title, x.subtitle, x.notes, ticketCode(`doc:${x.id}`, x.code))) out.push({ g: 'Documentos', icon: 'file-lines', title: x.title, sub: x.subtitle, href: `#/docs/${x.type}` });
+  for (const l of D.lodging) if (hit(l.name, l.area, l.address, l.notes, l.confirmation, l.bookingUrl)) out.push({ g: 'Alojamientos', icon: 'hotel', title: l.name, sub: `${fmtShort(l.checkIn)} → ${fmtShort(l.checkOut)}`, href: '#/alojamientos' });
+  for (const t of D.transport) if (hit(t.route, t.service, t.medium, ticketCode(`transport:${t.id}`, t.code))) out.push({ g: 'Transporte', icon: 'train', title: t.route, sub: [day(t.day), t.service].filter(Boolean).join(' · '), href: `#/dia/${t.day}` });
   for (const s of suggestions({ includeClosed: true })) if (hit(s.title, s.detail)) out.push({ g: 'Sugerencias y preparativos', icon: s.icon, title: s.title, sub: s.state ? `${s.kind} · ${s.state}` : s.detail, href: '#/tareas#sugerencias' });
   for (const n of D.notes) if (hit(n.title, n.detail)) out.push({ g: 'Alertas', icon: 'triangle-exclamation', title: n.title, sub: n.detail, href: n.days?.[0] ? `#/dia/${n.days[0]}` : '#/itinerario' });
   for (const r of D.resources) if (hit(r.title, r.notes, I.city[r.cityId]?.name)) out.push({ g: 'Recursos', icon: (KINDS[r.kind] || KINDS.otro)[0], title: r.title, sub: [I.city[r.cityId]?.name || 'Todo el viaje', (KINDS[r.kind] || KINDS.otro)[1]].join(' · '), href: `#/recursos${r.cityId ? '?city=' + r.cityId : ''}` });
   for (const gr of D.phrases.groups) for (const ph of gr.phrases) for (const l of D.phrases.languages) {
-    if (ph[l.id] && hit(ph.es, ph[l.id][1])) out.push({ g: 'Frases', icon: 'language', title: `${ph.es} — ${ph[l.id][0]}`, sub: `${l.name} · ${ph[l.id][1]}`, href: `#/frases?lang=${l.id}` });
+    if (ph[l.id] && hit(ph.es, ph[l.id][1])) out.push({ g: 'Cheat sheet', icon: 'language', title: `${ph.es} — ${ph[l.id][0]}`, sub: `${l.name} · ${ph[l.id][1]}`, href: `#/cheatsheet?lang=${l.id}` });
+  }
+  for (const gr of D.phrases.kanji) for (const k of gr.items) for (const l of D.phrases.languages) {
+    if (k[l.id] && hit(k.es, k[l.id][0], k[l.id][1])) out.push({ g: 'Cheat sheet', icon: 'language', title: `${k[l.id][0]} — ${k.es}`, sub: `${l.scriptName || l.name} · ${k[l.id][1]}`, href: `#/cheatsheet?lang=${l.id}` });
   }
   return out;
 }

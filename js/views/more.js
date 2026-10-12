@@ -1,26 +1,27 @@
 // Secondary screens: menu, transport, lodging, to-do list, links, settings.
-import { D, I, settings, setSimulatedNow, DATA_BASE, kv, cols, overriddenBase } from '../store.js';
+import { D, I, settings, setSimulatedNow, DATA_BASE, kv, cols, bus, overriddenBase } from '../store.js';
 import { exportBackup, importBackup } from '../share.js';
+import { uploads, uploadPending, uploadSoon } from '../upload.js';
 import { tileUrls, prefetchTiles } from '../map.js';
 import { esc, ic, fmtShort, fmtDate, toast, isoDate, cap } from '../util.js';
-import { register, statusBadge, extLink, transportIcon, cat } from '../ui.js';
+import { register, statusBadge, extLink, transportIcon, cat, bookingSite } from '../ui.js';
 import { tripPhase } from '../tripstate.js';
+import { ticketBox, hasTicket, transportTicket, paintAttachments, freeUrls } from '../ticket.js';
 import { setupCard } from './people.js';
 
 export function menu(_, ctx) {
   ctx.after(() => setupCard(document.getElementById('setup')));
   const items = [
     ['#/tareas', 'square-check', 'Tareas y sugerencias', 'Pendientes asignables a cada viajero y lo que falta'],
-    ['#/viajeros', 'users', 'Viajeros', 'Quién sos, ubicación del grupo, sincronización'],
+    ['#/viajeros', 'users', 'Viajeros', 'Pasaportes, quién sos, ubicación del grupo, sincronización'],
     ['#/lugares', 'location-dot', 'Lugares', 'Agregar, editar e importar lugares de interés'],
-    ['#/docs', 'ticket', 'Documentos', 'Pasajes, visas, entradas, códigos'],
-    ['#/pasaportes', 'passport', 'Pasaportes', 'Datos y foto del pasaporte de cada viajero'],
+    ['#/docs', 'file-lines', 'Documentos', 'Visas, trámites de entrada, seguro'],
     ['#/recursos', 'book', 'Recursos', 'Enlaces, mapas del metro, guías y apps por ciudad'],
-    ['#/frases', 'language', 'Frases útiles', 'Cómo decir gracias, la cuenta, etc. en chino y japonés'],
-    ['#/alojamientos', 'hotel', 'Alojamientos', 'Hoteles: agregar, editar, check-in'],
-    ['#/transporte', 'train', 'Transporte', 'Vuelos, trenes y traslados por día'],
+    ['#/cheatsheet', 'language', 'Cheat sheet', 'Frases y kanji útiles en chino y japonés'],
+    ['#/alojamientos', 'hotel', 'Alojamientos', 'Hoteles, reservas y check-in'],
+    ['#/transporte', 'train', 'Transporte', 'Vuelos y trenes por día, con pasajes y QR'],
     ['#/fotos', 'camera', 'Fotos', 'Fotos por día, guardadas en el celular'],
-    ['#/itinerario', 'calendar-days', 'Itinerario completo', 'Todos los días'],
+    ['#/itinerario', 'calendar-days', 'Itinerario', 'Todos los días'],
     ['#/ajustes', 'gear', 'Ajustes', 'Mapas, simulador de fecha, datos'],
   ];
   return `<header class="pagehead"><h1>Más</h1></header><div id="setup"></div><nav class="menu">${items.map(([h, i, t, s]) => `<a href="${h}"><span>${ic(i)}</span><div><b>${t}</b><small>${s}</small></div><em>›</em></a>`).join('')}</nav>`;
@@ -34,21 +35,27 @@ export function itinerary() {
     <small class="muted">${esc(d.summary || '')}</small></div></a></li>`).join('')}</ol>`;
 }
 
-export function transport() {
+export function transport(_, ctx) {
+  ctx.cleanup(freeUrls);
+  ctx.after(paintAttachments);
   const byDay = {};
   D.transport.forEach((t) => (byDay[t.day] ||= []).push(t));
-  return `<header class="pagehead"><h1>${ic('train')} Transporte</h1></header>` + D.days.filter((d) => byDay[d.id]).map((d) => `
+  return `<header class="pagehead"><h1>${ic('train')} Transporte</h1><p class="muted">Cada pasaje con su código de reserva, el QR de la tarjeta de embarque o del tren (escaneado con la cámara), el link a la reserva y el PDF.</p></header>` + D.days.filter((d) => byDay[d.id]).map((d) => `
     <h3 class="grp"><a href="#/dia/${d.id}">Día ${d.n} · ${esc(fmtShort(d.date))}</a></h3>
-    ${byDay[d.id].map((t) => `<article class="card trow2"><div class="o-ic">${transportIcon(t.kind)}</div><div>
+    ${byDay[d.id].map((t) => `<article class="card trow2" id="tr-${esc(t.id)}"><div class="o-ic">${transportIcon(t.kind)}</div><div>
       <b>${esc(t.route)}</b> ${statusBadge(t.status)}
       <small>${esc([t.medium, t.service].filter(Boolean).join(' · '))}</small>
       ${(t.depart || t.arrive) ? `<small>${ic('clock')} ${esc([t.depart, t.arrive].filter(Boolean).join(' → '))}</small>` : ''}
       ${t.price ? `<small>${ic('credit-card')} ${esc(t.price)}</small>` : ''}
       ${t.buyWhere ? `<small>${ic('cart-shopping')} ${esc(t.buyWhere)}${t.buyWhen ? ' · ' + esc(t.buyWhen) : ''}</small>` : ''}
-      ${t.link ? `<small>${extLink(t.link, 'Más info')}</small>` : ''}</div></article>`).join('')}`).join('');
+      ${t.link ? `<small>${extLink(t.link, 'Más info')}</small>` : ''}
+      ${t.notes ? `<p class="note-line">${esc(t.notes)}</p>` : ''}
+      ${hasTicket(t) ? transportTicket(t) : ''}</div></article>`).join('')}`).join('');
 }
 
-export function lodging() {
+export function lodging(_, ctx) {
+  ctx.cleanup(freeUrls);
+  ctx.after(paintAttachments);
   return `<header class="pagehead"><h1>${ic('hotel')} Alojamientos</h1></header>
   <div class="row-actions"><button class="btn primary" data-act="lodging-new">${ic('plus')} Agregar alojamiento</button></div>` + D.lodging.map((l) => `
     <article class="card"><div class="card-head"><h3>${esc(l.name)}</h3>${statusBadge(l.status)}</div>
@@ -57,12 +64,14 @@ export function lodging() {
       ${l.address ? `<p>${ic('map-location-dot')} ${esc(l.address)}</p>` : ''}
       ${l.addressLocal ? `<p class="local">${esc(l.addressLocal)}</p>` : ''}
       ${l.confirmation ? `<p>${ic('key')} Reserva: <b>${esc(l.confirmation)}</b></p>` : ''}
+      ${l.bookingUrl ? `<p>${extLink(l.bookingUrl, bookingSite(l.bookingUrl))}</p>` : ''}
       ${l.notes ? `<p class="note-line">${esc(l.notes)}</p>` : ''}
       ${l.approx && Number.isFinite(l.lat) ? '<p class="hint">Ubicación aproximada (zona).</p>' : ''}
       <div class="row-actions"><button class="btn small" data-act="lodging-edit" data-id="${esc(l.id)}">${ic('pen')} Editar</button>
         ${l.checkInDay ? `<a class="btn small" href="#/dia/${l.checkInDay}">Día de llegada</a>` : ''}
         ${l.addressLocal ? `<button class="btn small" data-act="show-address" data-id="${esc(l.id)}">Mostrar al taxista</button>` : ''}
-        ${l.link ? extLink(l.link, 'Sitio del hotel') : ''}</div></article>`).join('');
+        ${l.link ? extLink(l.link, 'Sitio del hotel') : ''}</div>
+      ${ticketBox(`lodging:${l.id}`, { noCode: true, noLink: true, title: l.name })}</article>`).join('');
 }
 
 export function ajustes() {
@@ -107,7 +116,7 @@ export function ajustes() {
     <ul class="people">${ov.map((o) => `<li><div><b>${esc(o.title)}</b><small>${esc({ places: 'Lugar', lodging: 'Alojamiento', tasks: 'Tarea', travelers: 'Viajero', activities: 'Actividad' }[o.col])} · ${o.deleted ? 'borrado' : 'editado'}</small></div>
       <button class="btn tiny" data-act="restore-one" data-col="${o.col}" data-id="${esc(o.id)}">Restaurar</button></li>`).join('')}</ul></section>` : ''; })()}
 
-  <section class="card"><h3>${ic('floppy-disk')} Datos del dispositivo</h3><p id="storage-info" class="muted">…</p>
+  <section class="card"><h3>${ic('floppy-disk')} Datos del dispositivo</h3><p id="storage-info" class="muted">…</p><p id="cloud-info" class="muted"></p>
     <p class="hint">Viaje: <b>${esc(D.trip.title)}</b> · datos en <code>${esc(DATA_BASE)}/</code>. Editá los JSON para cambiar el itinerario; lo que cargues en la app (fotos, gastos, códigos) queda en este dispositivo.</p>
     <div class="row-actions"><button class="btn" data-act="sw-refresh">Actualizar app y datos</button><button class="btn danger" data-act="wipe">Borrar datos locales</button></div></section>
   <p class="muted center">Travell · app web sin backend</p>`;
@@ -124,7 +133,19 @@ async function downloadCity(c, btn) {
   return ok;
 }
 
-export async function storageInfo() {
+function cloudInfo() {
+  const el = document.getElementById('cloud-info');
+  if (!el) return;
+  const { pending, done, running, error } = uploads, total = pending + done;
+  el.innerHTML = !total ? `${ic('cloud')} Las fotos y adjuntos se suben a la nube al agregarlos.`
+    : `${ic('cloud-arrow-up')} En la nube: ${done} de ${total} fotos y adjuntos${running ? ' · subiendo…' : pending ? ` · ${pending} pendiente${pending === 1 ? '' : 's'}${error || !navigator.onLine ? ' (se reintenta con conexión)' : ''}` : ''}`
+      + (pending && !running ? ' <button class="btn tiny" data-act="upload-now">Subir ahora</button>' : '');
+}
+
+export async function storageInfo(ctx) {
+  cloudInfo();
+  ctx?.cleanup(bus.on('uploads', cloudInfo));
+  uploadPending();
   const el = document.getElementById('storage-info');
   if (!el) return;
   try {
@@ -159,7 +180,7 @@ register({
     const file = el.files[0]; el.value = '';
     if (!file) return;
     toast('Importando…');
-    try { const n = await importBackup(file); toast(`Respaldo importado (${n} fotos/archivos)`); app.rerender(); } catch (e) { toast(e.message || 'Archivo inválido'); }
+    try { const n = await importBackup(file); toast(`Respaldo importado (${n} fotos/archivos)`); uploadSoon(); app.rerender(); } catch (e) { toast(e.message || 'Archivo inválido'); }
   },
   'restore-one': (el, _, app) => { cols.reset(el.dataset.col, el.dataset.id); toast('Restaurado'); app.rerender(); },
   'set-provider': (el) => { settings.set('mapProvider', el.value); toast('Listo'); },
@@ -170,6 +191,7 @@ register({
   'sim-set': () => { const v = document.getElementById('sim-input').value; if (v) { setSimulatedNow(v); toast('Fecha simulada'); } },
   'sim-clear': () => { setSimulatedNow(null); toast('Fecha real'); },
   'sim-day': (el) => { setSimulatedNow(`${el.dataset.d}T09:00`); },
+  'upload-now': () => uploadPending(),
   'sw-refresh': async () => {
     const regs = await navigator.serviceWorker?.getRegistrations?.() || [];
     for (const r of regs) await r.update();

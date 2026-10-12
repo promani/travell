@@ -1,11 +1,11 @@
-import { D, I, done, settings, now, docCodes } from '../store.js';
+import { D, I, done, settings, now } from '../store.js';
+import { hasTicket, transportTicket, ticketCode, paintAttachments, freeUrls } from '../ticket.js';
 import { esc, ic, fmtShort, fmtWeekdayShort, cap } from '../util.js';
 import { tripPhase, activityNow, lodgingOfDay } from '../tripstate.js';
-import { heroImg, actRow, renderCards, notesFor, noteHtml, dayLabel, statusBadge, extLink, transportIcon, register, cat } from '../ui.js';
+import { heroImg, actRow, renderCards, notesFor, noteHtml, dayLabel, statusBadge, extLink, transportIcon, register, cat, bookingSite } from '../ui.js';
 import { thumbsFor } from './photos.js';
 import { dayTotalText } from './expenses.js';
 import { resourcesForDay, resRow } from './resources.js';
-import { paintAttachments } from './docs.js';
 import { weatherLine } from '../weather.js';
 
 let onlyMust = false;
@@ -22,7 +22,9 @@ function transportRow(t) {
     <small>${esc([t.medium, t.service].filter(Boolean).join(' · '))}${times ? ' · ' + esc(times) : ''}</small>
     ${t.price ? `<small>${ic('credit-card')} ${esc(t.price)}</small>` : ''}
     ${t.buyWhere && t.status === 'pendiente' ? `<small>${ic('cart-shopping')} ${esc(t.buyWhere)}${t.buyWhen ? ' — ' + esc(t.buyWhen) : ''}</small>` : ''}
-    ${t.link ? `<small>${extLink(t.link, 'Más info')}</small>` : ''}</div></li>`;
+    ${t.link ? `<small>${extLink(t.link, 'Más info')}</small>` : ''}
+    ${t.notes ? `<small class="muted">${esc(t.notes)}</small>` : ''}
+    ${hasTicket(t) ? transportTicket(t) : ''}</div></li>`;
 }
 
 export function render({ id }, ctx) {
@@ -41,10 +43,11 @@ export function render({ id }, ctx) {
   const res = resourcesForDay(day);
   const dayPlaces = [...new Set(day.activities.map((a) => a.placeId).filter(Boolean))];
 
+  ctx.cleanup(freeUrls);
+  ctx.after(paintAttachments);
   ctx.after(() => {
     document.querySelector('#daystrip .on')?.scrollIntoView({ inline: 'center', block: 'nearest' });
     thumbsFor(day.id, document.getElementById('day-photos'), ctx);
-    if (res.length) paintAttachments();
     dayTotalText(day.id).then((t) => { const el = document.getElementById('day-spend'); if (el) el.innerHTML = t; });
   });
   ctx.title = `Día ${day.n} · ${day.title}`;
@@ -81,9 +84,10 @@ export function render({ id }, ctx) {
     ${lodgOut.map((x) => `<li class="trow"><span class="o-ic">${ic('suitcase-rolling')}</span><div><b>Check-out · ${esc(x.name)}</b><small>${esc(x.checkOutTime || '')}</small></div></li>`).join('')}
     ${trans.map(transportRow).join('')}
     ${lodgIn.map((x) => `<li class="trow"><span class="o-ic">${ic('hotel')}</span><div><b>Check-in · ${esc(x.name)}</b> ${statusBadge(x.status)} <button class="btn tiny" data-act="lodging-edit" data-id="${esc(x.id)}">Editar</button><small>${esc([x.area, x.checkInTime, x.notes].filter(Boolean).join(' · '))}</small>
-      ${x.link ? `<small>${extLink(x.link, 'Hotel')}</small>` : ''}</div></li>`).join('')}</ul></section>` : ''}
+      ${x.confirmation ? `<small>${ic('key')} Reserva: <b>${esc(x.confirmation)}</b></small>` : ''}
+      ${x.bookingUrl ? `<small>${extLink(x.bookingUrl, bookingSite(x.bookingUrl))}</small>` : ''}${x.link ? `<small>${extLink(x.link, 'Hotel')}</small>` : ''}</div></li>`).join('')}</ul></section>` : ''}
 
-  ${docs.length ? `<section class="card"><h3>${ic('file-lines')} Documentos de este día</h3><ul class="doc-mini">${docs.map((x) => `<li><a href="#/docs/${esc(x.type)}"><b>${esc(x.title)}</b><small>${esc(docCodes.get(x) || x.subtitle || '')}</small></a></li>`).join('')}</ul></section>` : ''}
+  ${docs.length ? `<section class="card"><h3>${ic('file-lines')} Documentos de este día</h3><ul class="doc-mini">${docs.map((x) => `<li><a href="#/docs/${esc(x.type)}"><b>${esc(x.title)}</b><small>${esc(ticketCode(`doc:${x.id}`, x.code) || x.subtitle || '')}</small></a></li>`).join('')}</ul></section>` : ''}
   ${res.length ? `<section class="card"><div class="card-head"><h3>${ic('book')} Recursos${day.cityId ? ' · ' + esc(I.city[day.cityId].name) : ''}</h3><a href="#/recursos${day.cityId ? '?city=' + esc(day.cityId) : ''}">Ver →</a></div>
     <ul class="res-list">${res.map((r) => resRow(r, { actions: false })).join('')}</ul></section>` : ''}
 

@@ -6,6 +6,8 @@ import { gps, startGps, currentPosition, permissionState, onPosition } from '../
 import { ago } from '../map.js';
 import { syncNow, syncState, syncConfigured, shareMyPosition, locationLink, otherPositions, defaultRelayUrl } from '../sync.js';
 import { exportShared, importShared } from '../share.js';
+import { passportCards } from './passports.js';
+import { paintAttachments, freeUrls } from '../ticket.js';
 
 export function personItems() {
   return otherPositions().map((pos) => ({ kind: 'person', traveler: I.traveler[pos.id], pos }));
@@ -65,6 +67,8 @@ export function render(_, ctx) {
   const mine = me(), sharing = settings.get('shareLocation', false);
   const myPos = gps.pos;
   ctx.after(() => permBanner(document.getElementById('perm')));
+  ctx.after(paintAttachments);
+  ctx.cleanup(freeUrls);
   ctx.cleanup(bus.on('sync', () => { const el = document.getElementById('sync-status'); if (el) el.textContent = syncStatus(); }));
   const rows = D.travelers.map((t) => {
     const pos = t.id === mine ? (myPos ? { ...myPos, updatedAt: Date.now() } : null) : cols.map('positions')[t.id];
@@ -73,7 +77,6 @@ export function render(_, ctx) {
     return `<li><span class="who big" style="--c:${esc(t.color || '#888')}">${esc(t.name.trim().slice(0, 2).toUpperCase())}</span>
       <div><b>${esc(t.name)}${t.id === mine ? ' (vos)' : ''}</b><small>${esc(where)}</small></div>
       ${pos && !pos.deleted && t.id !== mine ? `<a class="btn tiny" href="#/mapa?person=${esc(t.id)}">Mapa</a>` : ''}
-      <a class="btn tiny" href="#/pasaportes" title="Pasaporte" aria-label="Pasaporte">${ic('passport')}</a>
       <button class="btn tiny" data-act="traveler-edit" data-id="${esc(t.id)}">Editar</button></li>`;
   }).join('');
 
@@ -89,6 +92,9 @@ export function render(_, ctx) {
     }, 'map-people')}
     <ul class="people">${rows}</ul>
     <div class="row-actions"><button class="btn small" data-act="traveler-new">${ic('plus')} Agregar viajero</button></div></section>
+
+  <h2 class="grp">${ic('passport')} Pasaportes</h2>
+  ${passportCards()}
 
   <section class="card"><h3>${ic('tower-broadcast')} Compartir mi ubicación</h3>
     <label class="check"><input type="checkbox" data-change="share-toggle" ${sharing ? 'checked' : ''} ${mine ? '' : 'disabled'}><span>Compartir mi ubicación con el grupo (se actualiza cada ~2 min mientras la app está abierta)</span></label>

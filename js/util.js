@@ -6,6 +6,9 @@ export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
 /** Font Awesome icon (solid set, vendored in vendor/fontawesome). */
 export const ic = (name, cls = '') => `<i class="fa-solid fa-${name}${cls ? ' ' + cls : ''}" aria-hidden="true"></i>`;
 
+/** Link that opens outside the app (needs internet). */
+export const extLink = (url, text) => `<a href="${esc(url)}" target="_blank" rel="noopener" class="ext">${esc(text)} ${ic('arrow-up-right-from-square')}<span class="net" title="Requiere internet">${ic('globe')}</span></a>`;
+
 // Emojis that older data (JSON files, edits saved on the device, synced records) may still carry.
 const EMOJI_ICON = {
   '📍': 'location-dot', '🏨': 'hotel', '🛏': 'bed', '🚆': 'train', '🚄': 'train', '🚈': 'train-tram', '🚇': 'train-subway',

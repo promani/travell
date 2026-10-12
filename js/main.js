@@ -15,11 +15,13 @@ import * as people from './views/people.js';
 import * as places from './views/places.js';
 import * as search from './views/search.js';
 import * as phrases from './views/phrases.js';
-import * as passports from './views/passports.js';
+import './views/passports.js';
+import { ticketActions, migrateDocuments } from './ticket.js';
 import * as resources from './views/resources.js';
 import { paintSimBar } from './views/sim.js';
 import './views/forms.js';
 import { startSync } from './sync.js';
+import { startUploads } from './upload.js';
 import { refreshWeather } from './weather.js';
 
 const main = $('#app');
@@ -29,14 +31,16 @@ const ROUTES = {
   '': (p, c) => home.render(p, c), inicio: (p, c) => home.render(p, c),
   dia: (p, c) => day.render(p, c), mapa: (p, c) => mapview.render(p, c), lugar: (p, c) => mapview.renderPlace(p, c),
   fotos: (p, c) => photos.render(p, c), gastos: (p, c) => expenses.render(p, c), docs: (p, c) => docs.render(p, c),
-  mas: (p, c) => more.menu(p, c), itinerario: () => more.itinerary(), transporte: () => more.transport(),
-  alojamientos: () => more.lodging(), frases: (p, c) => phrases.render(p, c),
+  mas: (p, c) => more.menu(p, c), itinerario: () => more.itinerary(), transporte: (p, c) => more.transport(p, c),
+  alojamientos: (p, c) => more.lodging(p, c), cheatsheet: (p, c) => phrases.render(p, c),
+  frases: (p) => { setTimeout(() => location.replace(`#/cheatsheet${p.lang ? `?lang=${encodeURIComponent(p.lang)}` : ''}`), 0); return ''; },   // old name
   enlaces: () => { setTimeout(() => location.replace('#/recursos'), 0); return ''; },   // the old "Enlaces" section is now part of Recursos
   tareas: (p, c) => tasks.render(p, c), pendientes: (p, c) => tasks.render(p, c),
   viajeros: (p, c) => people.render(p, c), lugares: (p, c) => places.render(p, c),
-  pasaportes: (p, c) => passports.render(p, c), recursos: (p, c) => resources.render(p, c),
+  pasaportes: () => { setTimeout(() => location.replace('#/viajeros'), 0); return ''; },   // passports are now part of each traveler
+  recursos: (p, c) => resources.render(p, c),
   ubicacion: (p) => receiveLocation(p), buscar: (p, c) => search.render(p, c),
-  ajustes: (p, c) => { c.after(more.storageInfo); return more.ajustes(); },
+  ajustes: (p, c) => { c.after(() => more.storageInfo(c)); return more.ajustes(); },
 };
 const NAV_GROUP = { '': 'inicio', inicio: 'inicio', dia: 'dia', itinerario: 'dia', mapa: 'mapa', lugar: 'mapa', lugares: 'mapa', fotos: 'fotos', gastos: 'gastos', tareas: 'tareas', pendientes: 'tareas' };
 
@@ -123,6 +127,7 @@ document.addEventListener('keydown', (e) => {
 });
 window.addEventListener('hashchange', () => { document.querySelectorAll('dialog[open]').forEach((d) => d.close()); route(); });   // a modal never outlives its screen
 
+Object.assign(actions, ticketActions);
 Object.assign(actions, {
   'close-modal': (el) => closeModal(el),
   'toggle-check': (el, _, app) => { checks.toggle(el.dataset.key); app.rerender(); },
@@ -159,8 +164,10 @@ setInterval(() => {
   document.title = D.trip.title;
   $('#brand').textContent = D.trip.title;
   if (!location.hash) history.replaceState(null, '', '#/inicio');
+  await migrateDocuments().catch((e) => console.warn('migrate', e));
   route();
   startSync();
+  startUploads();
   bus.on('settings', (k) => { if (k === 'simOffset') route({ keepScroll: true }); });   // simulated date changed
   // data changed on another phone: redraw, unless the user is in the middle of a form
   bus.on('remote-change', () => { if (!document.querySelector('dialog[open]') && !document.activeElement?.matches('input, textarea, select')) route({ keepScroll: true }); });

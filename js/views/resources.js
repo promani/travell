@@ -3,7 +3,8 @@
 import { D, I, cols, idb } from '../store.js';
 import { esc, ic, uid, toast, openModal, closeModal } from '../util.js';
 import { register, extLink } from '../ui.js';
-import { paintAttachments } from './docs.js';
+import { paintAttachments } from '../ticket.js';
+import { uploadSoon, removeRemote } from '../upload.js';
 
 export const KINDS = {
   mapa: ['map', 'Mapa'], guia: ['book-open', 'Guía'], app: ['mobile-screen', 'App'], traduccion: ['language', 'Traducción'],
@@ -42,7 +43,7 @@ export function render({ city }, ctx) {
     <ul class="res-list">${sources.map((r) => resRow(r)).join('')}</ul></details>` : '';
   return `<header class="pagehead"><h1>${ic('book')} Recursos</h1>
     <p class="muted">Enlaces, mapas del metro, apps y guías por ciudad. Adjuntá capturas o PDFs para tenerlos sin internet.</p>
-    <div class="row-actions"><button class="btn primary small" data-act="res-new">${ic('plus')} Agregar recurso</button><a class="btn small" href="#/frases">${ic('language')} Frases útiles</a></div></header>
+    <div class="row-actions"><button class="btn primary small" data-act="res-new">${ic('plus')} Agregar recurso</button><a class="btn small" href="#/cheatsheet">${ic('language')} Cheat sheet</a></div></header>
   ${chips}${groups || '<p class="muted">Todavía no hay recursos.</p>'}${src}`;
 }
 
@@ -71,7 +72,7 @@ register({
     const files = [...form.querySelector('input[type=file]').files];
     if (files.length) {
       navigator.storage?.persist?.();
-      try { for (const file of files) await idb.put('files', { id: uid('fi'), docId: `res:${id}`, name: file.name, type: file.type || 'application/octet-stream', blob: file, addedAt: Date.now() }); }
+      try { for (const file of files) await idb.put('files', { id: uid('fi'), docId: `res:${id}`, name: file.name, type: file.type || 'application/octet-stream', blob: file, addedAt: Date.now() }); uploadSoon(); }
       catch { toast('No se pudo guardar el archivo'); }
     }
     closeModal(form); toast('Recurso guardado'); app.rerender();
@@ -80,7 +81,7 @@ register({
     if (!confirm('¿Borrar este recurso y sus archivos adjuntos?')) return;
     const id = el.dataset.id;
     cols.del('resources', id);
-    try { for (const f of (await idb.all('files')).filter((x) => x.docId === `res:${id}`)) await idb.del('files', f.id); } catch { /* ignore */ }
+    try { for (const f of (await idb.all('files')).filter((x) => x.docId === `res:${id}`)) { removeRemote(f); await idb.del('files', f.id); } } catch { /* ignore */ }
     closeModal(el); app.rerender();
   },
 });

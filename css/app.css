@@ -288,3 +288,26 @@ ul.card { padding: .3rem 1rem; }
 .hero-meta { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .55rem; } .hero-meta > p { margin: 0 !important; }
 .hero-pre .hero-meta { justify-content: center; }
 .hero .btn, .hero .go-grid { text-shadow: none; }
+
+/* booking proof (ticket.js): code, QR codes, link, attachments */
+.ticket { margin-top: .5rem; } .ticket .attach:empty { display: none; } .ticket .codebox { margin-top: 0; }
+.ticket-actions { gap: .35rem; margin-top: .4rem; } .ticket-link { margin: .3rem 0; }
+.qr-list { display: flex; flex-wrap: wrap; gap: .35rem; margin: .4rem 0; } .qr-btn { font-weight: 700; }
+.trow .ticket .btn.small { padding: .3rem .6rem; font-size: .8rem; }
+.act-more h4 { margin: .8rem 0 .2rem; font-size: .9rem; }
+/* the QR is always black on white (scanners need contrast), also in dark mode */
+.qr-big { background: #fff; border-radius: 14px; padding: .6rem; margin: .6rem auto; width: min(100%, 360px); }
+.qr-big svg { display: block; width: 100%; height: auto; } .qr-big.small { width: min(100%, 220px); }
+.qr-text { font: .8rem/1.4 ui-monospace, Menlo, monospace; word-break: break-all; color: var(--muted); margin: .3rem 0; }
+.qr-modal details { margin: .4rem 0; } .qr-modal summary { cursor: pointer; color: var(--muted); font-size: .85rem; }
+.scanner { position: relative; background: #000; border-radius: 14px; overflow: hidden; aspect-ratio: 3 / 4; max-height: 60dvh; margin: .5rem auto; }
+.scanner video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.scan-frame { position: absolute; inset: 18% 12%; border: 3px solid #fffc; border-radius: 16px; box-shadow: 0 0 0 100vmax #0006; pointer-events: none; }
+
+/* cheat sheet: kanji / hanzi */
+.kanji-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: .5rem; }
+.kanji { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; gap: .1rem; padding: .6rem .3rem; border: 1px solid var(--line); border-radius: 12px;
+  background: var(--bg); color: var(--text); font: inherit; cursor: pointer; text-align: center; }
+.kanji b { font-size: 1.7rem; font-weight: 600; line-height: 1.2; white-space: nowrap; } .kanji b.l { font-size: 1.3rem; } .kanji b.xl { font-size: 1.1rem; white-space: normal; } .kanji span { font-size: .78rem; line-height: 1.2; }
+.kanji em { font-style: normal; color: var(--pri); font-size: .75rem; }
+.phrase-big .kanji-big { font-size: 4.5rem; line-height: 1.15; }

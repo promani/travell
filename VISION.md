@@ -27,7 +27,7 @@ Nació para un viaje concreto (China y Japón, noviembre–diciembre 2026), plan
 3. **Los datos del viaje son JSON legibles.** Se editan a mano o se generan desde una planilla. La app no esconde el plan en un formato propio.
 4. **Todo está anclado a días.** Actividades, transportes, hospedajes, documentos, fotos y gastos se relacionan con un día del viaje. El día es la unidad de navegación.
 5. **Contexto según el momento.** La pantalla de inicio cambia antes, durante y después del viaje: cuenta regresiva, día de salida, llegada a una ciudad, lo que sigue hoy.
-6. **Privacidad por defecto.** Fotos, códigos y gastos quedan en el dispositivo. Para compartir, el usuario exporta un archivo o activa la sincronización cifrada, siempre de forma explícita.
+6. **Privacidad por defecto.** Códigos y gastos quedan en el dispositivo; las fotos y los adjuntos además se respaldan en la nube (R2), sin cifrar. Para compartir, el usuario exporta un archivo o activa la sincronización cifrada, siempre de forma explícita.
 7. **Funciona en el mundo real.** Celular con una mano, poca batería, mala señal, servicios bloqueados según el país.
 8. **Simple de mantener.** JavaScript sin framework ni build, dependencias vendorizadas (Leaflet) y código que se lee de corrido.
 

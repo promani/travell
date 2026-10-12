@@ -7,6 +7,7 @@ import { departureCard, checklistCard, heroImg, renderCards, actRow, notesFor, n
 import { openTasks, taskRow } from './tasks.js';
 import { suggestions } from '../suggest.js';
 import { weatherLine } from '../weather.js';
+import { paintAttachments, freeUrls } from '../ticket.js';
 
 const plural = (n, s, p) => `${n} ${n === 1 ? s : p}`;
 
@@ -45,12 +46,14 @@ function heroPost() {
 
 function quickLinks() {
   return `<nav class="tiles" aria-label="Accesos rápidos">
-    <a class="tile primary" href="#/docs/pasaje"><span>${ic('ticket')}</span>Pasajes y códigos</a>
+    <a class="tile primary" href="#/transporte"><span>${ic('ticket')}</span>Pasajes y QR</a>
     <a class="tile primary" href="#/docs"><span>${ic('passport')}</span>Visas y documentos</a>
   </nav>`;
 }
 
 export function render(_, ctx) {
+  ctx.cleanup(freeUrls);
+  ctx.after(paintAttachments);
   const st = tripPhase();
   const day = st.day;
   const startCard = st.phase === 'during' ? day.cards.find((c) => c.type === 'departure' && c.tripStart) : null;

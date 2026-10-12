@@ -38,6 +38,7 @@ flowchart LR
 | **Cambios locales (overlay)** | `localStorage`, `travell:<tripId>:col:<colección>` | Altas, modificaciones y bajas de lugares, alojamientos, actividades, tareas y viajeros. Además gastos, ubicaciones y sugerencias descartadas | La app, y la sincronización o la importación |
 | **Estado del dispositivo** | `localStorage`, `travell:<tripId>:` | Ajustes (quién soy, relay, mapa), actividades hechas, checklists, códigos cargados | La app |
 | **Archivos locales** | IndexedDB `travell-<tripId>` | Fotos (miniatura + original reducido), adjuntos de documentos (PDF, capturas) | La app |
+| **Archivos en la nube** | Cloudflare R2, `<tripId>/(photos\|files)/<id>-<128 bits al azar>.<ext>` | Copia de cada foto (original reducido) y de cada adjunto, sin cifrar | `upload.js`, a través del relay |
 | **Caché offline** | Cache Storage | App, JSON y tiles de mapa | El service worker |
 
 Los JSON son **de solo lectura** para la app. Lo que el usuario carga (un lugar, un hotel, una tarea, un gasto) se guarda como **registro** en una colección local y se **superpone** al JSON. Así se pueden publicar versiones nuevas del itinerario sin pisar lo cargado en cada celular.
@@ -80,6 +81,9 @@ js/
   tripstate.js        Fase del viaje (antes/durante/después), día actual, actividad actual y siguiente, horarios de salida
   ui.js               Fragmentos compartidos (badges, filas de actividad, tarjetas de día) y registro de acciones
   sync.js             Sincronización cifrada con el relay, compartir ubicación, link de ubicación
+  upload.js           Sube fotos y adjuntos a R2 a través del relay (cola con reintentos)
+  ticket.js           Comprobantes (código, QR, link, adjuntos) de pasajes, entradas, hoteles y documentos
+  qr.js               Leer QR con la cámara o una imagen y dibujarlos en grande
   weather.js          Clima por día: lo baja del relay una vez por día, copia en localStorage, línea para los heros
   suggest.js          Reglas de "te falta…" (hospedajes, noches sin alojamiento, compras, reservas, preparativos)
   share.js            Exportar e importar los datos cargados en la app, y el respaldo completo (con fotos y adjuntos)
@@ -92,6 +96,7 @@ js/
                       tasks (tareas y sugerencias), people (viajeros, ubicación, sync), places (ABM de lugares),
                       forms (formularios de ABM y selector de ubicación), search (buscador global)
 server/relay.mjs      Relay opcional (Node, sin dependencias); con SERVE_STATIC también sirve la app y GET /v1/weather
+server/r2.mjs         Cliente mínimo de Cloudflare R2 (API S3, firma SigV4) para subir, leer y borrar archivos
 server/weather.mjs    Clima diario desde Open-Meteo (pronóstico o clima típico), guardado en Redis o en un archivo
 server/redis.mjs      Cliente Redis mínimo (RESP, sin dependencias)
 tests/                Tests con node:test (npm test)
@@ -159,7 +164,7 @@ erDiagram
 | `tasks.json` | no | Tareas con `dueAt` (ISO), `urgent`, `day`, `assignee`, `priority`, `status` y `covers` (qué sugerencias ya cubren, por ejemplo `lodging:l04`) |
 | `requirements.json` | no | Preparativos sugeridos: `title`, `detail`, `category`, `countries` (vacío = siempre), `dueDaysBefore`, `covers`, `link` |
 | `notes.json` | no | Alertas por día (`days[]`) o generales |
-| `phrases.json` | no | Frases útiles por idioma (`languages`, `groups[].phrases[]` con `[escritura, romanización, nota?]`) |
+| `phrases.json` | no | Cheat sheet por idioma: `languages` (con `scriptName`), `groups[].phrases[]` y `kanji[].items[]`, cada entrada con `[escritura, romanización, nota?]` por idioma |
 
 **Tarjetas de día** (`cards[]`), genéricas y configurables desde el JSON:
 
@@ -242,6 +247,25 @@ sequenceDiagram
 - **Ubicación**: con "Compartir mi ubicación" activo, cada fix del GPS escribe `positions/<yo>` si pasaron 2 minutos o hubo más de 50 m de movimiento. Dejar de compartir borra el registro. Solo funciona con la app abierta: una web no puede seguir la ubicación en segundo plano.
 - **Avisos**: al recibir una tarea asignada a mí y creada por otro viajero, muestra un toast y, si hay permiso, una notificación del sistema.
 - **Deploy**: el `Dockerfile` corre `server/relay.mjs` con `SERVE_STATIC=/app`, así un solo contenedor sirve la PWA (con una lista blanca de rutas públicas) y el relay. Con `trip.json → sync.relayUrl: "same-origin"`, la app usa su propio origen como relay. Los datos del relay van al volumen `/data`.
+### Comprobantes (`ticket.js`, `qr.js`)
+
+- Un **comprobante** cuelga de algo ya modelado, con la clave `<tipo>:<id>`: `transport:t01` (pasaje), `activity:A052` (entrada), `lodging:l03` (hotel), `doc:doc04` (documento no modelado) o `passport:<viajero>`.
+- El código de reserva, los QR (`qrs: [{ id, text, format, label }]`) y el link van en la colección `tickets`, que se sincroniza. Los adjuntos van en IndexedDB `files` con `docId` = la clave, y se suben a R2.
+- `qr.js` lee códigos con `BarcodeDetector` si el navegador lo tiene, y si no con jsQR (`vendor/jsqr`); dibuja los QR con qrcode-generator (`vendor/qrcode`). Las dos se cargan solo al usarlas y quedan en el caché offline.
+- `documents.json` solo tiene lo no modelado. `migrateDocuments()` mueve una vez los códigos (`docCodes`) y adjuntos de los documentos viejos a su comprobante, hotel o pasaporte.
+- Alojamientos: `bookingUrl` es el link a la reserva (Booking, Trip.com…); `link` sigue siendo el sitio del hotel.
+
+### Fotos y adjuntos en R2
+
+- Toda foto o adjunto se sube **siempre** a Cloudflare R2, haya grupo configurado o no. La copia local en IndexedDB sigue siendo la que muestra la app, así que todo anda sin conexión.
+- **Cliente** (`upload.js`): sube lo que no tenga `remote` con `PUT /v1/files/<clave>` y al terminar guarda `remote: { key, at }` en el registro. Reintenta al abrir la app, al volver a primer plano, al recuperar la conexión, a los 60 s de un error y después de agregar archivos. Borrar una foto o adjunto borra también la copia en R2 (si no hay conexión, queda en cola en `r2:deletes`). Ajustes muestra cuántos hay subidos.
+- **Relay** (`server/r2.mjs`): firma los pedidos con AWS SigV4 y reenvía a R2; `GET` devuelve el archivo en streaming. Las credenciales solo están en el servidor. Acepta imágenes, PDF y binarios de hasta 30 MB.
+- **Acceso**: los archivos **no van cifrados** (decisión explícita). No hay autenticación: el nombre lleva 128 bits al azar y funciona como capacidad (quien lo conoce puede leer o borrar ese archivo). Cualquiera que llegue al relay puede subir archivos.
+
+### Redis
+
+Hoy guarda el clima (`<REDIS_KEY_PREFIX>weather:<tripId>`). Los datos del viaje (`data/*.json`) y el overlay en `localStorage` alcanzan para un viaje; cuando haya varios viajes, los datos pasan a Redis, con el mismo prefijo.
+
 - **Requisitos**: el relay tiene que estar en HTTPS si la app está en HTTPS (contenido mixto), y conviene alojarlo donde sea accesible desde China. Ejecución: `PORT=8787 RELAY_DATA=./relay-data node server/relay.mjs`.
 
 ### Sugerencias
@@ -253,7 +277,7 @@ sequenceDiagram
 - tareas hechas cuyo hospedaje sigue pendiente;
 - transportes sin comprar;
 - actividades con reserva necesaria;
-- documentos pendientes y pasajes sin código;
+- documentos pendientes y vuelos reservados sin código;
 - preparativos de `requirements.json` filtrados por los países de `trip.cities`.
 
 Cada sugerencia tiene una clave estable (`lodging:l04`, `gap:2026-11-25`, `req:fiebre-amarilla`). Se oculta si una tarea la cubre (`covers` o `source: "sug:<clave>"`) o si se marcó "ya está" o "no aplica" (colección `suggestions`, que también se sincroniza).
@@ -294,9 +318,10 @@ Las pruebas de interfaz (dos celulares, sincronización, offline) se corrieron c
 
 - Todo el texto de los JSON y del usuario pasa por `esc()` antes de insertarse como HTML.
 - No hay analytics, cookies ni llamadas a terceros salvo tiles, links que el usuario abre y el relay que él mismo configure.
+- Fotos y adjuntos (incluidos escaneos de pasaportes) se suben sin cifrar a R2: quien tenga acceso al bucket los puede ver.
 - La ubicación se comparte solo si el usuario lo activa, y viaja cifrada.
 - El código del grupo es la única protección: tiene que ser largo y no publicarse. Cambiarlo crea otro grupo.
 - El relay valida tamaños (2 MB por pedido, 256 KB por registro, 50 000 registros por grupo) pero no tiene autenticación: cualquiera que adivine un `gid` podría llenar ese grupo con basura, aunque no leerlo.
-- Los datos sensibles (códigos, pasaporte) quedan en el dispositivo. Conviene no subirlos al JSON público si el sitio está publicado.
+- Los códigos y los datos del pasaporte quedan en el dispositivo (los adjuntos no: ver arriba). Conviene no subirlos al JSON público si el sitio está publicado.
 
 Ver también: [VISION.md](VISION.md) · [FEATURES.md](FEATURES.md) · [BACKLOG.md](BACKLOG.md)
