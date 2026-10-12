@@ -68,7 +68,7 @@ export function render({ id }, ctx) {
   ${notesFor(day).map(noteHtml).join('')}
 
   <section class="card">
-    <div class="card-head"><h3>Actividades del día</h3>
+    <div class="card-head"><h3>Actividades</h3>
       <div class="row-actions" style="margin:0"><button class="btn small ${onlyMust ? 'on' : ''}" data-act="toggle-must">${ic('star')} Imperdibles</button>
       <button class="btn small primary" data-act="act-new" data-day="${day.id}">${ic('plus')} Actividad</button></div></div>
     <div class="timeline">${acts.map((a) => actRow(a, { current: a === current, next: a === nextA })).join('') || '<p class="muted">Sin actividades.</p>'}</div>

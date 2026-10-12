@@ -79,8 +79,23 @@ function route({ keepScroll = false } = {}) {
   $$('#nav a').forEach((a) => a.classList.toggle('on', a.dataset.nav === group));
   const dn = $('#nav [data-nav=dia]'); if (dn) dn.href = `#/dia/${(tripPhase().day || D.days[0]).id}`;
   window.scrollTo(0, keepScroll ? y : 0);
+  showPictures();
   people.pendingSetup().then((items) => $('#nav [data-nav=mas]')?.classList.toggle('pending', items.length > 0)).catch(() => null);
   tick();
+}
+// Hero / day pictures: show them only once they really loaded. The image host can be unreachable (offline, or
+// blocked off the published domain): then the hero keeps its gradient and the day banner stays hidden.
+const pictureOk = new Map();   // url -> true | false
+function showPictures() {
+  $$('[style*="--hero-img"]').forEach((el) => {
+    const url = el.style.getPropertyValue('--hero-img').match(/url\(['"]?(.*?)['"]?\)/)?.[1];
+    if (!url) return;
+    const done = (ok) => { pictureOk.set(url, ok); el.classList.toggle('img-ok', ok); };
+    if (pictureOk.has(url)) return done(pictureOk.get(url));
+    const im = new Image();
+    im.onload = () => done(true); im.onerror = () => done(false);
+    im.src = url;
+  });
 }
 const app = { rerender: () => route({ keepScroll: true }), navigate: (h) => { location.hash = h; } };
 

@@ -18,8 +18,8 @@ function heroPre(st) {
   return `<section class="hero hero-pre${g.cls}"${g.style}>
     <div class="hero-kicker">${esc(D.trip.subtitle || '')}</div>
     <h1>${n === 1 ? 'Falta' : 'Faltan'} <span class="big">${n}</span> ${n === 1 ? 'día' : 'días'} para tu viaje</h1>
-    <p class="hero-sub">${esc(fmtShort(first.date))} → ${esc(fmtShort(last.date))} · ${plural(D.days.length, 'día', 'días')}</p>
-    ${arrival ? weatherLine(arrival, { prefix: `Al llegar a ${I.city[arrival.cityId]?.name || ''}` }) : ''}
+    <div class="hero-meta"><p class="hero-sub">${ic('calendar-day')} ${esc(fmtShort(first.date))} → ${esc(fmtShort(last.date))} · ${plural(D.days.length, 'día', 'días')}</p>
+    ${arrival ? weatherLine(arrival, { prefix: `Al llegar a ${I.city[arrival.cityId]?.name || ''}` }) : ''}</div>
   </section>`;
 }
 
@@ -30,8 +30,8 @@ function heroDuring(st) {
     <div class="hero-kicker">Día ${d.n} de ${st.total}${d.cityId ? ' · ' + esc(I.city[d.cityId]?.name || '') : ''}</div>
     <h1>${esc(d.title)}</h1>
     <p>${esc(d.summary || '')}</p>
-    ${weatherLine(d)}
-    <p class="hero-sub">${esc(dayLabel(d))}${d.sleepsAt ? ` · ${ic('bed')} ${esc(l ? l.name + (l.area ? ' (' + l.area + ')' : '') : d.sleepsAt)}` : ''}</p>
+    <div class="hero-meta"><p class="hero-sub">${ic('calendar-day')} ${esc(dayLabel(d))}</p>${weatherLine(d)}</div>
+    ${d.sleepsAt ? `<p class="hero-lodging">${ic('bed')} ${esc(l ? l.name + (l.area ? ' (' + l.area + ')' : '') : d.sleepsAt)}</p>` : ''}
   </section>`;
 }
 
