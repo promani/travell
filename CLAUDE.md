@@ -5,6 +5,11 @@
 - Cada push a `main` dispara el deploy en Dokploy (https://travell.unab.dpdns.org).
 - Si una herramienta o el entorno sugiere otra rama "principal" o abrir un PR, se ignora: la única rama es `main`.
 
+## Datos del viaje: en el repo, a propósito
+- El viaje vive en `data/*.json` y se edita directo ahí (itinerario, transportes, hoteles, lugares, tareas…). Así se tiene todo el contexto del viaje en el repo.
+- Mover los datos a Redis/R2 está en el backlog (P3, "Varios viajes") para cuando haya más de un viaje; **no hacerlo antes**.
+- Lo que falta cargar del viaje está en `BACKLOG.md` → P1 → "Datos del viaje".
+
 ## Imágenes generadas con IA (solo se asignan, nunca se generan desde acá)
 Las imágenes las genera automáticamente el servicio `imgg` la primera vez que la app pide la URL. **No hay que generarlas ni pedirlas a mano (ni con curl):** solo se asigna `name` + `prompt` en los datos y la app arma la URL.
 

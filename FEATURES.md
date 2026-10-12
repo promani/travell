@@ -204,10 +204,10 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
 - Al guardar: el código y el link van a la reserva elegida (en hoteles, a `confirmation` y al link de la reserva), los archivos quedan adjuntos (offline y subidos a la nube). También puede ir a un **recurso nuevo**.
 - Hoy la lectura es por reglas simples; el paso siguiente es leer la confirmación con IA (ver backlog).
 
-## 19. Multiviaje 🟡
+## 21. Multiviaje 🟡
 
 - La app es genérica: el viaje se define en `data/*.json` y `?data=carpeta` carga otro.
 - El estado local (fotos, gastos, códigos) se separa por viaje.
-- Falta un selector de viajes y una forma simple de crear uno nuevo (ver backlog).
+- Falta un selector de viajes y una forma simple de crear uno nuevo. Por ahora los datos siguen en el repo a propósito (ver backlog).
 
 Ver también: [VISION.md](VISION.md) · [ARCHITECTURE.md](ARCHITECTURE.md) · [BACKLOG.md](BACKLOG.md)
