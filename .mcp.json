@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "lab-mcp": {
+      "type": "http",
+      "url": "https://unab.dpdns.org/mcp",
+      "headers": {
+        "Authorization": "Bearer lab_mcp_cadb9d148710ceb1257d1fdea3c4ce5c47654711ff2d017d"
+      }
+    }
+  }
+}
