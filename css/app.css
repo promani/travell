@@ -181,9 +181,10 @@ progress { width: 100%; accent-color: var(--pri); }
 .hero-pre { text-align: center; } .hero-pre h1 { font-size: var(--fs-xl); font-weight: 600; }
 .hero-go { background: linear-gradient(135deg, #d9480f, #c2255c); } .hero-go h1 { font-size: var(--fs-xl); }
 .hero-post { background: linear-gradient(135deg, #2b8a3e, #0b7285); text-align: center; }
-/* AI picture behind the hero; the gradient is the fallback while offline. The shadow keeps text readable on any picture. */
-.hero-img.img-ok { background-color: var(--pri); background-image: linear-gradient(180deg, #0002 0%, #0003 45%, #0007 100%), var(--hero-img); background-size: cover; background-position: center;
-  text-shadow: 0 1px 4px #000a, 0 0 12px #0006; }
+/* AI picture behind the hero; the gradient is the fallback while offline. An even dark veil over the picture does the
+   readability work, so the text only needs a short, crisp shadow (no blurry halo). */
+.hero-img.img-ok { background-color: var(--pri); background-image: linear-gradient(180deg, #00000040 0%, #00000059 55%, #00000080 100%), var(--hero-img); background-size: cover; background-position: center;
+  text-shadow: 0 1px 2px #00000080; }
 .hero-img.img-ok.hero-go, .hero-img.img-ok.hero-post { background-color: #c2255c; }
 /* date and weather straight on the picture, no box behind */
 .hero .hero-sub, .hero .wx { align-self: flex-start; display: inline-flex; flex-wrap: wrap; align-items: center; gap: .1rem var(--s2); width: auto; max-width: 100%;
@@ -192,8 +193,9 @@ progress { width: 100%; accent-color: var(--pri); }
 .hero .wx b { font-size: 1.25rem; } .hero .wx-min, .hero .wx-txt { opacity: 1; } .hero .wx-txt i { opacity: .85; }
 .hero .wx-pre { flex-basis: 100%; opacity: .85; font-size: var(--fs-xs); }
 .hero-lodging { font-size: var(--fs-sm); margin-top: var(--s2) !important; }
-.hero-meta { display: flex; flex-wrap: wrap; gap: var(--s2); margin-top: var(--s2); } .hero-meta > p { margin: 0 !important; }
-.hero-pre .hero-meta { justify-content: center; }
+/* date and weather: always one under the other, never side by side */
+.hero-meta { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s1); margin-top: var(--s2); } .hero-meta > p { margin: 0 !important; }
+.hero-pre .hero-meta { align-items: center; }
 .hero .btn { text-shadow: none; }
 .hero .countdown { color: #fff; }
 /* departure hero: times and checklist straight on the picture */
