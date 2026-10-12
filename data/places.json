@@ -1,0 +1,1616 @@
+[
+  {
+    "id": "p-eze",
+    "name": "Aeropuerto de Ezeiza (EZE)",
+    "nameLocal": null,
+    "cityId": "buenos-aires",
+    "category": "traslado",
+    "lat": -34.8222,
+    "lon": -58.5358,
+    "approx": false,
+    "area": "Ezeiza",
+    "description": "Estar ~3 h antes del vuelo de las 02:00.",
+    "cost": null,
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d01"
+    ]
+  },
+  {
+    "id": "p-pvg",
+    "name": "Aeropuerto de Pudong (PVG)",
+    "nameLocal": "浦东国际机场",
+    "cityId": "shanghai",
+    "category": "traslado",
+    "lat": 31.1443,
+    "lon": 121.8083,
+    "approx": false,
+    "area": "Pudong",
+    "description": "Entrada a China (exención de visa o tránsito 240 h, a confirmar). Configurar Alipay/WeChat Pay y eSIM.",
+    "cost": null,
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d03",
+      "d07"
+    ]
+  },
+  {
+    "id": "p-bund",
+    "name": "El Bund",
+    "nameLocal": "外滩",
+    "cityId": "shanghai",
+    "category": "cultura",
+    "lat": 31.24,
+    "lon": 121.49,
+    "approx": false,
+    "area": "Huangpu",
+    "description": "Paseo junto al río con la arquitectura colonial y la vista al skyline de Lujiazui. Temprano hay menos gente.",
+    "cost": "Gratis",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d04"
+    ]
+  },
+  {
+    "id": "p-nanjing",
+    "name": "Nanjing Road peatonal",
+    "nameLocal": "南京东路步行街",
+    "cityId": "shanghai",
+    "category": "compras",
+    "lat": 31.2352,
+    "lon": 121.4815,
+    "approx": false,
+    "area": "Huangpu",
+    "description": "La calle comercial más famosa de China.",
+    "cost": "Gratis",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d04"
+    ]
+  },
+  {
+    "id": "p-yuyuan",
+    "name": "Yu Garden y Ciudad Vieja",
+    "nameLocal": "豫园",
+    "cityId": "shanghai",
+    "category": "cultura",
+    "lat": 31.2272,
+    "lon": 121.4921,
+    "approx": false,
+    "area": "Huangpu",
+    "description": "Jardín clásico de la dinastía Ming y bazar alrededor. Almuerzo de xiaolongbao en la zona.",
+    "cost": "~¥40 entrada (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d04"
+    ]
+  },
+  {
+    "id": "p-shtower",
+    "name": "Shanghai Tower / Lujiazui",
+    "nameLocal": "上海中心大厦",
+    "cityId": "shanghai",
+    "category": "cultura",
+    "lat": 31.2335,
+    "lon": 121.5055,
+    "approx": false,
+    "area": "Pudong",
+    "description": "Cruzar el río en ferry local y subir al mirador de la Shanghai Tower al atardecer (~16:55).",
+    "cost": "Ferry ~¥2; mirador ~¥180 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d04"
+    ]
+  },
+  {
+    "id": "p-frenchconc",
+    "name": "Concesión Francesa (Wukang Rd)",
+    "nameLocal": "武康路",
+    "cityId": "shanghai",
+    "category": "cultura",
+    "lat": 31.209,
+    "lon": 121.442,
+    "approx": false,
+    "area": "Xuhui",
+    "description": "Calles arboladas (Wukang Rd, Anfu Rd, Fuxing Rd), edificios art déco, cafés.",
+    "cost": "Gratis",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d05"
+    ]
+  },
+  {
+    "id": "p-tianzifang",
+    "name": "Tianzifang y Xintiandi",
+    "nameLocal": "田子坊",
+    "cityId": "shanghai",
+    "category": "compras",
+    "lat": 31.2107,
+    "lon": 121.4694,
+    "approx": false,
+    "area": "Huangpu",
+    "description": "Callejones shikumen con tiendas y comida; Xintiandi para un café.",
+    "cost": "Gratis",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d05"
+    ]
+  },
+  {
+    "id": "p-shmuseum",
+    "name": "Museo de Shanghai",
+    "nameLocal": "上海博物馆",
+    "cityId": "shanghai",
+    "category": "cultura",
+    "lat": 31.2288,
+    "lon": 121.4732,
+    "approx": false,
+    "area": "Plaza del Pueblo / Jing'an",
+    "description": "Museo con bronces y cerámica china, o templo budista en medio de rascacielos. Chequear día de cierre.",
+    "cost": "Museo gratis con reserva; templo ~¥50 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d05"
+    ]
+  },
+  {
+    "id": "p-yongkang",
+    "name": "Yongkang Road (bares)",
+    "nameLocal": "永康路",
+    "cityId": "shanghai",
+    "category": "noche",
+    "lat": 31.2095,
+    "lon": 121.4513,
+    "approx": false,
+    "area": "Xuhui",
+    "description": "Yongkang Road y speakeasies de la zona.",
+    "cost": null,
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d05"
+    ]
+  },
+  {
+    "id": "p-hongqiao",
+    "name": "Estación Shanghai Hongqiao",
+    "nameLocal": "上海虹桥站",
+    "cityId": "shanghai",
+    "category": "traslado",
+    "lat": 31.1946,
+    "lon": 121.3203,
+    "approx": false,
+    "area": null,
+    "description": "Tren rápido G/D, más de 200 por día.",
+    "cost": "~¥40 (aprox.)",
+    "link": "https://www.chinatravel.com/china-trains/shanghai-suzhou-train",
+    "source": "itinerario",
+    "days": [
+      "d06"
+    ]
+  },
+  {
+    "id": "p-zhuozheng",
+    "name": "Jardín del Administrador Humilde",
+    "nameLocal": "拙政园",
+    "cityId": "suzhou",
+    "category": "cultura",
+    "lat": 31.3238,
+    "lon": 120.6306,
+    "approx": false,
+    "area": "Gusu",
+    "description": "El jardín clásico más famoso de China (Patrimonio UNESCO). Reservar entrada con pasaporte.",
+    "cost": "~¥70–90 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d06"
+    ]
+  },
+  {
+    "id": "p-szmuseum",
+    "name": "Museo de Suzhou",
+    "nameLocal": "苏州博物馆",
+    "cityId": "suzhou",
+    "category": "cultura",
+    "lat": 31.3234,
+    "lon": 120.6289,
+    "approx": false,
+    "area": "Gusu",
+    "description": "Obra de I. M. Pei, al lado del jardín. Gratis con reserva; cerrado los lunes.",
+    "cost": "Gratis",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d06"
+    ]
+  },
+  {
+    "id": "p-pingjiang",
+    "name": "Calle Pingjiang y canales",
+    "nameLocal": "平江路",
+    "cityId": "suzhou",
+    "category": "cultura",
+    "lat": 31.319,
+    "lon": 120.6358,
+    "approx": false,
+    "area": "Gusu",
+    "description": "Calle peatonal junto al canal, casas de té, paseo en bote opcional.",
+    "cost": "Bote ~¥100–150 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d06"
+    ]
+  },
+  {
+    "id": "p-shantang",
+    "name": "Shantang Street",
+    "nameLocal": "山塘街",
+    "cityId": "suzhou",
+    "category": "gastronomia",
+    "lat": 31.3226,
+    "lon": 120.597,
+    "approx": false,
+    "area": "Gusu",
+    "description": "Calle antigua con faroles; cena de fideos de Suzhou.",
+    "cost": null,
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d06"
+    ]
+  },
+  {
+    "id": "p-szstation",
+    "name": "Estación de Suzhou",
+    "nameLocal": "苏州站",
+    "cityId": "suzhou",
+    "category": "traslado",
+    "lat": 31.3293,
+    "lon": 120.6134,
+    "approx": false,
+    "area": null,
+    "description": "Tren rápido de vuelta.",
+    "cost": "~¥40 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d06"
+    ]
+  },
+  {
+    "id": "p-jadebuddha",
+    "name": "Templo del Buda de Jade",
+    "nameLocal": "玉佛禅寺",
+    "cityId": "shanghai",
+    "category": "cultura",
+    "lat": 31.2415,
+    "lon": 121.443,
+    "approx": false,
+    "area": "Putuo",
+    "description": "Último paseo o compras antes de salir.",
+    "cost": "~¥50 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d07"
+    ]
+  },
+  {
+    "id": "p-nrt",
+    "name": "Aeropuerto de Narita (NRT)",
+    "nameLocal": "成田国際空港",
+    "cityId": "tokyo",
+    "category": "traslado",
+    "lat": 35.772,
+    "lon": 140.3929,
+    "approx": false,
+    "area": "Narita",
+    "description": "Mostrar el QR de Visit Japan Web. Comprar Welcome Suica o cargar Suica en el celular. Sacar yenes en un ATM de 7-Eleven o Japan Post.",
+    "cost": null,
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d07"
+    ]
+  },
+  {
+    "id": "p-shinjuku",
+    "name": "Estación de Shinjuku",
+    "nameLocal": "新宿駅",
+    "cityId": "tokyo",
+    "category": "traslado",
+    "lat": 35.6896,
+    "lon": 139.7006,
+    "approx": false,
+    "area": null,
+    "description": "Directo, asientos reservados. Alternativa: Skyliner a Ueno (40 min) si el hotel queda en el este.",
+    "cost": "¥3.330",
+    "link": "https://thejapanode.com/guides/narita-airport-transport-guide",
+    "source": "itinerario",
+    "days": [
+      "d07",
+      "d09",
+      "d12"
+    ]
+  },
+  {
+    "id": "p-omoide",
+    "name": "Omoide Yokocho",
+    "nameLocal": "思い出横丁",
+    "cityId": "tokyo",
+    "category": "gastronomia",
+    "lat": 35.693,
+    "lon": 139.6995,
+    "approx": false,
+    "area": "Shinjuku",
+    "description": "Callejón de yakitori junto a la estación de Shinjuku; puestos chicos, humo y cerveza. Alternativa a toda hora: ramen Ichiran.",
+    "cost": "~¥2.000–4.000 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d07"
+    ]
+  },
+  {
+    "id": "p-tsukiji",
+    "name": "Mercado exterior de Tsukiji",
+    "nameLocal": "築地場外市場",
+    "cityId": "tokyo",
+    "category": "gastronomia",
+    "lat": 35.6655,
+    "lon": 139.7707,
+    "approx": false,
+    "area": "Tsukiji",
+    "description": "Desayuno de sushi, tamagoyaki, ostras y vieiras a la parrilla. Mejor entre 9 y 13 h. Cierra miércoles, domingos y feriados (por eso va el jueves).",
+    "cost": "~¥3.000–5.000 (aprox.)",
+    "link": "https://www.gotokyo.org/en/story/guide/tsukijioutermarket/",
+    "source": "itinerario",
+    "days": [
+      "d08"
+    ]
+  },
+  {
+    "id": "p-hamarikyu",
+    "name": "Jardín Hama-rikyu",
+    "nameLocal": "浜離宮恩賜庭園",
+    "cityId": "tokyo",
+    "category": "naturaleza",
+    "lat": 35.6595,
+    "lon": 139.763,
+    "approx": false,
+    "area": "Chuo",
+    "description": "Jardín de los shogunes con casa de té sobre el agua (matcha con dulce). Rodeado de rascacielos.",
+    "cost": "Entrada ~¥300; matcha ~¥1.000 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d08"
+    ]
+  },
+  {
+    "id": "p-hamapier",
+    "name": "Embarcadero Hama-rikyu (water bus)",
+    "nameLocal": "浜離宮発着場",
+    "cityId": "tokyo",
+    "category": "aventura",
+    "lat": 35.6612,
+    "lon": 139.7622,
+    "approx": true,
+    "area": "Sumida",
+    "description": "Barco desde Hama-rikyu hasta Asakusa pasando bajo los puentes. Chequear horarios.",
+    "cost": "~¥1.000–1.200 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d08"
+    ]
+  },
+  {
+    "id": "p-asakusalunch",
+    "name": "Asakusa (almuerzo)",
+    "nameLocal": "浅草",
+    "cityId": "tokyo",
+    "category": "gastronomia",
+    "lat": 35.7125,
+    "lon": 139.7955,
+    "approx": true,
+    "area": "Asakusa",
+    "description": "Tempura o soba en un local tradicional.",
+    "cost": "~¥1.500–3.000 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d08"
+    ]
+  },
+  {
+    "id": "p-sensoji",
+    "name": "Senso-ji y Nakamise-dori",
+    "nameLocal": "浅草寺",
+    "cityId": "tokyo",
+    "category": "cultura",
+    "lat": 35.7148,
+    "lon": 139.7967,
+    "approx": false,
+    "area": "Asakusa",
+    "description": "El templo más antiguo de Tokio. Puerta Kaminarimon, calle de puestos con snacks (melonpan, ningyo-yaki).",
+    "cost": "Gratis",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d08"
+    ]
+  },
+  {
+    "id": "p-kappabashi",
+    "name": "Kappabashi (calle de la cocina)",
+    "nameLocal": "かっぱ橋道具街",
+    "cityId": "tokyo",
+    "category": "compras",
+    "lat": 35.7144,
+    "lon": 139.7884,
+    "approx": false,
+    "area": "Asakusa",
+    "description": "Cuchillos japoneses, vajilla y réplicas de comida en plástico. Los locales cierran ~17:00.",
+    "cost": null,
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d08"
+    ]
+  },
+  {
+    "id": "p-asakusatc",
+    "name": "Centro Turístico de Asakusa (terraza)",
+    "nameLocal": "浅草文化観光センター",
+    "cityId": "tokyo",
+    "category": "cultura",
+    "lat": 35.7107,
+    "lon": 139.7967,
+    "approx": false,
+    "area": "Asakusa",
+    "description": "Terraza gratis en el piso 8 con vista a Senso-ji y la Skytree. Atardecer ~16:30. Alternativa paga: Tokyo Skytree.",
+    "cost": "Gratis",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d08"
+    ]
+  },
+  {
+    "id": "p-ameyoko",
+    "name": "Ameyoko / Ueno (izakayas)",
+    "nameLocal": "アメヤ横丁",
+    "cityId": "tokyo",
+    "category": "noche",
+    "lat": 35.7107,
+    "lon": 139.7745,
+    "approx": false,
+    "area": "Ueno",
+    "description": "Bares y puestos bajo las vías del tren; ambiente ruidoso y barato. Volver a Shinjuku por la Yamanote (~30 min).",
+    "cost": "~¥3.000–5.000 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d08"
+    ]
+  },
+  {
+    "id": "p-chureito",
+    "name": "Pagoda Chureito",
+    "nameLocal": "忠霊塔",
+    "cityId": "kawaguchiko",
+    "category": "naturaleza",
+    "lat": 35.5013,
+    "lon": 138.801,
+    "approx": false,
+    "area": "Fujiyoshida",
+    "description": "La postal clásica: pagoda roja con el Fuji detrás. ~400 escalones en el parque Arakurayama Sengen.",
+    "cost": "Gratis",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d09"
+    ]
+  },
+  {
+    "id": "p-hoto",
+    "name": "Kawaguchiko (almuerzo de hoto)",
+    "nameLocal": "ほうとう",
+    "cityId": "kawaguchiko",
+    "category": "gastronomia",
+    "lat": 35.4985,
+    "lon": 138.769,
+    "approx": true,
+    "area": "Kawaguchiko",
+    "description": "Plato típico de Yamanashi: fideos gruesos en caldo de miso con zapallo y verduras.",
+    "cost": "~¥1.500 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d09"
+    ]
+  },
+  {
+    "id": "p-kachikachi",
+    "name": "Teleférico Kachi Kachi",
+    "nameLocal": "カチカチ山ロープウェイ",
+    "cityId": "kawaguchiko",
+    "category": "aventura",
+    "lat": 35.5004,
+    "lon": 138.7636,
+    "approx": false,
+    "area": "Kawaguchiko",
+    "description": "Sube a un mirador sobre el lago con vista al Fuji.",
+    "cost": "~¥1.000 ida y vuelta (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d09"
+    ]
+  },
+  {
+    "id": "p-maple",
+    "name": "Corredor de arces (Momiji Kairo)",
+    "nameLocal": "紅葉回廊",
+    "cityId": "kawaguchiko",
+    "category": "naturaleza",
+    "lat": 35.5183,
+    "lon": 138.7692,
+    "approx": false,
+    "area": "Lago Kawaguchi norte",
+    "description": "Festival del 7 al 29/11; iluminación desde el atardecer hasta las 21:00. El pico suele ser ~15/11. Último bus Red Line de vuelta: 18:32.",
+    "cost": "Gratis",
+    "link": "https://hiddenjapan-gems.com/kawaguchiko-autumn-leaves-festival/",
+    "source": "itinerario",
+    "days": [
+      "d09"
+    ]
+  },
+  {
+    "id": "p-kgstation",
+    "name": "Estación Kawaguchiko",
+    "nameLocal": "河口湖駅",
+    "cityId": "kawaguchiko",
+    "category": "traslado",
+    "lat": 35.4992,
+    "lon": 138.7686,
+    "approx": false,
+    "area": null,
+    "description": "Fuji Excursion de la tarde o bus.",
+    "cost": "Consultar",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d09"
+    ]
+  },
+  {
+    "id": "p-goldengai",
+    "name": "Golden Gai",
+    "nameLocal": "ゴールデン街",
+    "cityId": "tokyo",
+    "category": "noche",
+    "lat": 35.694,
+    "lon": 139.7035,
+    "approx": false,
+    "area": "Shinjuku",
+    "description": "Más de 200 bares diminutos (5–10 personas) en callejones. Muchos cobran cover de entrada.",
+    "cost": "Cover ~¥500–1.000 + tragos (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d09"
+    ]
+  },
+  {
+    "id": "p-meiji",
+    "name": "Santuario Meiji Jingu",
+    "nameLocal": "明治神宮",
+    "cityId": "tokyo",
+    "category": "cultura",
+    "lat": 35.6764,
+    "lon": 139.6993,
+    "approx": false,
+    "area": "Harajuku",
+    "description": "Bosque en plena ciudad y santuario sintoísta. Los sábados suele haber bodas tradicionales.",
+    "cost": "Gratis",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d10"
+    ]
+  },
+  {
+    "id": "p-takeshita",
+    "name": "Takeshita-dori y Omotesando",
+    "nameLocal": "竹下通り",
+    "cityId": "tokyo",
+    "category": "compras",
+    "lat": 35.6702,
+    "lon": 139.7059,
+    "approx": false,
+    "area": "Harajuku",
+    "description": "Cultura kawaii y crepes en Takeshita; arquitectura y tiendas de diseño en Omotesando.",
+    "cost": null,
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d10"
+    ]
+  },
+  {
+    "id": "p-harajukulunch",
+    "name": "Harajuku (almuerzo)",
+    "nameLocal": "原宿",
+    "cityId": "tokyo",
+    "category": "gastronomia",
+    "lat": 35.6693,
+    "lon": 139.7047,
+    "approx": true,
+    "area": "Harajuku",
+    "description": "Ramen de yuzu (Afuri) o gyoza.",
+    "cost": "~¥1.500 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d10"
+    ]
+  },
+  {
+    "id": "p-ginkgo",
+    "name": "Avenida de ginkgos de Jingu Gaien",
+    "nameLocal": "神宮外苑イチョウ並木",
+    "cityId": "tokyo",
+    "category": "naturaleza",
+    "lat": 35.6759,
+    "lon": 139.7211,
+    "approx": false,
+    "area": "Aoyama",
+    "description": "Túnel de ginkgos amarillos; el pico suele ser de mediados a fines de noviembre. Festival ~15/11–1/12 (fechas a confirmar).",
+    "cost": "Gratis",
+    "link": "https://en.japantravel.com/tokyo/jingu-gaien-ginkgo-festival/60691",
+    "source": "itinerario",
+    "days": [
+      "d10"
+    ]
+  },
+  {
+    "id": "p-shibuyacross",
+    "name": "Cruce de Shibuya y Hachiko",
+    "nameLocal": "渋谷スクランブル交差点",
+    "cityId": "tokyo",
+    "category": "cultura",
+    "lat": 35.6595,
+    "lon": 139.7005,
+    "approx": false,
+    "area": "Shibuya",
+    "description": "El cruce peatonal más famoso del mundo. Verlo también desde arriba (Starbucks del Tsutaya o el puente de Mark City).",
+    "cost": "Gratis",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d10"
+    ]
+  },
+  {
+    "id": "p-shibuyasky",
+    "name": "Shibuya Sky",
+    "nameLocal": "SHIBUYA SKY",
+    "cityId": "tokyo",
+    "category": "cultura",
+    "lat": 35.6585,
+    "lon": 139.7022,
+    "approx": false,
+    "area": "Shibuya",
+    "description": "Mirador al aire libre en la cima de Shibuya Scramble Square; atardecer ~16:30 y, si está despejado, el Fuji. Las entradas salen 2 semanas antes a las 00:00 de Japón y los turnos del atardecer se agotan.",
+    "cost": "~¥2.500–3.000 (aprox.)",
+    "link": "https://www.trvlogue.com/en/shibuya-sky-tokyo-guide",
+    "source": "itinerario",
+    "days": [
+      "d10"
+    ]
+  },
+  {
+    "id": "p-shimokita",
+    "name": "Shimokitazawa",
+    "nameLocal": "下北沢",
+    "cityId": "tokyo",
+    "category": "noche",
+    "lat": 35.6613,
+    "lon": 139.668,
+    "approx": false,
+    "area": "Shibuya / Setagaya",
+    "description": "Opción A: Shimokitazawa (2 paradas en la línea Inokashira): ropa vintage, bares chicos y música en vivo. Opción B: Nonbei Yokocho en Shibuya, callejón de bares diminutos.",
+    "cost": null,
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d10"
+    ]
+  },
+  {
+    "id": "p-yanaka",
+    "name": "Yanaka Ginza",
+    "nameLocal": "谷中銀座",
+    "cityId": "tokyo",
+    "category": "cultura",
+    "lat": 35.7279,
+    "lon": 139.7664,
+    "approx": false,
+    "area": "Yanaka",
+    "description": "El barrio que sobrevivió a la guerra: Yanaka Ginza, templos, cementerio y casas de madera. Tokio de antes.",
+    "cost": "Gratis",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d11"
+    ]
+  },
+  {
+    "id": "p-uenomuseum",
+    "name": "Parque Ueno y Museo Nacional",
+    "nameLocal": "東京国立博物館",
+    "cityId": "tokyo",
+    "category": "cultura",
+    "lat": 35.7189,
+    "lon": 139.7765,
+    "approx": false,
+    "area": "Ueno",
+    "description": "El museo más importante de arte japonés (samuráis, budismo, ukiyo-e).",
+    "cost": "~¥1.000 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d11"
+    ]
+  },
+  {
+    "id": "p-akihabara",
+    "name": "Akihabara",
+    "nameLocal": "秋葉原",
+    "cityId": "tokyo",
+    "category": "compras",
+    "lat": 35.6984,
+    "lon": 139.7731,
+    "approx": false,
+    "area": "Akihabara",
+    "description": "Los domingos Chuo-dori se cierra a los autos de 13:00 a 17:00 (horario de octubre a marzo). Videojuegos retro, figuras, arcades de varios pisos.",
+    "cost": null,
+    "link": "https://fun-japan.jp/en/articles/11765",
+    "source": "itinerario",
+    "days": [
+      "d11"
+    ]
+  },
+  {
+    "id": "p-teamlab",
+    "name": "teamLab Borderless",
+    "nameLocal": "チームラボボーダレス",
+    "cityId": "tokyo",
+    "category": "cultura",
+    "lat": 35.6613,
+    "lon": 139.7415,
+    "approx": false,
+    "area": "Azabudai",
+    "description": "Museo de arte digital inmersivo en Azabudai Hills. Entrada con horario; se agota. Fines de semana abre hasta las 21:00.",
+    "cost": "¥3.200 (más en fin de semana)",
+    "link": "https://mileasia.com/japan/teamlab-borderless/",
+    "source": "itinerario",
+    "days": [
+      "d11"
+    ]
+  },
+  {
+    "id": "p-roppongi",
+    "name": "Roppongi",
+    "nameLocal": "六本木",
+    "cityId": "tokyo",
+    "category": "noche",
+    "lat": 35.6628,
+    "lon": 139.7313,
+    "approx": false,
+    "area": "Roppongi",
+    "description": "Zona de bares internacionales y clubes; o volver a Shinjuku (Kabukicho).",
+    "cost": null,
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d11"
+    ]
+  },
+  {
+    "id": "p-tocho",
+    "name": "Mirador del Gobierno Metropolitano (Tocho)",
+    "nameLocal": "東京都庁展望室",
+    "cityId": "tokyo",
+    "category": "cultura",
+    "lat": 35.6896,
+    "lon": 139.6917,
+    "approx": false,
+    "area": "Shinjuku",
+    "description": "Mirador gratis en el piso 45; las mañanas despejadas se ve el Fuji. Chequear horario del día.",
+    "cost": "Gratis",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d12"
+    ]
+  },
+  {
+    "id": "p-yumoto",
+    "name": "Hakone-Yumoto (almuerzo)",
+    "nameLocal": "箱根湯本駅",
+    "cityId": "hakone",
+    "category": "gastronomia",
+    "lat": 35.233,
+    "lon": 139.105,
+    "approx": false,
+    "area": "Hakone-Yumoto",
+    "description": "Soba o tofu de la zona en la calle de tiendas frente a la estación. Comprar el Hakone Free Pass si no se compró en Shinjuku.",
+    "cost": "~¥1.500 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d12"
+    ]
+  },
+  {
+    "id": "p-ubako",
+    "name": "Ubako Iriguchi (bus)",
+    "nameLocal": "姥子",
+    "cityId": "hakone",
+    "category": "traslado",
+    "lat": 35.2512,
+    "lon": 139.0135,
+    "approx": true,
+    "area": null,
+    "description": "Bus Hakone Tozan hacia Togendai; bajar en Ubako Iriguchi (~50 min) + 5 min a pie.",
+    "cost": "Incluido en Free Pass",
+    "link": "https://hakonetrip.odakyu-global.com/stay/hotel-green-plaza-hakone/",
+    "source": "itinerario",
+    "days": [
+      "d12"
+    ]
+  },
+  {
+    "id": "p-owakudani",
+    "name": "Owakudani",
+    "nameLocal": "大涌谷",
+    "cityId": "hakone",
+    "category": "naturaleza",
+    "lat": 35.2444,
+    "lon": 139.0198,
+    "approx": false,
+    "area": "Owakudani",
+    "description": "Estación a 5 min a pie del hotel. Owakudani: valle volcánico con fumarolas y los huevos negros (kuro-tamago). Puede cerrar por actividad volcánica.",
+    "cost": "Incluido en Free Pass",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d13"
+    ]
+  },
+  {
+    "id": "p-togendai",
+    "name": "Togendai (barco por el lago Ashi)",
+    "nameLocal": "桃源台",
+    "cityId": "hakone",
+    "category": "aventura",
+    "lat": 35.2545,
+    "lon": 139.0068,
+    "approx": false,
+    "area": "Lago Ashi",
+    "description": "Barco 'pirata' cruzando el lago, con el Fuji de fondo si está despejado.",
+    "cost": "Incluido en Free Pass",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d13"
+    ]
+  },
+  {
+    "id": "p-motohakone",
+    "name": "Moto-Hakone (almuerzo)",
+    "nameLocal": "元箱根",
+    "cityId": "hakone",
+    "category": "gastronomia",
+    "lat": 35.1998,
+    "lon": 139.0268,
+    "approx": false,
+    "area": "Moto-Hakone",
+    "description": "Frente al lago.",
+    "cost": "~¥1.500–2.500 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d13"
+    ]
+  },
+  {
+    "id": "p-hakoneshrine",
+    "name": "Santuario de Hakone y torii del lago",
+    "nameLocal": "箱根神社",
+    "cityId": "hakone",
+    "category": "cultura",
+    "lat": 35.2043,
+    "lon": 139.0253,
+    "approx": false,
+    "area": "Moto-Hakone",
+    "description": "Torii rojo en el agua y santuario entre cedros gigantes; tramo del camino histórico de cedros.",
+    "cost": "Gratis",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d13"
+    ]
+  },
+  {
+    "id": "p-odawara",
+    "name": "Estación Odawara",
+    "nameLocal": "小田原駅",
+    "cityId": "hakone",
+    "category": "traslado",
+    "lat": 35.2564,
+    "lon": 139.155,
+    "approx": false,
+    "area": null,
+    "description": "Bus a Hakone-Yumoto (~50 min) + tren Hakone Tozan a Odawara (~15 min).",
+    "cost": "Incluido en Free Pass",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d14"
+    ]
+  },
+  {
+    "id": "p-dotonbori",
+    "name": "Dotonbori y Hozenji Yokocho",
+    "nameLocal": "道頓堀",
+    "cityId": "osaka",
+    "category": "gastronomia",
+    "lat": 34.6687,
+    "lon": 135.5013,
+    "approx": false,
+    "area": "Namba",
+    "description": "Carteles de neón, cartel de Glico, takoyaki, okonomiyaki y kushikatsu. Hozenji Yokocho: callejón empedrado con templo y bares.",
+    "cost": "~¥3.000–5.000 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d14"
+    ]
+  },
+  {
+    "id": "p-osakacastle",
+    "name": "Castillo de Osaka",
+    "nameLocal": "大阪城",
+    "cityId": "osaka",
+    "category": "cultura",
+    "lat": 34.6873,
+    "lon": 135.5262,
+    "approx": false,
+    "area": "Chuo",
+    "description": "Castillo y parque; vista desde el último piso.",
+    "cost": "~¥600 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d15"
+    ]
+  },
+  {
+    "id": "p-shinsekai",
+    "name": "Shinsekai (kushikatsu)",
+    "nameLocal": "新世界",
+    "cityId": "osaka",
+    "category": "gastronomia",
+    "lat": 34.6525,
+    "lon": 135.5063,
+    "approx": false,
+    "area": "Shinsekai",
+    "description": "Barrio retro con la torre Tsutenkaku; brochetes fritas (regla: no mojar dos veces en la salsa).",
+    "cost": "~¥2.000 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d15"
+    ]
+  },
+  {
+    "id": "p-sannomiya",
+    "name": "Sannomiya (carne de Kobe)",
+    "nameLocal": "三宮",
+    "cityId": "kobe",
+    "category": "gastronomia",
+    "lat": 34.694,
+    "lon": 135.195,
+    "approx": false,
+    "area": "Sannomiya / Harborland",
+    "description": "Teppanyaki de carne de Kobe en Sannomiya; después Meriken Park y Harborland de noche.",
+    "cost": "~¥8.000–20.000 la cena (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d15"
+    ]
+  },
+  {
+    "id": "p-fushimi",
+    "name": "Fushimi Inari Taisha",
+    "nameLocal": "伏見稲荷大社",
+    "cityId": "kyoto",
+    "category": "cultura",
+    "lat": 34.9671,
+    "lon": 135.7727,
+    "approx": false,
+    "area": "Fushimi",
+    "description": "Miles de torii rojos montaña arriba. Temprano hay menos gente; subir al menos hasta el mirador de Yotsutsuji.",
+    "cost": "Gratis",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d16"
+    ]
+  },
+  {
+    "id": "p-kiyomizu",
+    "name": "Kiyomizu-dera",
+    "nameLocal": "清水寺",
+    "cityId": "kyoto",
+    "category": "cultura",
+    "lat": 34.9949,
+    "lon": 135.785,
+    "approx": false,
+    "area": "Higashiyama",
+    "description": "Templo con terraza de madera sobre el bosque; fines de noviembre es pico de hojas rojas en Kioto.",
+    "cost": "~¥500 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d16"
+    ]
+  },
+  {
+    "id": "p-ninenzaka",
+    "name": "Sannenzaka, Ninenzaka y Yasaka",
+    "nameLocal": "二年坂",
+    "cityId": "kyoto",
+    "category": "cultura",
+    "lat": 34.9985,
+    "lon": 135.7806,
+    "approx": false,
+    "area": "Higashiyama",
+    "description": "Calles empedradas con casas de madera, hasta el santuario Yasaka.",
+    "cost": null,
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d16"
+    ]
+  },
+  {
+    "id": "p-gion",
+    "name": "Gion y Pontocho",
+    "nameLocal": "祇園",
+    "cityId": "kyoto",
+    "category": "noche",
+    "lat": 35.0033,
+    "lon": 135.7755,
+    "approx": false,
+    "area": "Gion",
+    "description": "Hanamikoji al atardecer (posible ver geiko/maiko, sin perseguir ni fotografiar de cerca). Cena en Pontocho, callejón junto al río.",
+    "cost": "~¥4.000–8.000 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d16"
+    ]
+  },
+  {
+    "id": "p-narastation",
+    "name": "Estación Kintetsu-Nara",
+    "nameLocal": "近鉄奈良駅",
+    "cityId": "nara",
+    "category": "traslado",
+    "lat": 34.6841,
+    "lon": 135.8286,
+    "approx": false,
+    "area": null,
+    "description": "Hanshin/Kintetsu directo Sannomiya → Kintetsu-Nara.",
+    "cost": "~¥1.000–1.500 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d17"
+    ]
+  },
+  {
+    "id": "p-naratodai",
+    "name": "Parque de Nara y Todai-ji",
+    "nameLocal": "東大寺",
+    "cityId": "nara",
+    "category": "cultura",
+    "lat": 34.689,
+    "lon": 135.8398,
+    "approx": false,
+    "area": "Nara Park",
+    "description": "Ciervos sueltos (comprar galletas shika-senbei) y el Gran Buda en uno de los edificios de madera más grandes del mundo.",
+    "cost": "~¥800 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d17"
+    ]
+  },
+  {
+    "id": "p-kasuga",
+    "name": "Kasuga Taisha y Naramachi",
+    "nameLocal": "春日大社",
+    "cityId": "nara",
+    "category": "cultura",
+    "lat": 34.6813,
+    "lon": 135.8483,
+    "approx": false,
+    "area": "Nara",
+    "description": "Santuario de los miles de faroles; después el barrio antiguo de Naramachi.",
+    "cost": "~¥500 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d17"
+    ]
+  },
+  {
+    "id": "p-umeda",
+    "name": "Umeda Sky Building",
+    "nameLocal": "梅田スカイビル",
+    "cityId": "osaka",
+    "category": "noche",
+    "lat": 34.7052,
+    "lon": 135.4905,
+    "approx": false,
+    "area": "Umeda / Kobe",
+    "description": "Vista desde el Umeda Sky Building, o cena tranquila en Kobe (Nankinmachi, el barrio chino).",
+    "cost": null,
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d17"
+    ]
+  },
+  {
+    "id": "p-himejistation",
+    "name": "Estación Himeji",
+    "nameLocal": "姫路駅",
+    "cityId": "himeji",
+    "category": "traslado",
+    "lat": 34.8272,
+    "lon": 134.6905,
+    "approx": false,
+    "area": null,
+    "description": "JR Special Rapid desde Sannomiya (~40 min).",
+    "cost": "~¥1.000 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d18"
+    ]
+  },
+  {
+    "id": "p-himejicastle",
+    "name": "Castillo de Himeji",
+    "nameLocal": "姫路城",
+    "cityId": "himeji",
+    "category": "cultura",
+    "lat": 34.8394,
+    "lon": 134.6939,
+    "approx": false,
+    "area": "Himeji",
+    "description": "El castillo original más espectacular de Japón (UNESCO), la 'Garza Blanca'. El precio para no residentes subió; confirmar.",
+    "cost": "~¥2.500 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d18"
+    ]
+  },
+  {
+    "id": "p-kokoen",
+    "name": "Jardín Kokoen",
+    "nameLocal": "好古園",
+    "cityId": "himeji",
+    "category": "naturaleza",
+    "lat": 34.8383,
+    "lon": 134.691,
+    "approx": false,
+    "area": "Himeji",
+    "description": "Nueve jardines japoneses al lado del castillo; en otoño, arces rojos.",
+    "cost": "~¥300 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d18"
+    ]
+  },
+  {
+    "id": "p-arima",
+    "name": "Arima Onsen",
+    "nameLocal": "有馬温泉",
+    "cityId": "arima",
+    "category": "onsen",
+    "lat": 34.7974,
+    "lon": 135.2482,
+    "approx": false,
+    "area": "Arima",
+    "description": "Uno de los onsen más antiguos de Japón, en la montaña detrás de Kobe. Baños públicos Kin-no-yu (agua dorada) y Gin-no-yu.",
+    "cost": "~¥800 por baño (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d18"
+    ]
+  },
+  {
+    "id": "p-arashiyama",
+    "name": "Bosque de bambú de Arashiyama y Tenryu-ji",
+    "nameLocal": "嵐山",
+    "cityId": "kyoto",
+    "category": "naturaleza",
+    "lat": 35.0165,
+    "lon": 135.672,
+    "approx": false,
+    "area": "Arashiyama",
+    "description": "Ir temprano al bosque de bambú; templo Tenryu-ji con jardín zen; puente Togetsukyo.",
+    "cost": "Tenryu-ji ~¥500 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d19"
+    ]
+  },
+  {
+    "id": "p-kinkakuji",
+    "name": "Kinkaku-ji (Pabellón Dorado)",
+    "nameLocal": "金閣寺",
+    "cityId": "kyoto",
+    "category": "cultura",
+    "lat": 35.0394,
+    "lon": 135.7292,
+    "approx": false,
+    "area": "Kita",
+    "description": "El templo cubierto de oro sobre el estanque.",
+    "cost": "~¥500 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d19"
+    ]
+  },
+  {
+    "id": "p-nishiki",
+    "name": "Mercado Nishiki",
+    "nameLocal": "錦市場",
+    "cityId": "kyoto",
+    "category": "compras",
+    "lat": 35.005,
+    "lon": 135.7646,
+    "approx": false,
+    "area": "Centro de Kioto",
+    "description": "El 'mercado de la cocina de Kioto': encurtidos, dulces, té.",
+    "cost": null,
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d19"
+    ]
+  },
+  {
+    "id": "p-kix",
+    "name": "Aeropuerto de Kansai (KIX)",
+    "nameLocal": "関西国際空港",
+    "cityId": "osaka",
+    "category": "traslado",
+    "lat": 34.432,
+    "lon": 135.2304,
+    "approx": false,
+    "area": null,
+    "description": "Port Liner al aeropuerto de Kobe + ferry Bay Shuttle (30 min) + shuttle a la terminal. Ajustar al horario del vuelo.",
+    "cost": "Ferry ¥1.880",
+    "link": "https://www.kansai-airport.or.jp/en/access/to-airport/ferry",
+    "source": "itinerario",
+    "days": [
+      "d20"
+    ]
+  },
+  {
+    "id": "p-pek",
+    "name": "Aeropuerto de Pekín (PEK)",
+    "nameLocal": "北京首都国际机场",
+    "cityId": "beijing",
+    "category": "traslado",
+    "lat": 40.0799,
+    "lon": 116.6031,
+    "approx": false,
+    "area": null,
+    "description": "Entrada a China (segunda). Airport Express + metro o DiDi.",
+    "cost": "~¥25 metro / ~¥120–150 taxi (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d20",
+      "d23"
+    ]
+  },
+  {
+    "id": "p-duck",
+    "name": "Pato laqueado (zona Dongcheng)",
+    "nameLocal": "北京烤鸭",
+    "cityId": "beijing",
+    "category": "gastronomia",
+    "lat": 39.917,
+    "lon": 116.417,
+    "approx": true,
+    "area": "Dongcheng",
+    "description": "El plato emblema de Pekín. Reservar en un restaurante conocido.",
+    "cost": "~¥200–400 por persona (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d20"
+    ]
+  },
+  {
+    "id": "p-mutianyu",
+    "name": "Gran Muralla en Mutianyu",
+    "nameLocal": "慕田峪长城",
+    "cityId": "beijing",
+    "category": "aventura",
+    "lat": 40.4319,
+    "lon": 116.5704,
+    "approx": false,
+    "area": "Mutianyu",
+    "description": "Subida en teleférico, caminata por las torres y bajada en tobogán. Hace frío (cerca de 0 °C): ropa de abrigo. El tobogán puede cerrar por clima.",
+    "cost": "Entrada + teleférico/tobogán ~¥200–250 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d21"
+    ]
+  },
+  {
+    "id": "p-wangfujing",
+    "name": "Wangfujing",
+    "nameLocal": "王府井",
+    "cityId": "beijing",
+    "category": "gastronomia",
+    "lat": 39.915,
+    "lon": 116.4115,
+    "approx": false,
+    "area": "Dongcheng",
+    "description": "Calle comercial; cena de hot pot o jiaozi.",
+    "cost": null,
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d21"
+    ]
+  },
+  {
+    "id": "p-tiananmen",
+    "name": "Plaza de Tiananmen",
+    "nameLocal": "天安门广场",
+    "cityId": "beijing",
+    "category": "cultura",
+    "lat": 39.9055,
+    "lon": 116.3976,
+    "approx": false,
+    "area": "Dongcheng",
+    "description": "Control de seguridad con pasaporte.",
+    "cost": "Gratis (con reserva)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d22"
+    ]
+  },
+  {
+    "id": "p-forbidden",
+    "name": "Ciudad Prohibida",
+    "nameLocal": "故宫",
+    "cityId": "beijing",
+    "category": "cultura",
+    "lat": 39.9163,
+    "lon": 116.3972,
+    "approx": false,
+    "area": "Dongcheng",
+    "description": "Reserva previa obligatoria con pasaporte y cupo diario; cerrada los lunes. Las entradas se liberan unos 7 días antes (a confirmar).",
+    "cost": "~¥60 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d22"
+    ]
+  },
+  {
+    "id": "p-jingshan",
+    "name": "Parque Jingshan",
+    "nameLocal": "景山公园",
+    "cityId": "beijing",
+    "category": "naturaleza",
+    "lat": 39.9253,
+    "lon": 116.3965,
+    "approx": false,
+    "area": "Xicheng",
+    "description": "Colina frente a la salida norte: la mejor vista de los techos dorados de la Ciudad Prohibida.",
+    "cost": "~¥2 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d22"
+    ]
+  },
+  {
+    "id": "p-nanluo",
+    "name": "Hutongs: Nanluoguxiang y Shichahai",
+    "nameLocal": "南锣鼓巷",
+    "cityId": "beijing",
+    "category": "cultura",
+    "lat": 39.937,
+    "lon": 116.4033,
+    "approx": false,
+    "area": "Dongcheng / Xicheng",
+    "description": "Callejones tradicionales; paseo en bici o rickshaw opcional.",
+    "cost": null,
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d22"
+    ]
+  },
+  {
+    "id": "p-houhai",
+    "name": "Bares de Houhai",
+    "nameLocal": "后海",
+    "cityId": "beijing",
+    "category": "noche",
+    "lat": 39.94,
+    "lon": 116.388,
+    "approx": false,
+    "area": "Xicheng",
+    "description": "Bares y música en vivo junto al lago.",
+    "cost": null,
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d22"
+    ]
+  },
+  {
+    "id": "p-temple-heaven",
+    "name": "Templo del Cielo",
+    "nameLocal": "天坛",
+    "cityId": "beijing",
+    "category": "cultura",
+    "lat": 39.8822,
+    "lon": 116.4066,
+    "approx": false,
+    "area": "Dongcheng",
+    "description": "Temprano, los locales hacen tai chi, bailan y juegan cartas en el parque.",
+    "cost": "~¥35 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d23"
+    ]
+  },
+  {
+    "id": "p-yonghe",
+    "name": "Templo Lama (Yonghe Gong)",
+    "nameLocal": "雍和宫",
+    "cityId": "beijing",
+    "category": "cultura",
+    "lat": 39.9477,
+    "lon": 116.417,
+    "approx": false,
+    "area": "Dongcheng",
+    "description": "Templo budista tibetano con un Buda de 18 m tallado en un solo árbol.",
+    "cost": "~¥25 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d23"
+    ]
+  },
+  {
+    "id": "p-x-jiajia",
+    "name": "Jia Jia Tang Bao",
+    "nameLocal": "佳家汤包",
+    "cityId": "shanghai",
+    "category": "gastronomia",
+    "lat": 31.2347,
+    "lon": 121.4698,
+    "approx": true,
+    "area": null,
+    "description": "Sugerencia: xiaolongbao de cerdo y cangrejo, cerca de Plaza del Pueblo. Verificar ubicación y horarios.",
+    "cost": null,
+    "link": null,
+    "source": "sugerencia",
+    "days": []
+  },
+  {
+    "id": "p-x-ichiran",
+    "name": "Ichiran Shinjuku (ramen)",
+    "nameLocal": "一蘭 新宿",
+    "cityId": "tokyo",
+    "category": "gastronomia",
+    "lat": 35.6937,
+    "lon": 139.7016,
+    "approx": true,
+    "area": null,
+    "description": "Sugerencia: ramen en cabinas individuales, abierto hasta tarde (alternativa a Omoide Yokocho). Verificar ubicación.",
+    "cost": null,
+    "link": null,
+    "source": "sugerencia",
+    "days": []
+  },
+  {
+    "id": "p-x-daruma",
+    "name": "Kushikatsu Daruma (Shinsekai)",
+    "nameLocal": "串かつだるま",
+    "cityId": "osaka",
+    "category": "gastronomia",
+    "lat": 34.6523,
+    "lon": 135.5062,
+    "approx": true,
+    "area": null,
+    "description": "Sugerencia: la cadena clásica de kushikatsu de Shinsekai. Verificar ubicación.",
+    "cost": null,
+    "link": null,
+    "source": "sugerencia",
+    "days": []
+  },
+  {
+    "id": "p-x-mochi",
+    "name": "Mochi de Nara (Nakatanidou)",
+    "nameLocal": "中谷堂",
+    "cityId": "nara",
+    "category": "gastronomia",
+    "lat": 34.6798,
+    "lon": 135.8279,
+    "approx": true,
+    "area": null,
+    "description": "Sugerencia: mochi de yomogi machacado al momento en Naramachi. Verificar ubicación.",
+    "cost": null,
+    "link": null,
+    "source": "sugerencia",
+    "days": []
+  },
+  {
+    "id": "p-x-quanjude",
+    "name": "Quanjude Qianmen (pato laqueado)",
+    "nameLocal": "全聚德前门",
+    "cityId": "beijing",
+    "category": "gastronomia",
+    "lat": 39.8997,
+    "lon": 116.399,
+    "approx": true,
+    "area": null,
+    "description": "Sugerencia: la casa más tradicional de pato laqueado. Reservar. Verificar ubicación.",
+    "cost": null,
+    "link": null,
+    "source": "sugerencia",
+    "days": []
+  }
+]

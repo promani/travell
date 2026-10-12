@@ -1,0 +1,232 @@
+[
+  {
+    "id": "k01",
+    "title": "Confirmar entrada a China sin visa (o tránsito 240 h) con la Embajada",
+    "when": "Ya",
+    "dueAt": null,
+    "urgent": true,
+    "day": "d03",
+    "status": "pendiente",
+    "notes": "Dos entradas: 14/11 por Shanghai y 1/12 por Pekín."
+  },
+  {
+    "id": "k02",
+    "title": "Vuelo Kansai → Pekín (1/12)",
+    "when": "Ya",
+    "dueAt": null,
+    "urgent": true,
+    "day": "d20",
+    "status": "pendiente",
+    "notes": "Salida ideal 11:00–14:00."
+  },
+  {
+    "id": "k03",
+    "title": "Vuelo Pekín → Shanghai Pudong (4/12)",
+    "when": "Ya",
+    "dueAt": null,
+    "urgent": true,
+    "day": "d23",
+    "status": "pendiente",
+    "notes": "Salida a media tarde."
+  },
+  {
+    "id": "k04",
+    "title": "Hotel Tokio 18–23/11 (Shinjuku)",
+    "when": "Ya",
+    "dueAt": null,
+    "urgent": true,
+    "day": "d07",
+    "status": "pendiente",
+    "notes": "Avisar llegada ~21:30."
+  },
+  {
+    "id": "k05",
+    "title": "Hotel Shanghai 14–18/11",
+    "when": "Ya",
+    "dueAt": null,
+    "urgent": true,
+    "day": "d03",
+    "status": "pendiente",
+    "notes": null
+  },
+  {
+    "id": "k06",
+    "title": "Hotel Osaka 25–26/11 (Namba)",
+    "when": "Ya",
+    "dueAt": null,
+    "urgent": true,
+    "day": "d15",
+    "status": "pendiente",
+    "notes": null
+  },
+  {
+    "id": "k07",
+    "title": "Extender Portopia la noche del 30/11",
+    "when": "Ya",
+    "dueAt": null,
+    "urgent": true,
+    "day": "d19",
+    "status": "pendiente",
+    "notes": null
+  },
+  {
+    "id": "k08",
+    "title": "Hotel Pekín 1–4/12",
+    "when": "Ya",
+    "dueAt": null,
+    "urgent": true,
+    "day": "d20",
+    "status": "pendiente",
+    "notes": null
+  },
+  {
+    "id": "k09",
+    "title": "teamLab Borderless (22/11 ~17:45)",
+    "when": "Ya",
+    "dueAt": null,
+    "urgent": true,
+    "day": "d11",
+    "status": "pendiente",
+    "notes": "Se agota; entrada con horario."
+  },
+  {
+    "id": "k10",
+    "title": "Fuji Excursion Shinjuku ↔ Kawaguchiko (20/11)",
+    "when": "19/10 ~22:00 (hora argentina)",
+    "dueAt": "2026-10-19T22:00:00-03:00",
+    "urgent": false,
+    "day": "d09",
+    "status": "pendiente",
+    "notes": "Se agota apenas sale."
+  },
+  {
+    "id": "k11",
+    "title": "Romancecar Shinjuku → Hakone (23/11)",
+    "when": "22/10 22:00 (hora argentina)",
+    "dueAt": "2026-10-22T22:00:00-03:00",
+    "urgent": false,
+    "day": "d12",
+    "status": "pendiente",
+    "notes": "Feriado: se llena."
+  },
+  {
+    "id": "k12",
+    "title": "Shibuya Sky atardecer (21/11 ~16:00)",
+    "when": "6/11 12:00 (hora argentina)",
+    "dueAt": "2026-11-06T12:00:00-03:00",
+    "urgent": false,
+    "day": "d10",
+    "status": "pendiente",
+    "notes": "Salen 2 semanas antes a las 00:00 de Japón."
+  },
+  {
+    "id": "k13",
+    "title": "Shinkansen Odawara → Shin-Osaka (25/11)",
+    "when": "Fines de octubre",
+    "dueAt": "2026-10-31T23:00:00-03:00",
+    "urgent": false,
+    "day": "d14",
+    "status": "pendiente",
+    "notes": "App smartEX."
+  },
+  {
+    "id": "k14",
+    "title": "Jardín del Administrador Humilde + Museo de Suzhou (17/11)",
+    "when": "Unos días antes",
+    "dueAt": null,
+    "urgent": false,
+    "day": "d06",
+    "status": "pendiente",
+    "notes": "Con pasaporte."
+  },
+  {
+    "id": "k15",
+    "title": "Trenes Shanghai ↔ Suzhou (17/11)",
+    "when": "Hasta 15 días antes",
+    "dueAt": "2026-11-02T00:00:00-03:00",
+    "urgent": false,
+    "day": "d06",
+    "status": "pendiente",
+    "notes": "12306 o Trip.com."
+  },
+  {
+    "id": "k16",
+    "title": "Ciudad Prohibida (3/12)",
+    "when": "~26/11 (a confirmar)",
+    "dueAt": "2026-11-26T00:00:00-03:00",
+    "urgent": false,
+    "day": "d22",
+    "status": "pendiente",
+    "notes": "Cupo diario; pasaporte."
+  },
+  {
+    "id": "k17",
+    "title": "Traslado/tour a la Muralla (2/12)",
+    "when": "Unos días antes",
+    "dueAt": null,
+    "urgent": false,
+    "day": "d21",
+    "status": "pendiente",
+    "notes": null
+  },
+  {
+    "id": "k18",
+    "title": "Cena de carne de Kobe (26/11)",
+    "when": "1–2 semanas antes",
+    "dueAt": null,
+    "urgent": false,
+    "day": "d15",
+    "status": "pendiente",
+    "notes": null
+  },
+  {
+    "id": "k19",
+    "title": "Visit Japan Web (QR de entrada)",
+    "when": "Antes del 18/11",
+    "dueAt": "2026-11-18T00:00:00-03:00",
+    "urgent": false,
+    "day": "d07",
+    "status": "pendiente",
+    "notes": null
+  },
+  {
+    "id": "k20",
+    "title": "Alipay/WeChat Pay con tarjeta internacional + eSIM para China",
+    "when": "Antes del 13/11",
+    "dueAt": "2026-11-13T00:00:00-03:00",
+    "urgent": false,
+    "day": "d03",
+    "status": "pendiente",
+    "notes": "Las apps de Google no andan sin VPN en China."
+  },
+  {
+    "id": "k21",
+    "title": "Welcome Suica / Suica móvil",
+    "when": "18/11 al llegar",
+    "dueAt": "2026-11-18T00:00:00-03:00",
+    "urgent": false,
+    "day": "d07",
+    "status": "pendiente",
+    "notes": null
+  },
+  {
+    "id": "k22",
+    "title": "Hakone Free Pass",
+    "when": "Antes del 23/11",
+    "dueAt": "2026-11-23T00:00:00-03:00",
+    "urgent": false,
+    "day": "d12",
+    "status": "pendiente",
+    "notes": "Odakyu, en Shinjuku."
+  },
+  {
+    "id": "k23",
+    "title": "Takkyubin: valija Tokio → Osaka",
+    "when": "22/11 a la noche",
+    "dueAt": "2026-11-22T20:00:00-03:00",
+    "urgent": false,
+    "day": "d11",
+    "status": "pendiente",
+    "notes": "Entrega el 25/11."
+  }
+]

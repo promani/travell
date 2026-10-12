@@ -1,0 +1,134 @@
+[
+  {
+    "id": "n01",
+    "title": "Visa China",
+    "detail": "La exención de 30 días para argentinos se anunció hasta el 31/5/2026; no encontré confirmación de prórroga. Plan B: tránsito sin visa de 240 h (ambas entradas < 10 días con destino a tercer país). Confirmar con la Embajada.",
+    "level": "warn",
+    "days": [
+      "d03",
+      "d20"
+    ],
+    "global": true
+  },
+  {
+    "id": "n02",
+    "title": "Vuelos China–Japón",
+    "detail": "Las aerolíneas chinas recortaron muchas rutas a Japón. Spring Airlines es china: chequear política de cambios.",
+    "level": "warn",
+    "days": [
+      "d07"
+    ],
+    "global": false
+  },
+  {
+    "id": "n03",
+    "title": "Narita T3",
+    "detail": "La Terminal 3 no tiene estación de tren: caminar o shuttle a la T2.",
+    "level": "warn",
+    "days": [
+      "d07"
+    ],
+    "global": false
+  },
+  {
+    "id": "n04",
+    "title": "Tsukiji",
+    "detail": "Cerrado miércoles, domingos y feriados.",
+    "level": "warn",
+    "days": [
+      "d08"
+    ],
+    "global": false
+  },
+  {
+    "id": "n05",
+    "title": "Feriado 23/11 en Japón",
+    "detail": "Trenes y Hakone más cargados.",
+    "level": "warn",
+    "days": [
+      "d12"
+    ],
+    "global": false
+  },
+  {
+    "id": "n06",
+    "title": "Monte Fuji",
+    "detail": "Se esconde entre nubes muchos días; mirar el pronóstico y, si el 20/11 viene nublado, cambiarlo con el 21 o el 22.",
+    "level": "warn",
+    "days": [
+      "d09",
+      "d10",
+      "d11"
+    ],
+    "global": false
+  },
+  {
+    "id": "n07",
+    "title": "Onsen",
+    "detail": "Se entra desnudo y después de ducharse. Algunos no admiten tatuajes.",
+    "level": "info",
+    "days": [
+      "d12",
+      "d13",
+      "d18"
+    ],
+    "global": false
+  },
+  {
+    "id": "n08",
+    "title": "Owakudani",
+    "detail": "El teleférico puede cerrar por actividad volcánica.",
+    "level": "warn",
+    "days": [
+      "d13"
+    ],
+    "global": false
+  },
+  {
+    "id": "n09",
+    "title": "Clima",
+    "detail": "Tokio y Kioto ~8–16 °C; Hakone más frío; Pekín cerca de 0 °C.",
+    "level": "info",
+    "days": [],
+    "global": true
+  },
+  {
+    "id": "n10",
+    "title": "Ciudad Prohibida",
+    "detail": "Cerrada los lunes; reserva obligatoria con pasaporte.",
+    "level": "warn",
+    "days": [
+      "d22"
+    ],
+    "global": false
+  },
+  {
+    "id": "n11",
+    "title": "Precios y horarios",
+    "detail": "Los marcados 'aprox.' son orientativos. ¥ en Japón = yenes; ¥ en China = yuanes. Fuentes consultadas entre el 9 y el 12/10/2026.",
+    "level": "info",
+    "days": [],
+    "global": true
+  },
+  {
+    "id": "n12",
+    "title": "Transporte en Japón",
+    "detail": "La tarjeta IC (Suica/ICOCA) sirve para todos los trenes locales. El JR Pass no conviene: solo hay un tramo largo en Shinkansen.",
+    "level": "info",
+    "days": [
+      "d07"
+    ],
+    "global": true
+  },
+  {
+    "id": "n13",
+    "title": "MU745",
+    "detail": "Desde el 5/12 cambia el cronograma: confirmar horario exacto en la reserva.",
+    "level": "warn",
+    "days": [
+      "d23",
+      "d24"
+    ],
+    "global": false
+  }
+]

@@ -1,0 +1,260 @@
+{
+  "id": "china-japon-2026",
+  "title": "China y Japón 2026",
+  "subtitle": "Shanghai · Tokio · Kioto · Pekín",
+  "locale": "es-AR",
+  "start": "2026-11-12",
+  "end": "2026-12-05",
+  "home": {
+    "city": "Buenos Aires",
+    "cityId": "buenos-aires"
+  },
+  "currencies": {
+    "base": "USD",
+    "list": [
+      "USD",
+      "CNY",
+      "JPY",
+      "ARS"
+    ],
+    "rates": {
+      "USD": 1,
+      "CNY": 7.1,
+      "JPY": 150,
+      "ARS": 1400
+    },
+    "note": "Cotizaciones de ejemplo: unidades de cada moneda por 1 USD. Editalas en Ajustes."
+  },
+  "tileProviders": {
+    "osm": {
+      "name": "OpenStreetMap",
+      "url": "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+      "maxZoom": 19,
+      "attribution": "© OpenStreetMap",
+      "gcj02": false
+    },
+    "gaode": {
+      "name": "AutoNavi / Gaode (China continental)",
+      "url": "https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}",
+      "subdomains": "1234",
+      "maxZoom": 18,
+      "attribution": "© AutoNavi",
+      "gcj02": true
+    }
+  },
+  "prefetch": {
+    "zooms": [
+      12,
+      13,
+      14,
+      15
+    ],
+    "maxTiles": 160
+  },
+  "categories": {
+    "gastronomia": {
+      "label": "Gastronomía",
+      "icon": "🍜",
+      "color": "#e8590c"
+    },
+    "cultura": {
+      "label": "Cultura",
+      "icon": "🏯",
+      "color": "#7048e8"
+    },
+    "naturaleza": {
+      "label": "Naturaleza",
+      "icon": "🌿",
+      "color": "#2f9e44"
+    },
+    "compras": {
+      "label": "Compras",
+      "icon": "🛍️",
+      "color": "#d6336c"
+    },
+    "noche": {
+      "label": "Noche",
+      "icon": "🌙",
+      "color": "#364fc7"
+    },
+    "aventura": {
+      "label": "Aventura",
+      "icon": "⛴️",
+      "color": "#1098ad"
+    },
+    "onsen": {
+      "label": "Onsen",
+      "icon": "♨️",
+      "color": "#c2255c"
+    },
+    "alojamiento": {
+      "label": "Alojamiento",
+      "icon": "🏨",
+      "color": "#495057"
+    },
+    "traslado": {
+      "label": "Traslado",
+      "icon": "🚆",
+      "color": "#868e96"
+    },
+    "vuelo": {
+      "label": "Vuelo",
+      "icon": "✈️",
+      "color": "#228be6"
+    }
+  },
+  "poiCategories": [
+    "gastronomia",
+    "cultura",
+    "naturaleza",
+    "compras",
+    "noche",
+    "aventura",
+    "onsen"
+  ],
+  "cities": [
+    {
+      "id": "buenos-aires",
+      "name": "Buenos Aires",
+      "country": "Argentina",
+      "center": [
+        -34.6037,
+        -58.3816
+      ],
+      "zoom": 12,
+      "tiles": "osm"
+    },
+    {
+      "id": "shanghai",
+      "name": "Shanghai",
+      "country": "China",
+      "center": [
+        31.2304,
+        121.4737
+      ],
+      "zoom": 13,
+      "tiles": "gaode"
+    },
+    {
+      "id": "suzhou",
+      "name": "Suzhou",
+      "country": "China",
+      "center": [
+        31.319,
+        120.62
+      ],
+      "zoom": 13,
+      "tiles": "gaode"
+    },
+    {
+      "id": "tokyo",
+      "name": "Tokio",
+      "country": "Japón",
+      "center": [
+        35.6762,
+        139.71
+      ],
+      "zoom": 12,
+      "tiles": "osm"
+    },
+    {
+      "id": "kawaguchiko",
+      "name": "Kawaguchiko",
+      "country": "Japón",
+      "center": [
+        35.505,
+        138.77
+      ],
+      "zoom": 13,
+      "tiles": "osm"
+    },
+    {
+      "id": "hakone",
+      "name": "Hakone",
+      "country": "Japón",
+      "center": [
+        35.23,
+        139.03
+      ],
+      "zoom": 12,
+      "tiles": "osm"
+    },
+    {
+      "id": "osaka",
+      "name": "Osaka",
+      "country": "Japón",
+      "center": [
+        34.67,
+        135.503
+      ],
+      "zoom": 13,
+      "tiles": "osm"
+    },
+    {
+      "id": "kobe",
+      "name": "Kobe",
+      "country": "Japón",
+      "center": [
+        34.683,
+        135.19
+      ],
+      "zoom": 13,
+      "tiles": "osm"
+    },
+    {
+      "id": "kyoto",
+      "name": "Kioto",
+      "country": "Japón",
+      "center": [
+        35.0116,
+        135.7681
+      ],
+      "zoom": 12,
+      "tiles": "osm"
+    },
+    {
+      "id": "nara",
+      "name": "Nara",
+      "country": "Japón",
+      "center": [
+        34.6851,
+        135.833
+      ],
+      "zoom": 14,
+      "tiles": "osm"
+    },
+    {
+      "id": "himeji",
+      "name": "Himeji",
+      "country": "Japón",
+      "center": [
+        34.8394,
+        134.6939
+      ],
+      "zoom": 14,
+      "tiles": "osm"
+    },
+    {
+      "id": "arima",
+      "name": "Arima Onsen",
+      "country": "Japón",
+      "center": [
+        34.7974,
+        135.2482
+      ],
+      "zoom": 15,
+      "tiles": "osm"
+    },
+    {
+      "id": "beijing",
+      "name": "Pekín",
+      "country": "China",
+      "center": [
+        39.9163,
+        116.3972
+      ],
+      "zoom": 12,
+      "tiles": "gaode"
+    }
+  ]
+}
