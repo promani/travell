@@ -256,5 +256,9 @@
       "zoom": 12,
       "tiles": "gaode"
     }
+  ],
+  "placeFiles": [
+    "places.json",
+    "places-extra.json"
   ]
 }

@@ -14,14 +14,15 @@ Ver lo que ya funciona en [FEATURES.md](FEATURES.md).
 
 ### Datos del viaje
 - [ ] **Cargar códigos de reserva** de MU746, MU745 y 9C6217, hoteles y entradas. Hoy `documents.json` los trae vacíos.
-- [ ] **Hoteles por reservar** (Shanghai, Tokio, Osaka, Pekín y la extensión de Portopia): nombre, dirección y coordenadas reales. Hoy tienen la ubicación aproximada de la zona.
-- [ ] **Dirección en idioma local** (`addressLocal`) de cada hotel, para el botón "Mostrar dirección al taxista". La función existe pero no hay datos.
-- [ ] **Viajeros reales** en `travelers.json`. Hoy están "Yo" y "Viajero 2" de ejemplo.
+- [ ] **Hoteles por reservar** (Shanghai, Tokio, Osaka, Pekín y la extensión de Portopia): nombre, dirección, dirección en idioma local y ubicación. Ya se pueden cargar desde la app (Alojamientos → Editar); falta hacerlo.
+- [ ] **Viajeros reales**: cargarlos desde Viajeros o en `travelers.json`. Hoy están "Yo" y "Viajero 2" de ejemplo.
+- [ ] **Revisar `requirements.json`** (preparativos sugeridos): confirmar con fuentes oficiales qué pide cada país, por ejemplo si China exige el certificado de fiebre amarilla viniendo de Argentina. Hoy dice "verificar".
 - [ ] **Verificar coordenadas aproximadas** (`approx: true`), sobre todo Hakone (hotel, Ubako, Togendai) y las 5 sugerencias gastronómicas.
 - [ ] **Horarios pendientes**: vuelo Kansai → Pekín (1/12) y Pekín → Pudong (4/12, hoy estimado a las 15:00).
 
 ### Respaldo y publicación
-- [ ] **Respaldo completo de datos locales**: exportar e importar fotos, códigos, actividades hechas, pendientes y checklists. Hoy solo se exportan los gastos, así que si se pierde o se cambia el celular se pierde lo demás.
+- [ ] **Respaldo completo de datos locales**: hoy "Exportar datos" incluye tareas, lugares, alojamientos, actividades, viajeros, gastos y ubicaciones, pero no **fotos, adjuntos, códigos cargados, actividades hechas ni checklists**.
+- [ ] **Alojar el relay** (si se quiere la sincronización automática): un servidor con HTTPS accesible desde China y Japón. Probar la latencia desde China.
 - [ ] **Publicar en HTTPS** (GitHub Pages, Netlify o similar) para que el service worker funcione en el celular. Probar la instalación en iOS y Android.
 - [ ] **Aviso de nueva versión** cuando el service worker se actualiza ("Hay datos nuevos, tocá para recargar"). Hoy se toma en la siguiente apertura o desde Ajustes.
 
@@ -40,12 +41,24 @@ Ver lo que ya funciona en [FEATURES.md](FEATURES.md).
 - [ ] Manejar los días de vuelo largo y el cruce de la línea de cambio de fecha (13–14/11).
 
 ### Editar desde la app
-- [ ] Agregar o editar **actividades, lugares y notas propias** sin tocar el JSON (guardadas localmente y exportables).
-- [ ] Editar **viajeros** y la **checklist** de salida desde la app.
-- [ ] Marcar un hospedaje o un transporte como reservado y cargar su código desde la vista de día.
+Ya hay ABM de lugares, alojamientos, actividades, tareas y viajeros. Falta:
+- [ ] ABM de **transportes**, **documentos**, **alertas** y **tarjetas de día** (llegada / salida).
+- [ ] Editar la **checklist** de salida.
+- [ ] **Restaurar** un registro del JSON que se editó o borró en la app (hoy hay que borrar los datos locales).
+- [ ] Ver el **historial** de un registro (quién lo cambió y cuándo; hoy solo se guarda la última edición).
+
+### Tareas y grupo
+- [ ] **Tareas repetitivas** o con subtareas (checklist dentro de una tarea).
+- [ ] **Comentarios** en una tarea.
+- [ ] Avisar cuando un viajero **completa** una tarea que yo le asigné.
+- [ ] **Ubicación en segundo plano**: una web no puede compartirla con la app cerrada. Haría falta una app nativa, o sugerir abrir la app.
+- [ ] Botón **"¿Dónde nos encontramos?"**: proponer un punto de encuentro en el mapa y avisar al grupo.
+- [ ] **Autenticación** en el relay (token por grupo) para evitar que alguien llene un grupo con basura.
+- [ ] Resolver **conflictos** campo por campo en vez de "gana la última edición".
 
 ### Recordatorios
-- [ ] **Notificaciones locales** para pendientes con fecha (ventanas de venta del Fuji Excursion, Romancecar, Shibuya Sky) y para la hora de salir al aeropuerto.
+- [ ] **Notificaciones programadas** para tareas con fecha (ventanas de venta del Fuji Excursion, Romancecar, Shibuya Sky) y para la hora de salir al aeropuerto. Hoy solo hay avisos al recibir una tarea asignada, y con la app abierta.
+- [ ] Más **reglas de sugerencias**: vuelos sin hora confirmada, días sin actividades, actividades fuera del horario de apertura, conexiones ajustadas entre transportes.
 
 ### Documentos
 - [ ] Generar **QR o código de barras** a partir del código cargado.
@@ -62,7 +75,7 @@ Ver lo que ya funciona en [FEATURES.md](FEATURES.md).
 - [ ] Exportar el álbum de un día o del viaje (zip).
 
 ### Búsqueda y navegación
-- [ ] **Buscador** de actividades, lugares y documentos.
+- [ ] **Buscador global** de actividades, lugares, tareas y documentos (hoy solo se busca en Lugares).
 - [ ] Atajo "Cómo vuelvo al hotel" desde la ubicación actual.
 
 ## P3 — A futuro
@@ -75,7 +88,7 @@ Ver lo que ya funciona en [FEATURES.md](FEATURES.md).
 
 ### Funciones con internet (opcionales)
 - [ ] Clima de la ciudad del día.
-- [ ] Sincronización opcional entre celulares (WebRTC, un gist o un archivo compartido) para gastos y fotos.
+- [ ] Sincronizar **fotos** entre celulares (hoy la sincronización no incluye archivos).
 - [ ] Compartir el itinerario en solo lectura con familia o amigos.
 
 ### Mapas
@@ -89,11 +102,13 @@ Ver lo que ya funciona en [FEATURES.md](FEATURES.md).
 
 ## Deuda técnica
 
-- [ ] **Tests automatizados** (lógica de fase del viaje, saldos de gastos, GCJ-02, unión de imports) e integración continua. Hoy solo hubo pruebas manuales con Playwright.
+- [ ] **Tests automatizados** (fase del viaje, saldos de gastos, GCJ-02 ida y vuelta, `rebuild()` del overlay, reglas de sugerencias, sincronización con el relay) e integración continua. Hoy solo hubo pruebas manuales con Playwright, con dos celulares simulados y el relay local.
 - [ ] Linter y formato (ESLint/Prettier).
 - [ ] La lista de precarga del service worker (`CORE` en `sw.js`) se mantiene a mano: generarla o validarla.
 - [ ] Límite de tiles en caché por cantidad (2500) en lugar de por tamaño; las respuestas opacas ocupan más cuota de la real.
 - [ ] Revisar el modo oscuro: no se probó visualmente.
 - [ ] Al volver a dibujar una vista se recrean sus mapas; se podría actualizar solo lo que cambió.
+- [ ] El relay guarda todo en memoria y en un JSON por grupo: alcanza para grupos de viaje, no para muchos usuarios.
+- [ ] Migraciones del formato de los registros locales (hoy hay una sola, de la v1 a la v2).
 
 Ver también: [VISION.md](VISION.md) · [ARCHITECTURE.md](ARCHITECTURE.md) · [FEATURES.md](FEATURES.md)

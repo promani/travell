@@ -7,7 +7,13 @@
     "urgent": true,
     "day": "d03",
     "status": "pendiente",
-    "notes": "Dos entradas: 14/11 por Shanghai y 1/12 por Pekín."
+    "notes": "Dos entradas: 14/11 por Shanghai y 1/12 por Pekín.",
+    "assignee": null,
+    "priority": "alta",
+    "covers": [
+      "doc:doc05"
+    ],
+    "source": "json"
   },
   {
     "id": "k02",
@@ -17,7 +23,13 @@
     "urgent": true,
     "day": "d20",
     "status": "pendiente",
-    "notes": "Salida ideal 11:00–14:00."
+    "notes": "Salida ideal 11:00–14:00.",
+    "assignee": null,
+    "priority": "alta",
+    "covers": [
+      "transport:t18"
+    ],
+    "source": "json"
   },
   {
     "id": "k03",
@@ -27,7 +39,13 @@
     "urgent": true,
     "day": "d23",
     "status": "pendiente",
-    "notes": "Salida a media tarde."
+    "notes": "Salida a media tarde.",
+    "assignee": null,
+    "priority": "alta",
+    "covers": [
+      "transport:t20"
+    ],
+    "source": "json"
   },
   {
     "id": "k04",
@@ -37,7 +55,13 @@
     "urgent": true,
     "day": "d07",
     "status": "pendiente",
-    "notes": "Avisar llegada ~21:30."
+    "notes": "Avisar llegada ~21:30.",
+    "assignee": null,
+    "priority": "alta",
+    "covers": [
+      "lodging:l02"
+    ],
+    "source": "json"
   },
   {
     "id": "k05",
@@ -47,7 +71,13 @@
     "urgent": true,
     "day": "d03",
     "status": "pendiente",
-    "notes": null
+    "notes": null,
+    "assignee": null,
+    "priority": "alta",
+    "covers": [
+      "lodging:l01"
+    ],
+    "source": "json"
   },
   {
     "id": "k06",
@@ -57,7 +87,13 @@
     "urgent": true,
     "day": "d15",
     "status": "pendiente",
-    "notes": null
+    "notes": null,
+    "assignee": null,
+    "priority": "alta",
+    "covers": [
+      "lodging:l04"
+    ],
+    "source": "json"
   },
   {
     "id": "k07",
@@ -67,7 +103,13 @@
     "urgent": true,
     "day": "d19",
     "status": "pendiente",
-    "notes": null
+    "notes": null,
+    "assignee": null,
+    "priority": "alta",
+    "covers": [
+      "lodging:l06"
+    ],
+    "source": "json"
   },
   {
     "id": "k08",
@@ -77,7 +119,13 @@
     "urgent": true,
     "day": "d20",
     "status": "pendiente",
-    "notes": null
+    "notes": null,
+    "assignee": null,
+    "priority": "alta",
+    "covers": [
+      "lodging:l07"
+    ],
+    "source": "json"
   },
   {
     "id": "k09",
@@ -87,7 +135,14 @@
     "urgent": true,
     "day": "d11",
     "status": "pendiente",
-    "notes": "Se agota; entrada con horario."
+    "notes": "Se agota; entrada con horario.",
+    "assignee": null,
+    "priority": "alta",
+    "covers": [
+      "activity:A052",
+      "doc:doc09"
+    ],
+    "source": "json"
   },
   {
     "id": "k10",
@@ -97,7 +152,15 @@
     "urgent": false,
     "day": "d09",
     "status": "pendiente",
-    "notes": "Se agota apenas sale."
+    "notes": "Se agota apenas sale.",
+    "assignee": null,
+    "priority": "normal",
+    "covers": [
+      "transport:t06",
+      "activity:A035",
+      "activity:A040"
+    ],
+    "source": "json"
   },
   {
     "id": "k11",
@@ -107,7 +170,14 @@
     "urgent": false,
     "day": "d12",
     "status": "pendiente",
-    "notes": "Feriado: se llena."
+    "notes": "Feriado: se llena.",
+    "assignee": null,
+    "priority": "normal",
+    "covers": [
+      "transport:t07",
+      "activity:A057"
+    ],
+    "source": "json"
   },
   {
     "id": "k12",
@@ -117,7 +187,14 @@
     "urgent": false,
     "day": "d10",
     "status": "pendiente",
-    "notes": "Salen 2 semanas antes a las 00:00 de Japón."
+    "notes": "Salen 2 semanas antes a las 00:00 de Japón.",
+    "assignee": null,
+    "priority": "normal",
+    "covers": [
+      "activity:A047",
+      "doc:doc10"
+    ],
+    "source": "json"
   },
   {
     "id": "k13",
@@ -127,7 +204,14 @@
     "urgent": false,
     "day": "d14",
     "status": "pendiente",
-    "notes": "App smartEX."
+    "notes": "App smartEX.",
+    "assignee": null,
+    "priority": "normal",
+    "covers": [
+      "transport:t11",
+      "activity:A071"
+    ],
+    "source": "json"
   },
   {
     "id": "k14",
@@ -137,7 +221,15 @@
     "urgent": false,
     "day": "d06",
     "status": "pendiente",
-    "notes": "Con pasaporte."
+    "notes": "Con pasaporte.",
+    "assignee": null,
+    "priority": "normal",
+    "covers": [
+      "activity:A016",
+      "activity:A017",
+      "doc:doc12"
+    ],
+    "source": "json"
   },
   {
     "id": "k15",
@@ -147,7 +239,15 @@
     "urgent": false,
     "day": "d06",
     "status": "pendiente",
-    "notes": "12306 o Trip.com."
+    "notes": "12306 o Trip.com.",
+    "assignee": null,
+    "priority": "normal",
+    "covers": [
+      "transport:t03",
+      "activity:A015",
+      "activity:A020"
+    ],
+    "source": "json"
   },
   {
     "id": "k16",
@@ -157,7 +257,15 @@
     "urgent": false,
     "day": "d22",
     "status": "pendiente",
-    "notes": "Cupo diario; pasaporte."
+    "notes": "Cupo diario; pasaporte.",
+    "assignee": null,
+    "priority": "normal",
+    "covers": [
+      "activity:A106",
+      "activity:A105",
+      "doc:doc11"
+    ],
+    "source": "json"
   },
   {
     "id": "k17",
@@ -167,7 +275,15 @@
     "urgent": false,
     "day": "d21",
     "status": "pendiente",
-    "notes": null
+    "notes": null,
+    "assignee": null,
+    "priority": "normal",
+    "covers": [
+      "transport:t19",
+      "activity:A101",
+      "activity:A102"
+    ],
+    "source": "json"
   },
   {
     "id": "k18",
@@ -177,7 +293,13 @@
     "urgent": false,
     "day": "d15",
     "status": "pendiente",
-    "notes": null
+    "notes": null,
+    "assignee": null,
+    "priority": "normal",
+    "covers": [
+      "activity:A078"
+    ],
+    "source": "json"
   },
   {
     "id": "k19",
@@ -187,7 +309,13 @@
     "urgent": false,
     "day": "d07",
     "status": "pendiente",
-    "notes": null
+    "notes": null,
+    "assignee": null,
+    "priority": "normal",
+    "covers": [
+      "doc:doc06"
+    ],
+    "source": "json"
   },
   {
     "id": "k20",
@@ -197,7 +325,14 @@
     "urgent": false,
     "day": "d03",
     "status": "pendiente",
-    "notes": "Las apps de Google no andan sin VPN en China."
+    "notes": "Las apps de Google no andan sin VPN en China.",
+    "assignee": null,
+    "priority": "normal",
+    "covers": [
+      "req:pagos-china",
+      "req:esim"
+    ],
+    "source": "json"
   },
   {
     "id": "k21",
@@ -207,7 +342,11 @@
     "urgent": false,
     "day": "d07",
     "status": "pendiente",
-    "notes": null
+    "notes": null,
+    "assignee": null,
+    "priority": "normal",
+    "covers": [],
+    "source": "json"
   },
   {
     "id": "k22",
@@ -217,7 +356,13 @@
     "urgent": false,
     "day": "d12",
     "status": "pendiente",
-    "notes": "Odakyu, en Shinjuku."
+    "notes": "Odakyu, en Shinjuku.",
+    "assignee": null,
+    "priority": "normal",
+    "covers": [
+      "transport:t09"
+    ],
+    "source": "json"
   },
   {
     "id": "k23",
@@ -227,6 +372,10 @@
     "urgent": false,
     "day": "d11",
     "status": "pendiente",
-    "notes": "Entrega el 25/11."
+    "notes": "Entrega el 25/11.",
+    "assignee": null,
+    "priority": "normal",
+    "covers": [],
+    "source": "json"
   }
 ]

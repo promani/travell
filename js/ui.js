@@ -49,7 +49,7 @@ export function actRow(a, { current = false, next = false } = {}) {
       <div class="act-body">
         <div class="act-title"><span class="act-ic" style="--c:${c.color}">${c.icon}</span> ${esc(a.title)}</div>
         <div class="act-tags">${current ? '<span class="badge now">Ahora</span>' : next ? '<span class="badge next">Sigue</span>' : ''}
-          ${a.priority !== 'recomendado' ? prioBadge(a.priority) : ''}${resvBadge(a.reservation)}${a.status === 'reservado' ? statusBadge('reservado') : ''}</div>
+          ${a.priority !== 'recomendado' ? prioBadge(a.priority) : ''}${a.source === 'app' ? '<span class="badge">nueva</span>' : ''}${resvBadge(a.reservation)}${a.status === 'reservado' ? statusBadge('reservado') : ''}</div>
       </div>
       <span class="chev" aria-hidden="true">▾</span>
     </div>
@@ -62,7 +62,8 @@ export function actRow(a, { current = false, next = false } = {}) {
         ${a.status && a.status !== 'reservado' ? `<dt>Estado</dt><dd>${statusBadge(a.status)}</dd>` : ''}
       </dl>
       <div class="row-actions">
-        ${a.placeId ? `<a class="btn small" href="#/mapa?focus=${esc(a.placeId)}">🗺 Ver en el mapa</a>` : ''}
+        ${a.placeId && I.place[a.placeId] ? `<a class="btn small" href="#/mapa?focus=${esc(a.placeId)}">🗺 Ver en el mapa</a>` : ''}
+        <button class="btn small" data-act="act-edit" data-id="${esc(a.id)}">✏️ Editar</button>
         ${a.link ? extLink(a.link, 'Más info') : ''}
       </div>
     </div>
@@ -127,6 +128,7 @@ export function arrivalCard(card, day, ctx) {
     ${mapHtml}${legend}
     ${lodging ? `<div class="lodging-line"><b>🏨 ${esc(lodging.name)}</b>${lodging.area ? `<span>${esc(lodging.area)}</span>` : ''}
       ${lodging.status === 'pendiente' ? '<span class="badge warn">Hotel por reservar</span>' : ''}
+      <button class="btn small" data-act="lodging-edit" data-id="${esc(lodging.id)}">✏️ Editar</button>
       ${lodging.addressLocal ? `<button class="btn small" data-act="show-address" data-id="${esc(lodging.id)}">Mostrar dirección al taxista</button>` : ''}</div>` : ''}
     ${(card.links || []).length ? `<h4>Links de interés</h4><ul class="links">${card.links.map((l) => `<li>${extLink(l.url, l.title)}</li>`).join('')}</ul>
       <p class="hint">Los links necesitan internet. Para tener un mapa de metro offline, guardá una captura y adjuntala en Documentos.</p>` : ''}

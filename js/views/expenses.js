@@ -1,15 +1,15 @@
 // Split expenses: stored locally, multi-currency, equal or exact splits, who-pays-whom, export/import to sync between phones.
-import { D, I, kv, settings } from '../store.js';
-import { esc, uid, toast, openModal, fmtMoney, fmtShort, download, closeModal } from '../util.js';
+import { D, I, cols, settings } from '../store.js';
+import { exportShared, importShared } from '../share.js';
+import { esc, uid, toast, openModal, fmtMoney, fmtShort, closeModal } from '../util.js';
 import { tripPhase } from '../tripstate.js';
 import { register } from '../ui.js';
 
 const CATS = { comida: '🍜 Comida', transporte: '🚆 Transporte', alojamiento: '🏨 Alojamiento', entradas: '🎟️ Entradas', compras: '🛍️ Compras', otros: '🧾 Otros' };
 let filterDay = null;
 
-const all = () => kv.get('expenses', []);
-const live = () => all().filter((e) => !e.deleted);
-const save = (list) => kv.set('expenses', list);
+const all = () => cols.list('expenses');
+const live = () => cols.live('expenses');
 const rates = () => ({ ...D.trip.currencies.rates, ...settings.get('rates', {}) });
 export const baseCur = () => D.trip.currencies.base;
 export const settleCur = () => settings.get('settleCur', baseCur());
@@ -136,7 +136,7 @@ register({
   'exp-edit': (el) => openModal(form(all().find((e) => e.id === el.dataset.id))),
   'exp-del': (el, _, app) => {
     if (!confirm('¿Borrar este gasto?')) return;
-    save(all().map((e) => e.id === el.dataset.id ? { ...e, deleted: true, updatedAt: Date.now() } : e)); app.rerender();
+    cols.del('expenses', el.dataset.id); app.rerender();
   },
   'exp-filter': (el, _, app) => { filterDay = el.dataset.day || null; app.rerender(); },
   'settle-cur': (el, _, app) => { settings.set('settleCur', el.value); app.rerender(); },
@@ -159,33 +159,15 @@ register({
     const id = f.get('id') || uid('ex');
     const rec = { id, desc: f.get('desc').trim(), amount, currency: f.get('currency'), paidBy: f.get('paidBy'), split,
       category: f.get('category'), dayId: f.get('dayId') || null, updatedAt: Date.now() };
-    const list = all(), i = list.findIndex((e) => e.id === id);
-    if (i >= 0) list[i] = { ...list[i], ...rec }; else list.push({ ...rec, createdAt: Date.now() });
-    save(list);
+    const prev = cols.map('expenses')[id];
+    cols.put('expenses', { ...(prev || { createdAt: Date.now() }), ...rec });
     settings.set('lastCur', rec.currency); settings.set('lastPayer', rec.paidBy);
     closeModal(form); app.rerender();
   },
-  'exp-export': async () => {
-    const data = { app: 'travell', tripId: D.trip.id, exportedAt: new Date().toISOString(), travelers: D.travelers, expenses: all() };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const file = new File([blob], `gastos-${D.trip.id}.json`, { type: 'application/json' });
-    if (navigator.canShare?.({ files: [file] })) { try { await navigator.share({ files: [file], title: 'Gastos del viaje' }); return; } catch { /* cancelled */ } }
-    download(file.name, blob);
-  },
+  'exp-export': () => exportShared(['expenses', 'travelers']),
   'exp-import': async (el, _, app) => {
     const file = el.files[0]; el.value = '';
     if (!file) return;
-    try {
-      const data = JSON.parse(await file.text());
-      if (data.tripId !== D.trip.id || !Array.isArray(data.expenses)) throw new Error('otro viaje');
-      const cur = new Map(all().map((e) => [e.id, e]));
-      let added = 0, updated = 0;
-      for (const e of data.expenses) {
-        const mine = cur.get(e.id);
-        if (!mine) { cur.set(e.id, e); added++; } else if ((e.updatedAt || 0) > (mine.updatedAt || 0)) { cur.set(e.id, e); updated++; }
-      }
-      save([...cur.values()]);
-      toast(`Importado: ${added} nuevos, ${updated} actualizados`); app.rerender();
-    } catch { toast('Archivo inválido o de otro viaje'); }
+    try { await importShared(file); app.rerender(); } catch (e) { toast(e.message || 'Archivo inválido'); }
   },
 });

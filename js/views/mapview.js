@@ -1,4 +1,6 @@
-import { D, I, settings } from '../store.js';
+import { D, I, settings, bus } from '../store.js';
+import { personItems } from './people.js';
+import { openPlaceForm, openActivityForm } from './forms.js';
 import { esc, fmtDist, openModal, toast, copyText, fmtShort } from '../util.js';
 import { tripPhase } from '../tripstate.js';
 import { cat, register, extLink } from '../ui.js';
@@ -6,7 +8,7 @@ import { computeNearby, isPoi } from '../nearby.js';
 import { TripMap, providerForPoint, tileUrls, prefetchTiles } from '../map.js';
 import { gps, onPosition, startGps, distance, externalMapUrl, googleMapUrl } from '../geo.js';
 
-const S = { scope: 'near', cats: null, dayId: null };       // survives navigation within the session
+const S = { scope: 'near', cats: null, dayId: null, people: true };       // survives navigation within the session
 let current = null;                                          // { map, refresh } of the open view
 
 export function render(params, ctx) {
@@ -17,6 +19,7 @@ export function render(params, ctx) {
   if (!S.dayId) S.dayId = st.phase === 'during' ? st.day.id : D.days[0].id;
   if (params.focus && I.place[params.focus] && !S.cats.has(I.place[params.focus].category)) S.cats.add(I.place[params.focus].category);
   if (params.focus && S.scope === 'near' && !gps.pos) S.scope = 'all';
+  if (params.person) S.people = true;
 
   ctx.title = 'Mapa';
   ctx.after(() => mount(ctx, st, params));
@@ -29,11 +32,12 @@ export function render(params, ctx) {
         ${D.days.map((d) => `<option value="${d.id}" ${d.id === S.dayId ? 'selected' : ''}>Día ${d.n} · ${esc(fmtShort(d.date))} · ${esc(d.title)}</option>`).join('')}
       </select>
     </div>
-    <div class="chips" id="catchips">${allCats.map((c) => `<button class="chip ${S.cats.has(c) ? 'on' : ''}" style="--c:${cat(c).color}" data-act="map-cat" data-cat="${c}">${cat(c).icon} ${esc(cat(c).label)}</button>`).join('')}</div>
+    <div class="chips" id="catchips"><button class="chip ${S.people ? 'on' : ''}" style="--c:#1c7ed6" data-act="map-people">👥 Viajeros</button>${allCats.map((c) => `<button class="chip ${S.cats.has(c) ? 'on' : ''}" style="--c:${cat(c).color}" data-act="map-cat" data-cat="${c}">${cat(c).icon} ${esc(cat(c).label)}</button>`).join('')}</div>
     <div class="map map-full" id="bigmap" role="region" aria-label="Mapa"></div>
     <div class="map-tools">
       <button class="btn small" data-act="map-locate">📍 Mi ubicación</button>
       <button class="btn small" data-act="map-provider" id="prov-btn">🗺 Mapa: …</button>
+      <button class="btn small" data-act="map-add">＋ Lugar acá</button>
       <button class="btn small" data-act="map-offline">⬇ Guardar zona offline</button>
     </div>
     <p class="hint" id="map-hint"></p>
@@ -73,7 +77,8 @@ function mount(ctx, st, params) {
 
   const refresh = (fit) => {
     const r = itemsFor(st);
-    map.setItems([...r.list.map((x) => ({ kind: 'poi', place: x.place, active: x.place.id === focusId })), ...r.lodg.map((l) => ({ kind: 'lodging', lodging: l }))]);
+    map.setItems([...r.list.map((x) => ({ kind: 'poi', place: x.place, active: x.place.id === focusId })), ...r.lodg.map((l) => ({ kind: 'lodging', lodging: l })),
+      ...(S.people ? personItems() : [])]);
     if (fit || firstFit) {
       firstFit = false;
       if (r.list.length || r.lodg.length) {
@@ -97,7 +102,16 @@ function mount(ctx, st, params) {
   el.addEventListener('providerchange', provLabel);
   refresh(true); provLabel();
   if (focusId && I.place[focusId]) setTimeout(() => map.openPlace(focusId), 250);
+  const person = params.person && personItems().find((x) => x.traveler.id === params.person);
+  if (person) setTimeout(() => map.setView(person.pos.lat, person.pos.lon, 16), 200);
   ctx.cleanup(onPosition(() => refresh(false)));
+  ctx.cleanup(bus.on('positions', () => refresh(false)));
+}
+
+function nearestCityId(lat, lon) {
+  let best = null, bd = Infinity;
+  for (const c of D.trip.cities) { const d = distance([lat, lon], c.center); if (d < bd) { bd = d; best = c.id; } }
+  return best;
 }
 
 function placeUrls() {
@@ -105,6 +119,13 @@ function placeUrls() {
 }
 
 register({
+  'map-people': (el) => { S.people = !S.people; el.classList.toggle('on', S.people); current?.refresh(false); },
+  'map-add': () => {
+    if (!current) return openPlaceForm();
+    const c = current.map.map.getCenter();
+    const [lat, lon] = gps.pos && current.map.map.getBounds().contains(current.map.proj(gps.pos.lat, gps.pos.lon)) ? [gps.pos.lat, gps.pos.lon] : current.map.unproj(c.lat, c.lng);
+    openPlaceForm({ lat, lon, cityId: nearestCityId(lat, lon) });
+  },
   'map-scope': (el, _, app) => { S.scope = el.dataset.scope; app.rerender(); },
   'map-day': (el, _, app) => { S.dayId = el.value; S.scope = 'day'; app.rerender(); },
   'map-cat': (el) => {
@@ -164,7 +185,19 @@ export function renderPlace({ id }, ctx) {
       <a class="btn" href="${externalMapUrl(p.lat, p.lon, p.name, provider)}" target="_blank" rel="noopener">Abrir en app de mapas 🌐</a>
       ${provider !== 'gaode' ? `<a class="btn" href="${googleMapUrl(p.lat, p.lon)}" target="_blank" rel="noopener">Google Maps 🌐</a>` : ''}
       ${p.link ? extLink(p.link, 'Más info') : ''}</div>
+    <div class="row-actions"><button class="btn small" data-act="place-edit" data-id="${esc(p.id)}">✏️ Editar</button>
+      <button class="btn small danger" data-act="place-del" data-id="${esc(p.id)}">Borrar</button>
+      <button class="btn small" data-act="act-new-place" data-id="${esc(p.id)}">＋ Agregar al itinerario</button></div>
+    <p class="hint">${p.source === 'app' ? 'Cargado en la app' : p.edited ? 'Del JSON, editado en la app' : `Del archivo ${esc(p.file || 'places.json')}`}${Number.isFinite(p.lat) ? ` · ${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}` : ''}</p>
   </article>`;
 }
 
-register({ copy: (el) => copyText(el.dataset.text) });
+register({
+  copy: (el) => copyText(el.dataset.text),
+  'act-new-place': (el) => {
+    const p = I.place[el.dataset.id];
+    const st = tripPhase();
+    const day = D.days.find((d) => d.cityId === p.cityId && (st.phase !== 'during' || d.date >= st.today)) || D.days.find((d) => d.cityId === p.cityId);
+    openActivityForm({ dayId: day?.id, title: p.name, placeId: p.id, category: p.category, area: p.area });
+  },
+});

@@ -18,6 +18,7 @@ flowchart LR
   end
   TILES[Servidores de tiles<br/>AutoNavi / OSM]
   LINKS[Links externos]
+  RELAY[Relay opcional<br/>server/relay.mjs<br/>solo ve datos cifrados]
 
   APP -- fetch --> SW
   SW -- red primero / caché si no hay --> Hosting estático
@@ -26,6 +27,7 @@ flowchart LR
   APP <--> LS
   APP <--> IDB
   APP -. solo con internet .-> LINKS
+  APP -. sync cifrada, opcional .-> RELAY
 ```
 
 ## Capas
@@ -33,11 +35,37 @@ flowchart LR
 | Capa | Dónde | Qué guarda | Quién lo escribe |
 |---|---|---|---|
 | **Datos del viaje** | `data/*.json` (servidor) | Itinerario, transportes, hospedajes, lugares, documentos, viajeros, pendientes, alertas, enlaces | Quien arma el viaje (a mano o con un conversor) |
-| **Estado local** | `localStorage`, con la clave `travell:<tripId>:` | Ajustes, actividades hechas, pendientes resueltos, checklists, códigos cargados, gastos | La app |
+| **Cambios locales (overlay)** | `localStorage`, `travell:<tripId>:col:<colección>` | Altas, modificaciones y bajas de lugares, alojamientos, actividades, tareas y viajeros. Además gastos, ubicaciones y sugerencias descartadas | La app, y la sincronización o la importación |
+| **Estado del dispositivo** | `localStorage`, `travell:<tripId>:` | Ajustes (quién soy, relay, mapa), actividades hechas, checklists, códigos cargados | La app |
 | **Archivos locales** | IndexedDB `travell-<tripId>` | Fotos (miniatura + original reducido), adjuntos de documentos (PDF, capturas) | La app |
 | **Caché offline** | Cache Storage | App, JSON y tiles de mapa | El service worker |
 
-Los JSON son **de solo lectura** para la app. Lo que el usuario carga en el dispositivo (un código de reserva, una foto, un gasto) va al estado local y **tapa** el valor del JSON sin modificar el archivo. Así se pueden publicar versiones nuevas del itinerario sin pisar lo cargado en cada celular.
+Los JSON son **de solo lectura** para la app. Lo que el usuario carga (un lugar, un hotel, una tarea, un gasto) se guarda como **registro** en una colección local y se **superpone** al JSON. Así se pueden publicar versiones nuevas del itinerario sin pisar lo cargado en cada celular.
+
+### Overlay: JSON + registros locales
+
+```mermaid
+flowchart LR
+  J[BASE<br/>data/*.json] --> M{rebuild}
+  C[cols<br/>registros locales] --> M
+  M --> DI[D / I<br/>datos combinados + índices]
+  DI --> V[vistas]
+  V -- alta / modificación / baja --> C
+  S[sync / importación] -- merge por id, gana updatedAt --> C
+```
+
+- Cada registro es `{ id, updatedAt, by, deleted?, ...campos }`.
+- **Alta**: un id nuevo. **Modificación**: el mismo id que el registro del JSON, con el objeto completo. **Baja**: `{ id, deleted: true }`, que oculta también un registro del JSON.
+- `rebuild()` (en `store.js`) combina `BASE` con las colecciones y recalcula todo lo derivado:
+  - el hospedaje de cada noche (`day.lodgingId`, eligiendo primero el que esté reservado);
+  - noches y días de check-in/out;
+  - el orden de las actividades por hora;
+  - en qué días aparece cada lugar;
+  - los índices.
+- Las vistas leen solo `D` e `I`, así que no saben si un dato vino del JSON o de la app. Corre después de cada cambio: con cientos de registros tarda pocos milisegundos.
+- **Colecciones editables** (se combinan con el JSON): `places`, `lodging`, `activities`, `tasks`, `travelers`.
+- **Colecciones solo locales**: `expenses`, `positions`, `suggestions` (descartadas).
+- **Limitación**: un registro del JSON editado en la app queda "congelado" con su versión editada. Si después cambia en el JSON, gana la edición local.
 
 ## Estructura del código
 
@@ -51,11 +79,17 @@ js/
   store.js            Carga de JSON + índices, localStorage, IndexedDB, reloj simulable, bus de eventos
   tripstate.js        Fase del viaje (antes/durante/después), día actual, actividad actual y siguiente, horarios de salida
   ui.js               Fragmentos compartidos (badges, filas de actividad, tarjetas de día) y registro de acciones
+  sync.js             Sincronización cifrada con el relay, compartir ubicación, link de ubicación
+  suggest.js          Reglas de "te falta…" (hospedajes, noches sin alojamiento, compras, reservas, preparativos)
+  share.js            Exportar e importar todos los datos cargados en la app (sin servidor)
   map.js              Envoltorio de Leaflet: proveedor de tiles por región, GCJ-02, marcadores, rutas, precarga
   geo.js              WGS-84 → GCJ-02, GPS compartido, links a apps de mapas
   nearby.js           Selección de "puntos de interés cercanos"
   util.js             Fechas, formato, escape HTML, toasts, modales
-  views/              Una pantalla por archivo: home, day, mapview, photos, expenses, docs, more
+  views/              Una pantalla por archivo: home, day, mapview, photos, expenses, docs, more,
+                      tasks (tareas y sugerencias), people (viajeros, ubicación, sync), places (ABM de lugares),
+                      forms (formularios de ABM y selector de ubicación)
+server/relay.mjs      Relay opcional (Node, sin dependencias)
 vendor/leaflet/       Leaflet 1.9.4 vendorizado (sin CDN, para que funcione offline y en China)
 data/                 El viaje (ver "Modelo de datos")
 ```
@@ -113,10 +147,11 @@ erDiagram
 | `itinerary.json` | sí | `days[]`: `id`, `n`, `date`, `cityId`, `title`, `summary`, `lodgingId`, `cards[]`, `activities[]` |
 | `transport.json` | no | Tramos con `day`, tipo, servicio, horarios, `departAt`/`arriveAt` (ISO), dónde y cuándo comprar |
 | `lodging.json` | no | Hospedajes con check-in/out (día y hora), coordenadas, estado, `addressLocal` |
-| `places.json` | no | Lugares con `category`, `lat`/`lon`, `nameLocal`, `approx`, `days[]` |
+| `places.json` (+ `placeFiles`) | no | Lugares iniciales con `category`, `lat`/`lon`, `nameLocal`, `approx`. `trip.json → placeFiles` lista más archivos (por ejemplo `places-extra.json`): los posteriores extienden o reemplazan por `id` |
 | `documents.json` | no | Pasajes, visas, entradas, hoteles: `type`, `code`, `codeLabel`, `file`, `url`, `pin` |
 | `travelers.json` | no | Personas que dividen gastos |
-| `tasks.json` | no | Pendientes con `dueAt` (ISO con zona horaria), `urgent`, `day` |
+| `tasks.json` | no | Tareas con `dueAt` (ISO), `urgent`, `day`, `assignee`, `priority`, `status` y `covers` (qué sugerencias ya cubren, por ejemplo `lodging:l04`) |
+| `requirements.json` | no | Preparativos sugeridos: `title`, `detail`, `category`, `countries` (vacío = siempre), `dueDaysBefore`, `covers`, `link` |
 | `notes.json` | no | Alertas por día (`days[]`) o generales |
 | `links.json` | no | Enlaces por ciudad o día, y fuentes |
 
@@ -160,17 +195,61 @@ Varios viajes: `?data=trips/otro` carga otra carpeta. El estado local se separa 
 | Todo el itinerario, días, tarjetas, alertas, pendientes | Links externos (metro, webs oficiales) |
 | Documentos, códigos y adjuntos | Abrir un lugar en Amap, OSM o Google |
 | Fotos (agregar, ver, mover de día) | Tiles de zonas nunca vistas ni precargadas |
-| Gastos y saldos | Compartir el archivo de gastos (según el método) |
-| GPS y "cerca de vos" (el GPS no usa datos) | Primera carga de la app |
+| Gastos, tareas, sugerencias y ABM (lugares, hoteles, actividades) | Sincronizar con el relay (los cambios esperan y se envían al volver la conexión) |
+| GPS, "cerca de vos" y elegir ubicación con el GPS | Primera carga de la app |
+| Última ubicación conocida de los demás | Ubicación en vivo de los demás |
 | Mapas de zonas ya vistas o precargadas | |
 
 ### Persistencia
 
 Al agregar fotos o adjuntos se pide `navigator.storage.persist()` para que el navegador no borre los datos por falta de espacio. Ajustes muestra el espacio usado y si el almacenamiento es persistente.
 
-## Sincronización entre dispositivos
+## Sincronización y ubicación del grupo
 
-No hay servidor. Los gastos se comparten con **exportar/importar JSON** (con la hoja de compartir del sistema si está disponible). La importación une por `id`: gana el registro con `updatedAt` más nuevo y los borrados viajan como `deleted: true`, así no reaparecen.
+La app funciona completa en un solo celular. Para compartir entre viajeros hay tres niveles, de menor a mayor infraestructura:
+
+| Mecanismo | Qué comparte | Necesita |
+|---|---|---|
+| **Link de ubicación** (`#/ubicacion?t=&lat=&lon=&ts=`) | La ubicación en ese momento | Nada: se manda por WhatsApp y se abre con la app |
+| **Exportar e importar archivo** | Todas las colecciones del overlay | Nada: se manda el archivo |
+| **Relay** (`server/relay.mjs`) | Todas las colecciones, automático | Un servidor Node con HTTPS |
+
+### Relay
+
+```mermaid
+sequenceDiagram
+  participant A as Celular A
+  participant R as Relay (solo ciphertext)
+  participant B as Celular B
+  A->>A: cambio local (tarea asignada a B)
+  A->>R: POST /v1/{gid}/records [{c, id, u, d=AES-GCM(registro)}]
+  B->>R: GET /v1/{gid}/records?since=cursor
+  R-->>B: registros con seq > cursor
+  B->>B: descifra, merge (gana updatedAt), rebuild, aviso "te asignaron…"
+```
+
+- **Clave**: PBKDF2-SHA256 (150 000 iteraciones), aplicado al código del grupo con la sal `travell:<tripId>`, que da una clave AES-GCM de 256 bits.
+- **Id del grupo**: `gid` = SHA-256(`travell-group:<tripId>:<código>`), primeros 16 bytes. El relay nunca recibe el código.
+- El relay guarda, por grupo, el último registro de cada `(colección, id)` con un número de secuencia, y lo persiste en `RELAY_DATA/<gid>.json`. Ve los nombres de colección, los ids y las fechas, pero no el contenido.
+- **Cliente** (`sync.js`): sube lo que cambió desde el último envío y baja desde un cursor por grupo. Sincroniza cada 60 s con la app visible, a los 2,5 s de un cambio local, al volver a la app y al recuperar la conexión. Si el relay se reinicia y pierde la secuencia, el cliente vuelve a bajar todo.
+- **Conflictos**: gana la última escritura por registro (`updatedAt`). Alcanza para un grupo chico de viaje.
+- **Ubicación**: con "Compartir mi ubicación" activo, cada fix del GPS escribe `positions/<yo>` si pasaron 2 minutos o hubo más de 50 m de movimiento. Dejar de compartir borra el registro. Solo funciona con la app abierta: una web no puede seguir la ubicación en segundo plano.
+- **Avisos**: al recibir una tarea asignada a mí y creada por otro viajero, muestra un toast y, si hay permiso, una notificación del sistema.
+- **Requisitos**: el relay tiene que estar en HTTPS si la app está en HTTPS (contenido mixto), y conviene alojarlo donde sea accesible desde China. Ejecución: `PORT=8787 RELAY_DATA=./relay-data node server/relay.mjs`.
+
+### Sugerencias
+
+`suggest.js` aplica reglas sobre `D`:
+
+- noches sin hospedaje;
+- hospedajes por reservar;
+- tareas hechas cuyo hospedaje sigue pendiente;
+- transportes sin comprar;
+- actividades con reserva necesaria;
+- documentos pendientes y pasajes sin código;
+- preparativos de `requirements.json` filtrados por los países de `trip.cities`.
+
+Cada sugerencia tiene una clave estable (`lodging:l04`, `gap:2026-11-25`, `req:fiebre-amarilla`). Se oculta si una tarea la cubre (`covers` o `source: "sug:<clave>"`) o si se marcó "ya está" o "no aplica" (colección `suggestions`, que también se sincroniza).
 
 ## Decisiones y alternativas
 
@@ -178,7 +257,9 @@ No hay servidor. Los gastos se comparten con **exportar/importar JSON** (con la 
 |---|---|---|
 | Sin framework ni build | Cero dependencias que mantener, se edita y publica directo | Plantillas con strings; hay que cuidar el escape (`esc()`) |
 | JSON en lugar de base de datos | Legible, versionable en git, generable desde Excel | Editar el viaje requiere tocar archivos |
-| localStorage para estado chico | Simple y síncrono | Límite de ~5 MB, que alcanza para gastos y marcas |
+| localStorage para estado chico | Simple y síncrono | Límite de ~5 MB, que alcanza para gastos, tareas, lugares y marcas |
+| Overlay sobre JSON en vez de editar los archivos | Sin backend, y las actualizaciones del JSON no pisan lo cargado | Una edición local "congela" ese registro |
+| Relay propio con cifrado de punta a punta | Sin cuentas ni terceros que lean los datos; un archivo, sin dependencias | Hay que alojarlo; gana la última escritura, sin edición colaborativa fina |
 | IndexedDB para blobs | Fotos y PDFs sin límite práctico | API más verbosa (envoltorio en `store.js`) |
 | Tiles raster públicos | Simple, sin claves | Precarga limitada por los términos de uso; no hay mapas vectoriales offline completos |
 | Fotos reducidas a 1800 px | Ahorra espacio | No es un respaldo de los originales |
@@ -186,7 +267,10 @@ No hay servidor. Los gastos se comparten con **exportar/importar JSON** (con la 
 ## Seguridad y privacidad
 
 - Todo el texto de los JSON y del usuario pasa por `esc()` antes de insertarse como HTML.
-- No hay analytics, cookies ni llamadas a terceros salvo tiles y links que el usuario abre.
+- No hay analytics, cookies ni llamadas a terceros salvo tiles, links que el usuario abre y el relay que él mismo configure.
+- La ubicación se comparte solo si el usuario lo activa, y viaja cifrada.
+- El código del grupo es la única protección: tiene que ser largo y no publicarse. Cambiarlo crea otro grupo.
+- El relay valida tamaños (2 MB por pedido, 256 KB por registro, 50 000 registros por grupo) pero no tiene autenticación: cualquiera que adivine un `gid` podría llenar ese grupo con basura, aunque no leerlo.
 - Los datos sensibles (códigos, pasaporte) quedan en el dispositivo. Conviene no subirlos al JSON público si el sitio está publicado.
 
 Ver también: [VISION.md](VISION.md) · [FEATURES.md](FEATURES.md) · [BACKLOG.md](BACKLOG.md)

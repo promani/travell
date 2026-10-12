@@ -1,10 +1,18 @@
 // Leaflet wrapper: picks tiles that work in the region (AutoNavi in mainland China, OSM elsewhere),
 // handles the GCJ-02 offset, draws places / lodging / routes / the user, and can pre-cache tiles for offline.
-import { D, I, settings } from './store.js';
+import { D, settings } from './store.js';
 import { esc, haversine } from './util.js';
-import { wgs2gcj, externalMapUrl, googleMapUrl, gps, onPosition, startGps } from './geo.js';
+import { wgs2gcj, gcj2wgs, externalMapUrl, googleMapUrl, gps, onPosition, startGps } from './geo.js';
 
 const L = window.L;
+
+export function ago(ms) {
+  const m = Math.round(ms / 60000);
+  if (m < 1) return 'recién';
+  if (m < 60) return `hace ${m} min`;
+  if (m < 48 * 60) return `hace ${Math.round(m / 60)} h`;
+  return `hace ${Math.round(m / 1440)} días`;
+}
 
 export function providerForPoint(lat, lon) {
   let best = null, bd = Infinity;
@@ -45,6 +53,26 @@ export class TripMap {
   get provider() { return D.trip.tileProviders[this.providerId]; }
   /** WGS-84 -> coordinates in the tile layer's own system. */
   proj(lat, lon) { return this.provider?.gcj02 ? wgs2gcj(lat, lon) : [lat, lon]; }
+  /** Tile-layer coordinates (e.g. a click) -> WGS-84. */
+  unproj(lat, lon) { return this.provider?.gcj02 ? gcj2wgs(lat, lon) : [lat, lon]; }
+
+  /** Turn the map into a location picker: tap or drag the marker. `onPick([lat, lon])` gets WGS-84. */
+  enablePicker(start, onPick) {
+    const pinIcon = L.divIcon({ className: 'pick-icon', iconSize: [36, 46], iconAnchor: [18, 44], html: '<span>📍</span>' });
+    this.pick = start ? [...start] : null;
+    const place = () => {
+      if (!this.pick) { this.pickMarker?.remove(); this.pickMarker = null; return; }
+      const ll = this.proj(this.pick[0], this.pick[1]);
+      if (!this.pickMarker) {
+        this.pickMarker = L.marker(ll, { icon: pinIcon, draggable: true, zIndexOffset: 1000 }).addTo(this.map);
+        this.pickMarker.on('dragend', () => { const p = this.pickMarker.getLatLng(); this.pick = this.unproj(p.lat, p.lng); onPick(this.pick); });
+      } else this.pickMarker.setLatLng(ll);
+    };
+    this.setPick = (lat, lon, zoom) => { this.pick = [lat, lon]; place(); this.setView(lat, lon, zoom ?? Math.max(this.map.getZoom(), 15)); };
+    this.map.on('click', (e) => { this.pick = this.unproj(e.latlng.lat, e.latlng.lng); place(); onPick(this.pick); });
+    this.el.addEventListener('providerchange', place);
+    place();
+  }
 
   setMode(mode) {
     this.mode = mode;
@@ -92,10 +120,17 @@ export class TripMap {
         const l = it.lodging;
         lat = l.lat; lon = l.lon; ic = icon('🏨', catOf('alojamiento').color, 'lodging');
         html = `<b>${esc(l.name)}</b><br><small>${esc(l.area || '')}${l.approx ? ' · ubicación aproximada' : ''}</small>`;
+      } else if (it.kind === 'person') {
+        const tr = it.traveler, age = Date.now() - it.pos.updatedAt;
+        lat = it.pos.lat; lon = it.pos.lon;
+        ic = L.divIcon({ className: 'person-icon' + (age > 2 * 3600000 ? ' stale' : ''), iconSize: [34, 34], iconAnchor: [17, 17], popupAnchor: [0, -16],
+          html: `<span style="--c:${tr.color || '#1c7ed6'}">${esc((tr.name || '?').trim().slice(0, 2).toUpperCase())}</span>` });
+        html = `<b>${esc(tr.name)}</b><br><small>${esc(ago(age))}${it.pos.acc ? ` · ±${Math.round(it.pos.acc)} m` : ''}</small>`;
       } else {                                           // plain labelled point
         lat = it.lat; lon = it.lon; ic = icon(it.icon || '📍', it.color || '#1c7ed6');
         html = `<b>${esc(it.label || '')}</b>`;
       }
+      if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
       const m = L.marker(this.proj(lat, lon), { icon: ic, title: it.label || it.place?.name || '' }).addTo(this.layer);
       m.bindPopup(html);
       if (it.kind === 'poi') {
@@ -137,10 +172,12 @@ export class TripMap {
       if (it.kind === 'route') it.path.forEach(([a, b]) => pts.push(this.proj(a, b)));
       else if (it.kind === 'poi') pts.push(this.proj(it.place.lat, it.place.lon));
       else if (it.kind === 'lodging') pts.push(this.proj(it.lodging.lat, it.lodging.lon));
+      else if (it.kind === 'person') continue;
       else pts.push(this.proj(it.lat, it.lon));
     }
     extra.forEach(([a, b]) => pts.push(this.proj(a, b)));
-    if (pts.length) this.map.fitBounds(L.latLngBounds(pts), { padding: [28, 28], maxZoom: 16 });
+    const ok = pts.filter((p) => Number.isFinite(p[0]) && Number.isFinite(p[1]));
+    if (ok.length) this.map.fitBounds(L.latLngBounds(ok), { padding: [40, 40], maxZoom: 16 });
     this.autoProvider();
   }
 }

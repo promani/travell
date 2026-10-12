@@ -1,10 +1,13 @@
-import { D, I, done, taskState, docCodes, settings } from '../store.js';
+import { D, I, done, docCodes, settings, me, bus } from '../store.js';
 import { toast, esc, fmtDate, fmtShort, parseDate, daysBetween, isoDate, cap, fmtDist } from '../util.js';
 import { tripPhase, activityNow, lodgingOfDay } from '../tripstate.js';
 import { departureCard, renderCards, mapBox, cat, actRow, notesFor, noteHtml, dayLabel, register } from '../ui.js';
 import { computeNearby, lodgingsNear } from '../nearby.js';
 import { gps, onPosition, startGps, autoStartGpsIfGranted } from '../geo.js';
 import { now } from '../store.js';
+import { openTasks, taskRow, sugRow } from './tasks.js';
+import { suggestions } from '../suggest.js';
+import { permBanner, whoAmICard, personItems } from './people.js';
 
 const plural = (n, s, p) => `${n} ${n === 1 ? s : p}`;
 
@@ -42,7 +45,7 @@ function quickLinks(st) {
     <a class="tile primary" href="#/docs/pasaje"><span>🎫</span>Pasajes y códigos</a>
     <a class="tile primary" href="#/docs"><span>🛂</span>Visas y documentos</a>
     ${today}
-    <a class="tile" href="#/pendientes"><span>📋</span>Pendientes</a>
+    <a class="tile" href="#/tareas"><span>✅</span>Tareas</a>
   </nav>`;
 }
 
@@ -53,28 +56,6 @@ function pinnedDocs() {
     const code = docCodes.get(d);
     return `<li><a href="#/docs/${esc(d.type)}"><b>${esc(d.title)}</b><small>${code ? esc(code) : esc(d.subtitle || '')}</small></a></li>`;
   }).join('')}</ul></section>`;
-}
-
-export function dueInfo(t, todayISO) {
-  if (t.dueAt) {
-    const due = new Date(t.dueAt);
-    const diff = daysBetween(todayISO, isoDate(due));
-    const when = `${fmtShort(isoDate(due))} ${due.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}`;
-    if (due < now()) return { text: `Venció el ${when}`, cls: 'late', rank: -1000 + diff };
-    return { text: diff === 0 ? `Hoy ${when.split(' ').slice(-1)[0]}` : `En ${plural(diff, 'día', 'días')} · ${when}`, cls: diff <= 3 ? 'soon' : '', rank: diff };
-  }
-  if (t.urgent) return { text: t.when || 'Ya', cls: 'soon', rank: -500 };
-  return { text: t.when || '', cls: '', rank: 500 };
-}
-
-export function pendingTasks(todayISO) {
-  return D.tasks.filter((t) => taskState.get(t) !== 'hecho')
-    .map((t) => ({ t, due: dueInfo(t, todayISO) })).sort((a, b) => a.due.rank - b.due.rank);
-}
-export function taskRow({ t, due }) {
-  const dayRef = t.day && I.day[t.day] ? `<a href="#/dia/${t.day}">${esc(fmtShort(I.day[t.day].date))}</a>` : '';
-  return `<li class="task ${due.cls}"><button class="act-done" data-act="toggle-task" data-id="${esc(t.id)}" aria-label="Marcar como hecho">✓</button>
-    <div><b>${esc(t.title)}</b><small>${esc(due.text)}${dayRef ? ' · para el ' + dayRef : ''}</small>${t.notes ? `<small class="muted">${esc(t.notes)}</small>` : ''}</div></li>`;
 }
 
 function nearbyRow({ place, dist, today }, usingGps) {
@@ -94,7 +75,9 @@ export function render(_, ctx) {
     const startCard = day.cards.find((c) => c.type === 'departure' && c.tripStart);
     h += startCard ? departureCard(startCard, day, { hero: true }) : heroDuring(st);
   }
+  h += `<div id="perm"></div>` + whoAmICard();
   h += quickLinks(st);
+  ctx.after(() => permBanner(document.getElementById('perm')));
 
   if (st.phase === 'during') {
     h += renderCards(day, ctx, { skipTripStart: true });
@@ -109,10 +92,19 @@ export function render(_, ctx) {
   }
   if (st.phase === 'pre' || (st.phase === 'during' && day.n <= 3)) h += pinnedDocs();
 
-  const tasks = pendingTasks(st.today);
-  if (tasks.length && st.phase !== 'post') {
-    h += `<section class="card"><div class="card-head"><h3>📋 Por hacer</h3><a href="#/pendientes">Ver todo (${tasks.length}) →</a></div>
-      <ul class="tasks">${tasks.slice(0, 4).map(taskRow).join('')}</ul></section>`;
+  if (st.phase !== 'post') {
+    const mineOnly = !!me();
+    const tasks = openTasks(st.today, { mineOnly });
+    const others = mineOnly ? openTasks(st.today).length - tasks.length : 0;
+    h += `<section class="card"><div class="card-head"><h3>✅ ${mineOnly ? 'Mis tareas' : 'Por hacer'}</h3><a href="#/tareas">Ver todas →</a></div>
+      <ul class="tasks">${tasks.slice(0, 4).map(taskRow).join('') || '<li class="muted">Nada pendiente 🎉</li>'}</ul>
+      ${tasks.length > 4 ? `<p class="hint">y ${tasks.length - 4} más.</p>` : ''}${others ? `<p class="hint">${others} tarea${others === 1 ? '' : 's'} asignada${others === 1 ? '' : 's'} a otros viajeros.</p>` : ''}
+      <div class="row-actions"><button class="btn small" data-act="task-new" data-prefill='${esc(JSON.stringify({ assignee: me() }))}'>＋ Nueva tarea</button></div></section>`;
+    const sugs = suggestions();
+    if (sugs.length) {
+      h += `<section class="card"><div class="card-head"><h3>💡 Te falta…</h3><a href="#/tareas#sugerencias">Ver ${sugs.length} →</a></div>
+        <ul class="sugs">${sugs.slice(0, 3).map(sugRow).join('')}</ul></section>`;
+    }
   }
 
   const nb = computeNearby(st);
@@ -130,6 +122,7 @@ function setupHomeMap(m, st, ctx) {
     const nb = computeNearby(st);
     const items = nb.list.map((x) => ({ kind: 'poi', place: x.place }));
     lodgingsNear(nb.city, st).filter(Boolean).forEach((l) => items.push({ kind: 'lodging', lodging: l }));
+    items.push(...personItems());
     m.setItems(items);
     if (first) {
       first = false;
@@ -146,6 +139,7 @@ function setupHomeMap(m, st, ctx) {
   refresh();
   const off = onPosition(() => { if (gps.pos) { first = true; } refresh(); });
   ctx.cleanup(off);
+  ctx.cleanup(bus.on('positions', refresh));
   autoStartGpsIfGranted();
 }
 

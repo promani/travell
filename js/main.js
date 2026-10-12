@@ -1,5 +1,5 @@
 // Boot, hash router, event delegation, clock tick. Everything is static: no backend.
-import { loadData, D, I, now, checks } from './store.js';
+import { loadData, D, I, now, checks, cols, bus, me } from './store.js';
 import { esc, $, $$, closeModal, openModal, toast, fmtDuration } from './util.js';
 import { actions } from './ui.js';
 import { tripPhase } from './tripstate.js';
@@ -10,6 +10,11 @@ import * as photos from './views/photos.js';
 import * as expenses from './views/expenses.js';
 import * as docs from './views/docs.js';
 import * as more from './views/more.js';
+import * as tasks from './views/tasks.js';
+import * as people from './views/people.js';
+import * as places from './views/places.js';
+import './views/forms.js';
+import { startSync } from './sync.js';
 
 const main = $('#app');
 let active = null, renderedToday = null;
@@ -19,10 +24,22 @@ const ROUTES = {
   dia: (p, c) => day.render(p, c), mapa: (p, c) => mapview.render(p, c), lugar: (p, c) => mapview.renderPlace(p, c),
   fotos: (p, c) => photos.render(p, c), gastos: (p, c) => expenses.render(p, c), docs: (p, c) => docs.render(p, c),
   mas: () => more.menu(), itinerario: () => more.itinerary(), transporte: () => more.transport(),
-  alojamientos: () => more.lodging(), pendientes: () => more.pendientes(), enlaces: () => more.enlaces(),
+  alojamientos: () => more.lodging(), enlaces: () => more.enlaces(),
+  tareas: (p, c) => tasks.render(p, c), pendientes: (p, c) => tasks.render(p, c),
+  viajeros: (p, c) => people.render(p, c), lugares: (p, c) => places.render(p, c),
+  ubicacion: (p) => receiveLocation(p),
   ajustes: (p, c) => { c.after(more.storageInfo); return more.ajustes(); },
 };
-const NAV_GROUP = { '': 'inicio', inicio: 'inicio', dia: 'dia', itinerario: 'dia', mapa: 'mapa', lugar: 'mapa', fotos: 'fotos', gastos: 'gastos' };
+const NAV_GROUP = { '': 'inicio', inicio: 'inicio', dia: 'dia', itinerario: 'dia', mapa: 'mapa', lugar: 'mapa', lugares: 'mapa', fotos: 'fotos', gastos: 'gastos', tareas: 'tareas', pendientes: 'tareas' };
+
+/** "#/ubicacion?t=<traveler>&lat=..&lon=..&ts=.." — a location shared by link (works without any server). */
+function receiveLocation(p) {
+  const tr = I.traveler[p.t], lat = +p.lat, lon = +p.lon, ts = +p.ts || Date.now();
+  if (!tr || !Number.isFinite(lat) || !Number.isFinite(lon)) return '<div class="card"><p>Link de ubicación inválido.</p></div>';
+  if (tr.id !== me()) { cols.merge('positions', [{ id: tr.id, lat, lon, acc: 0, updatedAt: ts, via: 'link' }]); bus.emit('positions'); }
+  setTimeout(() => { location.hash = `#/mapa?person=${encodeURIComponent(tr.id)}`; }, 0);
+  return `<div class="card"><p>Ubicación de ${esc(tr.name)} guardada.</p></div>`;
+}
 
 function parseHash() {
   const raw = location.hash.replace(/^#\/?/, '');
@@ -118,6 +135,9 @@ setInterval(() => {
   $('#brand').textContent = D.trip.title;
   if (!location.hash) history.replaceState(null, '', '#/inicio');
   route();
+  startSync();
+  // data changed on another phone: redraw, unless the user is in the middle of a form
+  bus.on('remote-change', () => { if (!document.querySelector('dialog[open]') && !document.activeElement?.matches('input, textarea, select')) route({ keepScroll: true }); });
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
     navigator.serviceWorker.register('sw.js').catch((e) => console.warn('SW', e));
   }

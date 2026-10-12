@@ -1,4 +1,7 @@
-// Data loading (static JSON), per-trip local state (localStorage), blobs (IndexedDB) and the app clock.
+// Data model.
+//  BASE  = what the static JSON files say (read-only).
+//  cols  = records created/edited/deleted in the app ("overlay"), stored locally and optionally synced.
+//  D / I = BASE + overlay merged, plus indexes. Views only read D / I.
 import { setLocale } from './util.js';
 
 const params = new URLSearchParams(location.search);
@@ -6,15 +9,20 @@ const params = new URLSearchParams(location.search);
 export const DATA_BASE = (params.get('data') || 'data').replace(/\/$/, '');
 
 const REQUIRED = ['trip', 'itinerary'];
-const OPTIONAL = ['transport', 'lodging', 'places', 'documents', 'travelers', 'tasks', 'notes', 'links'];
+const OPTIONAL = ['transport', 'lodging', 'documents', 'travelers', 'tasks', 'notes', 'links', 'requirements'];
+/** Collections the user can create/edit in the app (merged over the JSON). */
+export const EDITABLE = ['places', 'lodging', 'activities', 'tasks', 'travelers'];
+/** Collections that only live in the overlay. */
+export const LOCAL_ONLY = ['expenses', 'positions', 'suggestions'];
 
-export const D = { trip: null, days: [], transport: [], lodging: [], places: [], documents: [], travelers: [], tasks: [], notes: [], links: [] };
-export const I = { day: {}, dayByDate: {}, place: {}, lodging: {}, transport: {}, doc: {}, traveler: {}, city: {}, activity: {}, activityDay: {} };
+export const BASE = {};
+export const D = { trip: null, days: [], transport: [], lodging: [], places: [], documents: [], travelers: [], tasks: [], notes: [], links: [], requirements: [] };
+export const I = {};
 
 async function getJSON(name, required) {
   try {
-    const r = await fetch(`${DATA_BASE}/${name}.json`);
-    if (!r.ok) throw new Error(`${name}.json: HTTP ${r.status}`);
+    const r = await fetch(`${DATA_BASE}/${name}`);
+    if (!r.ok) throw new Error(`${name}: HTTP ${r.status}`);
     return await r.json();
   } catch (e) {
     if (required) throw e;
@@ -24,24 +32,20 @@ async function getJSON(name, required) {
 
 export async function loadData() {
   const [req, opt] = await Promise.all([
-    Promise.all(REQUIRED.map((n) => getJSON(n, true))),
-    Promise.all(OPTIONAL.map((n) => getJSON(n, false)))]);
-  D.trip = req[0];
-  D.days = req[1].days;
-  OPTIONAL.forEach((n, i) => { D[n] = opt[i] || []; });
-  setLocale(D.trip.locale);
-
-  D.days.sort((a, b) => a.date.localeCompare(b.date));
-  D.days.forEach((d) => {
-    I.day[d.id] = d; I.dayByDate[d.date] = d;
-    d.activities.forEach((a) => { a.dayId = d.id; I.activity[a.id] = a; });
-  });
-  D.places.forEach((p) => { I.place[p.id] = p; });
-  D.lodging.forEach((l) => { I.lodging[l.id] = l; });
-  D.transport.forEach((t) => { I.transport[t.id] = t; });
-  D.documents.forEach((x) => { I.doc[x.id] = x; });
-  D.travelers.forEach((t) => { I.traveler[t.id] = t; });
-  D.trip.cities.forEach((c) => { I.city[c.id] = c; });
+    Promise.all(REQUIRED.map((n) => getJSON(n + '.json', true))),
+    Promise.all(OPTIONAL.map((n) => getJSON(n + '.json', false)))]);
+  BASE.trip = req[0];
+  BASE.days = req[1].days.sort((a, b) => a.date.localeCompare(b.date));
+  OPTIONAL.forEach((n, i) => { BASE[n] = opt[i] || []; });
+  // places can be split in several files listed in trip.json ("placeFiles"); later files extend / override earlier ones
+  const files = BASE.trip.placeFiles || ['places.json'];
+  const parts = await Promise.all(files.map((f) => getJSON(f, false)));
+  const byId = new Map();
+  parts.forEach((arr, k) => (arr || []).forEach((p) => byId.set(p.id, { ...p, file: files[k] })));
+  BASE.places = [...byId.values()];
+  setLocale(BASE.trip.locale);
+  migrateLegacy();
+  rebuild();
 }
 
 // ------------------------------------------------------------------ event bus
@@ -52,7 +56,7 @@ export const bus = {
 };
 
 // ------------------------------------------------------------------ key/value (localStorage), namespaced per trip
-const ns = () => `travell:${D.trip.id}:`;
+const ns = () => `travell:${BASE.trip.id}:`;
 export const kv = {
   get(key, def) {
     try { const v = localStorage.getItem(ns() + key); return v == null ? def : JSON.parse(v); } catch { return def; }
@@ -60,6 +64,7 @@ export const kv = {
   set(key, val) {
     try { localStorage.setItem(ns() + key, JSON.stringify(val)); return true; } catch { return false; }
   },
+  del(key) { try { localStorage.removeItem(ns() + key); } catch { /* ignore */ } },
 };
 
 export const settings = {
@@ -68,6 +73,110 @@ export const settings = {
     const s = kv.get('settings', {}); s[key] = val; kv.set('settings', s); bus.emit('settings', key);
   },
 };
+/** Traveler id of whoever uses this device. */
+export const me = () => settings.get('me', null);
+
+// ------------------------------------------------------------------ overlay collections
+// Each record: { id, updatedAt, by, deleted?, ...fields }. Last write (updatedAt) wins when merging.
+export const cols = {
+  map: (name) => kv.get('col:' + name, {}),
+  list: (name) => Object.values(kv.get('col:' + name, {})),
+  live: (name) => Object.values(kv.get('col:' + name, {})).filter((r) => !r.deleted),
+  put(name, rec, { rebuild: rb = true } = {}) {
+    const m = cols.map(name);
+    const r = { ...rec, updatedAt: Date.now(), by: me() };
+    m[r.id] = r;
+    kv.set('col:' + name, m);
+    if (rb && EDITABLE.includes(name)) rebuild();
+    bus.emit('local-change', name);
+    return r;
+  },
+  del(name, id) { return cols.put(name, { id, deleted: true }); },
+  /** Merge records coming from another device. Returns the records that changed. */
+  merge(name, recs) {
+    const m = cols.map(name), changed = [];
+    for (const r of recs) {
+      if (!r || !r.id) continue;
+      const cur = m[r.id];
+      if (!cur || (r.updatedAt || 0) > (cur.updatedAt || 0)) { m[r.id] = r; changed.push(r); }
+    }
+    if (changed.length) kv.set('col:' + name, m);
+    return changed;
+  },
+};
+
+function migrateLegacy() {
+  const old = kv.get('expenses', null);                     // v1 kept expenses as an array
+  if (Array.isArray(old)) {
+    const m = cols.map('expenses');
+    old.forEach((e) => { m[e.id] ||= { ...e, updatedAt: e.updatedAt || e.createdAt || Date.now() }; });
+    kv.set('col:expenses', m); kv.del('expenses');
+  }
+  const ts = kv.get('tasks', null);                         // v1 kept task status as a map
+  if (ts && typeof ts === 'object') {
+    const m = cols.map('tasks');
+    for (const [id, status] of Object.entries(ts)) {
+      const base = BASE.tasks.find((t) => t.id === id);
+      if (base && !m[id]) m[id] = { ...base, status, updatedAt: Date.now() };
+    }
+    kv.set('col:tasks', m); kv.del('tasks');
+  }
+}
+
+function merged(base, name) {
+  const m = new Map((base || []).map((x) => [x.id, x]));
+  for (const r of cols.list(name)) {
+    if (r.deleted) m.delete(r.id);
+    else m.set(r.id, { ...(m.get(r.id) || {}), ...r, edited: m.has(r.id) });
+  }
+  return [...m.values()];
+}
+
+const minutes = (hhmm) => { const x = /^(\d{1,2}):(\d{2})/.exec(hhmm || ''); return x ? +x[1] * 60 + +x[2] : null; };
+
+/** Recompute D and I from BASE + overlay. Cheap enough to run after every edit. */
+export function rebuild() {
+  D.trip = BASE.trip;
+  for (const k of ['transport', 'documents', 'notes', 'links', 'requirements']) D[k] = BASE[k];
+  D.travelers = merged(BASE.travelers, 'travelers');
+  D.places = merged(BASE.places, 'places');
+  D.tasks = merged(BASE.tasks, 'tasks');
+  D.lodging = merged(BASE.lodging, 'lodging').filter((l) => l.checkIn && l.checkOut).sort((a, b) => a.checkIn.localeCompare(b.checkIn));
+
+  const dayByDate = Object.fromEntries(BASE.days.map((d) => [d.date, d]));
+  D.lodging.forEach((l) => {
+    l.nights = Math.max(0, Math.round((new Date(l.checkOut) - new Date(l.checkIn)) / 86400000));
+    l.checkInDay = dayByDate[l.checkIn]?.id || null;
+    l.checkOutDay = dayByDate[l.checkOut]?.id || null;
+  });
+
+  // activities: base ones (in file order) + app ones, ordered by start time
+  const baseActs = BASE.days.flatMap((d) => d.activities.map((a) => ({ ...a, dayId: d.id })));
+  const acts = merged(baseActs, 'activities');
+  D.days = BASE.days.map((d) => {
+    let key = -1;
+    const list = acts.filter((a) => a.dayId === d.id).map((a) => {
+      const m = minutes(a.start);
+      if (m != null) key = m;
+      return { a, k: m ?? key };
+    }).sort((x, y) => x.k - y.k).map((x) => x.a);
+    // the night's lodging: whichever covers this date (booked ones first)
+    const l = D.lodging.filter((x) => x.checkIn <= d.date && d.date < x.checkOut).sort((x, y) => (y.status === 'reservado') - (x.status === 'reservado'))[0];
+    return { ...d, activities: list, lodgingId: l ? l.id : null };
+  });
+
+  for (const k of ['day', 'dayByDate', 'place', 'lodging', 'transport', 'doc', 'traveler', 'city', 'activity', 'task']) I[k] = {};
+  D.days.forEach((d) => { I.day[d.id] = d; I.dayByDate[d.date] = d; d.activities.forEach((a) => { I.activity[a.id] = a; }); });
+  D.places.forEach((p) => { I.place[p.id] = p; p.days = []; });
+  D.days.forEach((d) => d.activities.forEach((a) => { const p = I.place[a.placeId]; if (p && !p.days.includes(d.id)) p.days.push(d.id); }));
+  D.lodging.forEach((x) => { I.lodging[x.id] = x; });
+  D.transport.forEach((x) => { I.transport[x.id] = x; });
+  D.documents.forEach((x) => { I.doc[x.id] = x; });
+  D.travelers.forEach((x) => { I.traveler[x.id] = x; });
+  D.tasks.forEach((x) => { I.task[x.id] = x; });
+  D.trip.cities.forEach((c) => { I.city[c.id] = c; });
+  bus.emit('data');
+}
 
 // ------------------------------------------------------------------ clock (with a "simulate date" option for testing)
 export function now() {
@@ -78,17 +187,12 @@ export function setSimulatedNow(localISO) {      // "2026-11-12T18:00" or null t
   settings.set('simOffset', localISO ? new Date(localISO).getTime() - Date.now() : 0);
 }
 
-// ------------------------------------------------------------------ done-checks for activities, task status
+// ------------------------------------------------------------------ small per-device marks
 export const done = {
-  all: () => kv.get('done', {}),
   has: (id) => !!kv.get('done', {})[id],
   toggle(id) { const m = kv.get('done', {}); if (m[id]) delete m[id]; else m[id] = Date.now(); kv.set('done', m); return !!m[id]; },
 };
-export const taskState = {
-  get: (t) => kv.get('tasks', {})[t.id] ?? t.status,
-  set(id, v) { const m = kv.get('tasks', {}); m[id] = v; kv.set('tasks', m); },
-};
-export const docCodes = {       // codes / notes typed in the app override the JSON (which is just the starting point)
+export const docCodes = {       // codes typed in the app override the JSON (which is just the starting point)
   get: (doc) => kv.get('docCodes', {})[doc.id] ?? doc.code ?? '',
   set(id, v) { const m = kv.get('docCodes', {}); m[id] = v; kv.set('docCodes', m); },
 };
@@ -101,7 +205,7 @@ export const checks = {          // departure checklists
 let dbp;
 function openDB() {
   dbp ||= new Promise((resolve, reject) => {
-    const req = indexedDB.open('travell-' + D.trip.id, 1);
+    const req = indexedDB.open('travell-' + BASE.trip.id, 1);
     req.onupgradeneeded = () => {
       const db = req.result;
       db.createObjectStore('photos', { keyPath: 'id' });      // metadata + small thumbnail

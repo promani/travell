@@ -51,7 +51,7 @@ export function haversine(a, b) {
   const x = Math.sin(dLat / 2) ** 2 + Math.cos(a[0] * rad) * Math.cos(b[0] * rad) * Math.sin(dLon / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(x));
 }
-export const fmtDist = (m) => m < 950 ? `${Math.round(m / 10) * 10} m` : `${(m / 1000).toFixed(m < 10000 ? 1 : 0)} km`;
+export const fmtDist = (m) => m < 950 ? `${Math.round(m / 10) * 10} m` : `${(m / 1000).toLocaleString(LOCALE, { maximumFractionDigits: m < 10000 ? 1 : 0 })} km`;
 
 // ------------------------------------------------------------------ toasts / modals
 export function toast(msg, ms = 2600) {

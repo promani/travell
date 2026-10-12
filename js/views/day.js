@@ -61,15 +61,18 @@ export function render({ id }, ctx) {
 
   <section class="card">
     <div class="card-head"><h3>Actividades del día</h3>
-      <button class="btn small ${onlyMust ? 'on' : ''}" data-act="toggle-must">⭐ Solo imperdibles</button></div>
+      <div class="row-actions" style="margin:0"><button class="btn small ${onlyMust ? 'on' : ''}" data-act="toggle-must">⭐ Imperdibles</button>
+      <button class="btn small primary" data-act="act-new" data-day="${day.id}">＋ Actividad</button></div></div>
     <div class="timeline">${acts.map((a) => actRow(a, { current: a === current, next: a === nextA })).join('') || '<p class="muted">Sin actividades.</p>'}</div>
     <p class="hint">Tocá una actividad para ver el detalle. El círculo ✓ la marca como hecha (se guarda en este dispositivo).</p>
   </section>
 
+  ${!l && !/avi[oó]n/i.test(day.sleepsAt || '') && i < D.days.length - 1 ? `<div class="note warn"><b>🛏️ No hay hospedaje cargado para esta noche</b>
+    <div class="row-actions"><button class="btn small" data-act="lodging-new" data-prefill='${esc(JSON.stringify({ checkIn: day.date, checkOut: next.date, cityId: day.cityId }))}'>＋ Cargar hospedaje</button></div></div>` : ''}
   ${(trans.length || lodgIn.length || lodgOut.length) ? `<section class="card"><h3>Logística</h3><ul class="tlist">
     ${lodgOut.map((x) => `<li class="trow"><span class="o-ic">🧳</span><div><b>Check-out · ${esc(x.name)}</b><small>${esc(x.checkOutTime || '')}</small></div></li>`).join('')}
     ${trans.map(transportRow).join('')}
-    ${lodgIn.map((x) => `<li class="trow"><span class="o-ic">🏨</span><div><b>Check-in · ${esc(x.name)}</b> ${statusBadge(x.status)}<small>${esc([x.area, x.checkInTime, x.notes].filter(Boolean).join(' · '))}</small>
+    ${lodgIn.map((x) => `<li class="trow"><span class="o-ic">🏨</span><div><b>Check-in · ${esc(x.name)}</b> ${statusBadge(x.status)} <button class="btn tiny" data-act="lodging-edit" data-id="${esc(x.id)}">Editar</button><small>${esc([x.area, x.checkInTime, x.notes].filter(Boolean).join(' · '))}</small>
       ${x.link ? `<small>${extLink(x.link, 'Hotel')}</small>` : ''}</div></li>`).join('')}</ul></section>` : ''}
 
   ${docs.length ? `<section class="card"><h3>📄 Documentos de este día</h3><ul class="doc-mini">${docs.map((x) => `<li><a href="#/docs/${esc(x.type)}"><b>${esc(x.title)}</b><small>${esc(docCodes.get(x) || x.subtitle || '')}</small></a></li>`).join('')}</ul></section>` : ''}

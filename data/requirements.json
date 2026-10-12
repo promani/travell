@@ -1,0 +1,106 @@
+[
+  {
+    "id": "fiebre-amarilla",
+    "title": "Certificado internacional de vacunación contra la fiebre amarilla",
+    "category": "salud",
+    "countries": [
+      "China"
+    ],
+    "dueDaysBefore": 20,
+    "detail": "Algunos países lo piden a quienes llegan desde países con zonas de riesgo, y Argentina tiene zonas de riesgo. Verificá con la embajada de China y el Ministerio de Salud si te lo van a pedir. La vacuna tiene que darse al menos 10 días antes del viaje. Llevá la libreta amarilla y adjuntá una foto en Documentos.",
+    "link": "https://www.argentina.gob.ar/salud/viajeros"
+  },
+  {
+    "id": "pasaporte",
+    "title": "Pasaporte con vigencia suficiente",
+    "category": "documentos",
+    "countries": [],
+    "dueDaysBefore": 45,
+    "detail": "Varios países piden al menos 6 meses de vigencia al ingresar y hojas libres. Adjuntá una foto de la página de datos."
+  },
+  {
+    "id": "nzeta",
+    "title": "Autorización de tránsito de Nueva Zelanda (NZeTA)",
+    "category": "documentos",
+    "countries": [],
+    "dueDaysBefore": 14,
+    "detail": "El vuelo hace escala en Auckland. Verificá si tu pasaporte necesita NZeTA para el tránsito y tramitala con anticipación.",
+    "covers": [
+      "doc:doc04"
+    ],
+    "link": "https://www.immigration.govt.nz/new-zealand-visas/visas/visa/nzeta"
+  },
+  {
+    "id": "seguro",
+    "title": "Seguro de viaje con cobertura en China y Japón",
+    "category": "salud",
+    "countries": [],
+    "dueDaysBefore": 7,
+    "detail": "Guardá la póliza y el teléfono de asistencia en Documentos.",
+    "covers": [
+      "doc:doc14"
+    ]
+  },
+  {
+    "id": "tarjetas",
+    "title": "Avisar al banco y habilitar las tarjetas en el exterior",
+    "category": "dinero",
+    "countries": [],
+    "dueDaysBefore": 5,
+    "detail": "Confirmá límites y comisiones. Llevá al menos dos tarjetas de redes distintas."
+  },
+  {
+    "id": "pagos-china",
+    "title": "Alipay / WeChat Pay con tarjeta internacional",
+    "category": "dinero",
+    "countries": [
+      "China"
+    ],
+    "dueDaysBefore": 3,
+    "detail": "En China casi todo se paga con QR. Configurá ambas apps y probalas antes de salir."
+  },
+  {
+    "id": "efectivo-yenes",
+    "title": "Efectivo en yenes para los primeros días",
+    "category": "dinero",
+    "countries": [
+      "Japón"
+    ],
+    "dueDaysBefore": 0,
+    "detail": "Muchos locales chicos solo aceptan efectivo. Los ATM de 7-Eleven y Japan Post aceptan tarjetas extranjeras."
+  },
+  {
+    "id": "esim",
+    "title": "eSIM / datos móviles para China y Japón",
+    "category": "tecnología",
+    "countries": [],
+    "dueDaysBefore": 3,
+    "detail": "En China muchas apps occidentales están bloqueadas: verificá que la eSIM elegida te permita usarlas."
+  },
+  {
+    "id": "apps",
+    "title": "Instalar apps útiles",
+    "category": "tecnología",
+    "countries": [
+      "China"
+    ],
+    "dueDaysBefore": 3,
+    "detail": "Alipay, WeChat, DiDi, Amap, un traductor con chino y japonés offline. Descargá los mapas offline de esta app para cada ciudad."
+  },
+  {
+    "id": "adaptador",
+    "title": "Adaptador de enchufe",
+    "category": "equipaje",
+    "countries": [],
+    "dueDaysBefore": 1,
+    "detail": "Japón usa enchufes tipo A (dos patas planas); China, tipos A, C e I."
+  },
+  {
+    "id": "copias",
+    "title": "Copias de los documentos en el celular",
+    "category": "documentos",
+    "countries": [],
+    "dueDaysBefore": 2,
+    "detail": "Adjuntá en Documentos el pasaporte, los pasajes, las reservas y los QR para tenerlos offline."
+  }
+]

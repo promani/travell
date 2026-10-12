@@ -29,6 +29,31 @@ export function wgs2gcj(lat, lon) {
   return [lat + dLat, lon + dLon];
 }
 
+/** GCJ-02 -> WGS-84 (iterative inverse, sub-metre accuracy). */
+export function gcj2wgs(lat, lon) {
+  let w = [lat, lon];
+  for (let i = 0; i < 4; i++) {
+    const g = wgs2gcj(w[0], w[1]);
+    w = [w[0] - (g[0] - lat), w[1] - (g[1] - lon)];
+  }
+  return w;
+}
+
+/** One-shot position (asks for permission if needed). */
+export function currentPosition(timeout = 15000) {
+  return new Promise((resolve, reject) => {
+    if (!('geolocation' in navigator)) return reject(new Error('Sin GPS'));
+    navigator.geolocation.getCurrentPosition((p) => {
+      gps.pos = { lat: p.coords.latitude, lon: p.coords.longitude, acc: p.coords.accuracy };
+      listeners.forEach((f) => f(gps.pos));
+      resolve(gps.pos);
+    }, reject, { enableHighAccuracy: true, maximumAge: 30000, timeout });
+  });
+}
+export async function permissionState() {
+  try { return (await navigator.permissions.query({ name: 'geolocation' })).state; } catch { return 'unknown'; }
+}
+
 /** Link to open a point in an external map app, appropriate to the tile region. */
 export function externalMapUrl(lat, lon, name, providerId) {
   if (providerId === 'gaode') {

@@ -1,17 +1,18 @@
 // Secondary screens: menu, transport, lodging, to-do list, links, settings.
-import { D, I, kv, settings, taskState, now, setSimulatedNow, bus, DATA_BASE } from '../store.js';
+import { D, I, settings, setSimulatedNow, DATA_BASE } from '../store.js';
 import { esc, fmtShort, fmtDate, toast, isoDate, cap } from '../util.js';
 import { register, statusBadge, extLink, transportIcon, cat } from '../ui.js';
-import { pendingTasks, taskRow } from './home.js';
 import { tripPhase } from '../tripstate.js';
-import { balances } from './expenses.js';
 
 export function menu() {
   const items = [
+    ['#/tareas', '✅', 'Tareas y sugerencias', 'Pendientes asignables a cada viajero y lo que falta'],
+    ['#/viajeros', '👥', 'Viajeros', 'Quién sos, ubicación del grupo, sincronización'],
+    ['#/lugares', '📍', 'Lugares', 'Agregar, editar e importar lugares de interés'],
     ['#/docs', '🎫', 'Documentos', 'Pasajes, visas, entradas, códigos'],
+    ['#/alojamientos', '🏨', 'Alojamientos', 'Hoteles: agregar, editar, check-in'],
     ['#/transporte', '🚆', 'Transporte', 'Vuelos, trenes y traslados por día'],
-    ['#/alojamientos', '🏨', 'Alojamientos', 'Hoteles, check-in y estado'],
-    ['#/pendientes', '📋', 'Pendientes', 'Reservas y trámites por hacer'],
+    ['#/fotos', '📷', 'Fotos', 'Fotos por día, guardadas en el celular'],
     ['#/itinerario', '🗓️', 'Itinerario completo', 'Todos los días'],
     ['#/enlaces', '🔗', 'Enlaces y fuentes', 'Metros, trámites, fuentes consultadas'],
     ['#/ajustes', '⚙️', 'Ajustes', 'Mapas, fecha de prueba, datos'],
@@ -42,23 +43,20 @@ export function transport() {
 }
 
 export function lodging() {
-  return `<header class="pagehead"><h1>🏨 Alojamientos</h1></header>` + D.lodging.map((l) => `
+  return `<header class="pagehead"><h1>🏨 Alojamientos</h1></header>
+  <div class="row-actions"><button class="btn primary" data-act="lodging-new">＋ Agregar alojamiento</button></div>` + D.lodging.map((l) => `
     <article class="card"><div class="card-head"><h3>${esc(l.name)}</h3>${statusBadge(l.status)}</div>
       <p>${esc(I.city[l.cityId]?.name || '')}${l.area ? ' · ' + esc(l.area) : ''}</p>
-      <p>📅 ${esc(fmtShort(l.checkIn))} → ${esc(fmtShort(l.checkOut))} · ${l.nights} noche${l.nights > 1 ? 's' : ''}${l.checkInTime ? ` · check-in ${esc(l.checkInTime)}` : ''}${l.checkOutTime ? ` · check-out ${esc(l.checkOutTime)}` : ''}</p>
-      ${l.notes ? `<p class="note-line">${esc(l.notes)}</p>` : ''}
+      <p>📅 ${esc(fmtShort(l.checkIn))} → ${esc(fmtShort(l.checkOut))} · ${l.nights} noche${l.nights === 1 ? '' : 's'}${l.checkInTime ? ` · check-in ${esc(l.checkInTime)}` : ''}${l.checkOutTime ? ` · check-out ${esc(l.checkOutTime)}` : ''}</p>
+      ${l.address ? `<p>📫 ${esc(l.address)}</p>` : ''}
       ${l.addressLocal ? `<p class="local">${esc(l.addressLocal)}</p>` : ''}
-      <div class="row-actions"><a class="btn small" href="#/dia/${l.checkInDay}">Día de llegada</a>
+      ${l.confirmation ? `<p>🔑 Reserva: <b>${esc(l.confirmation)}</b></p>` : ''}
+      ${l.notes ? `<p class="note-line">${esc(l.notes)}</p>` : ''}
+      ${l.approx && Number.isFinite(l.lat) ? '<p class="hint">Ubicación aproximada (zona).</p>' : ''}
+      <div class="row-actions"><button class="btn small" data-act="lodging-edit" data-id="${esc(l.id)}">✏️ Editar</button>
+        ${l.checkInDay ? `<a class="btn small" href="#/dia/${l.checkInDay}">Día de llegada</a>` : ''}
+        ${l.addressLocal ? `<button class="btn small" data-act="show-address" data-id="${esc(l.id)}">Mostrar al taxista</button>` : ''}
         ${l.link ? extLink(l.link, 'Sitio del hotel') : ''}</div></article>`).join('');
-}
-
-export function pendientes() {
-  const st = tripPhase();
-  const open = pendingTasks(st.today);
-  const doneList = D.tasks.filter((t) => taskState.get(t) === 'hecho');
-  return `<header class="pagehead"><h1>📋 Pendientes</h1><p class="muted">Reservas, compras y trámites. Marcá los que ya resolviste.</p></header>
-  <section class="card"><ul class="tasks">${open.map(taskRow).join('') || '<li class="muted">¡Todo listo! 🎉</li>'}</ul></section>
-  ${doneList.length ? `<section class="card"><h3>Hechos (${doneList.length})</h3><ul class="tasks done">${doneList.map((t) => `<li class="task"><button class="act-done" data-act="toggle-task" data-id="${esc(t.id)}" aria-pressed="true">✓</button><div><b>${esc(t.title)}</b></div></li>`).join('')}</ul></section>` : ''}`;
 }
 
 export function enlaces() {
@@ -80,6 +78,8 @@ export function ajustes() {
       <option value="auto" ${settings.get('mapProvider', 'auto') === 'auto' ? 'selected' : ''}>Automática (según la ciudad)</option>
       ${Object.entries(D.trip.tileProviders).map(([k, p]) => `<option value="${k}" ${settings.get('mapProvider', 'auto') === k ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></label>
     <p class="hint">En China continental se usa AutoNavi (Gaode), que funciona sin VPN. Fuera de China, OpenStreetMap. Ningún servicio de Google es necesario.</p></section>
+  <section class="card"><h3>👥 Viajeros y sincronización</h3><p class="hint">Quién usa este celular, compartir ubicación y sincronizar con el grupo.</p>
+    <div class="row-actions"><a class="btn small" href="#/viajeros">Abrir Viajeros</a></div></section>
   <section class="card"><h3>💱 Cotizaciones (por 1 ${esc(D.trip.currencies.base)})</h3>
     <p class="hint">${esc(D.trip.currencies.note || '')}</p>
     <form data-submit="save-rates" class="form two">${D.trip.currencies.list.filter((c) => c !== D.trip.currencies.base).map((c) => `<label class="field">${c}<input name="${c}" type="number" step="any" min="0" value="${rates[c]}"></label>`).join('')}
@@ -107,7 +107,6 @@ export async function storageInfo() {
 }
 
 register({
-  'toggle-task': (el, _, app) => { const t = D.tasks.find((x) => x.id === el.dataset.id); taskState.set(t.id, taskState.get(t) === 'hecho' ? 'pendiente' : 'hecho'); app.rerender(); },
   'set-provider': (el) => { settings.set('mapProvider', el.value); toast('Listo'); },
   'save-rates': (form) => {
     const r = {}; new FormData(form).forEach((v, k) => { if (+v > 0) r[k] = +v; });
