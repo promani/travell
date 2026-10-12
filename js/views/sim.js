@@ -1,11 +1,11 @@
 // "Simulate a day": see the whole app as if it were another date/time (countdown, departure day, each day of the trip, after the trip).
 import { D, now, settings, setSimulatedNow } from '../store.js';
-import { esc, ic, openModal, closeModal, toast, isoDate, parseDate, fmtShort, fmtWeekdayShort, cap } from '../util.js';
+import { esc, ic, openModal, closeModal, toast, isoDate, parseDate, fmtShort, fmtWeekdayShort, cap, hhmm as hhmmTz } from '../util.js';
 import { register } from '../ui.js';
-import { tripPhase } from '../tripstate.js';
+import { tripPhase, tzAt, localInstant } from '../tripstate.js';
 
-const pad = (n) => String(n).padStart(2, '0');
-const hhmm = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+// the simulated clock reads and is set in the local time of wherever the traveler is that day
+const hhmm = (d) => hhmmTz(d, tzAt(d));
 const addDays = (iso, n) => { const d = parseDate(iso); d.setDate(d.getDate() + n); return isoDate(d); };
 export const isSimulating = () => !!settings.get('simOffset', 0);
 const TIMES = [['06:00', 'mug-hot', 'Mañana'], ['09:00', 'sun', '9:00'], ['13:00', 'bowl-food', 'Mediodía'], ['18:00', 'cloud-sun', 'Tarde'], ['22:00', 'moon', 'Noche']];
@@ -31,7 +31,6 @@ export function paintSimBar(el) {
 
 // Go to the home screen without a second redraw: changing the simulated clock (main.js listens to it) redraws once.
 const goHome = () => history.replaceState(null, '', '#/inicio');
-const local = (d) => `${isoDate(d)}T${hhmm(d)}`;
 
 register({
   'sim-open': () => {
@@ -51,9 +50,8 @@ register({
     const f = new FormData(form), v = f.get('date'), time = f.get('time') || '09:00';
     const date = v === 'pre' ? addDays(D.days[0].date, -10) : v === 'post' ? addDays(D.days[D.days.length - 1].date, 3) : v;
     closeModal(form); toast('Simulando otro día');
-    goHome(); setSimulatedNow(`${date}T${time}`);
+    goHome(); setSimulatedNow(localInstant(date, time));
   },
-  'sim-step': (el) => { const d = now(); d.setDate(d.getDate() + +el.dataset.n); setSimulatedNow(local(d)); },
+  'sim-step': (el) => { const n = now(), tz = tzAt(n); setSimulatedNow(localInstant(addDays(isoDate(n, tz), +el.dataset.n), hhmmTz(n, tz))); },
   'sim-exit': () => { document.querySelector('dialog[open]')?.close(); setSimulatedNow(null); toast('Volviste a la fecha real'); },
-  'sim-this-day': (el) => { toast('Simulando este día'); goHome(); setSimulatedNow(`${el.dataset.d}T09:00`); },
 });

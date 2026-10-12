@@ -78,7 +78,8 @@ css/app.css           Estilos (mobile first, modo oscuro con prefers-color-schem
 js/
   main.js             Arranque, router por hash, delegación de eventos, reloj
   store.js            Carga de JSON + índices, localStorage, IndexedDB, reloj simulable, bus de eventos
-  tripstate.js        Fase del viaje (antes/durante/después), día actual, actividad actual y siguiente, horarios de salida
+  tripstate.js        Fase del viaje (antes/durante/después), día actual, actividad actual y siguiente, horarios de salida, zona horaria de cada día y hora
+  ics.js              Exportación del viaje a calendario (.ics)
   ui.js               Fragmentos compartidos (badges, filas de actividad, tarjetas de día) y registro de acciones
   sync.js             Sincronización cifrada con el relay, compartir ubicación, link de ubicación
   upload.js           Sube fotos y adjuntos a R2 a través del relay (cola con reintentos)
@@ -91,7 +92,7 @@ js/
   map.js              Envoltorio de Leaflet: proveedor de tiles por región, GCJ-02, marcadores, rutas, precarga
   geo.js              WGS-84 → GCJ-02, GPS compartido, links a apps de mapas
   nearby.js           Selección de "puntos de interés cercanos"
-  util.js             Fechas, formato, escape HTML, toasts, modales
+  util.js             Fechas y zonas horarias, formato, escape HTML, toasts, modales
   views/              Una pantalla por archivo: home, day, mapview, photos, expenses, docs, more,
                       tasks (tareas y sugerencias), people (viajeros, ubicación, sync), places (ABM de lugares),
                       forms (formularios de ABM y selector de ubicación), search (buscador global)

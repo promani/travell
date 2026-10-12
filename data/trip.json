@@ -4,8 +4,7 @@
   "subtitle": "Shanghai · Tokio · Kioto · Pekín",
   "imageService": {
     "base": "https://imgg.unab.dpdns.org/marcell",
-    "ratio": "16:9",
-    "style": "fotografía realista de viaje, luz natural, composición paisajística"
+    "ratio": "16:9"
   },
   "images": {
     "pre": {
@@ -132,6 +131,7 @@
       "id": "buenos-aires",
       "name": "Buenos Aires",
       "country": "Argentina",
+      "tz": "America/Argentina/Buenos_Aires",
       "center": [
         -34.6037,
         -58.3816
@@ -143,6 +143,7 @@
       "id": "shanghai",
       "name": "Shanghai",
       "country": "China",
+      "tz": "Asia/Shanghai",
       "center": [
         31.2304,
         121.4737
@@ -154,6 +155,7 @@
       "id": "suzhou",
       "name": "Suzhou",
       "country": "China",
+      "tz": "Asia/Shanghai",
       "center": [
         31.319,
         120.62
@@ -165,6 +167,7 @@
       "id": "tokyo",
       "name": "Tokio",
       "country": "Japón",
+      "tz": "Asia/Tokyo",
       "center": [
         35.6762,
         139.71
@@ -176,6 +179,7 @@
       "id": "kawaguchiko",
       "name": "Kawaguchiko",
       "country": "Japón",
+      "tz": "Asia/Tokyo",
       "center": [
         35.505,
         138.77
@@ -187,6 +191,7 @@
       "id": "hakone",
       "name": "Hakone",
       "country": "Japón",
+      "tz": "Asia/Tokyo",
       "center": [
         35.23,
         139.03
@@ -198,6 +203,7 @@
       "id": "osaka",
       "name": "Osaka",
       "country": "Japón",
+      "tz": "Asia/Tokyo",
       "center": [
         34.67,
         135.503
@@ -209,6 +215,7 @@
       "id": "kobe",
       "name": "Kobe",
       "country": "Japón",
+      "tz": "Asia/Tokyo",
       "center": [
         34.683,
         135.19
@@ -220,6 +227,7 @@
       "id": "kyoto",
       "name": "Kioto",
       "country": "Japón",
+      "tz": "Asia/Tokyo",
       "center": [
         35.0116,
         135.7681
@@ -231,6 +239,7 @@
       "id": "nara",
       "name": "Nara",
       "country": "Japón",
+      "tz": "Asia/Tokyo",
       "center": [
         34.6851,
         135.833
@@ -242,6 +251,7 @@
       "id": "himeji",
       "name": "Himeji",
       "country": "Japón",
+      "tz": "Asia/Tokyo",
       "center": [
         34.8394,
         134.6939
@@ -253,6 +263,7 @@
       "id": "arima",
       "name": "Arima Onsen",
       "country": "Japón",
+      "tz": "Asia/Tokyo",
       "center": [
         34.7974,
         135.2482
@@ -264,6 +275,7 @@
       "id": "beijing",
       "name": "Pekín",
       "country": "China",
+      "tz": "Asia/Shanghai",
       "center": [
         39.9163,
         116.3972

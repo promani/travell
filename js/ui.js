@@ -103,13 +103,13 @@ export function checklistHtml(card, day) {
 }
 
 export function departureCard(card, day, { hero = false } = {}) {
-  const { t, dep, airport, leave } = departureTimes(card, day);
+  const { t, dep, airport, leave, tz } = departureTimes(card, day);
   const place = card.airportPlaceId ? I.place[card.airportPlaceId] : null;
   const target = leave || airport;
   const cells = [
-    leave && ['Salir de casa', hhmm(leave), ''],
-    airport && [hero ? 'Aeropuerto' : 'Estar en el aeropuerto', hhmm(airport), place && !hero ? place.name.replace(/ \(.*\)/, '') : ''],
-    dep && ['Despega', hhmm(dep), hero ? fmtShort(isoDate(dep)) : `${fmtShort(isoDate(dep))}${t?.service ? ' · ' + t.service : ''}`],
+    leave && ['Salir de casa', hhmm(leave, tz), ''],
+    airport && [hero ? 'Aeropuerto' : 'Estar en el aeropuerto', hhmm(airport, tz), place && !hero ? place.name.replace(/ \(.*\)/, '') : ''],
+    dep && ['Despega', hhmm(dep, tz), hero ? fmtShort(isoDate(dep, tz)) : `${fmtShort(isoDate(dep, tz))}${t?.service ? ' · ' + t.service : ''}`],
   ].filter(Boolean);
   const grid = `<div class="go-grid">${cells.map(([l, v, s]) => `<div><small>${l}</small><b>${v}</b>${s ? `<em>${esc(s)}</em>` : ''}</div>`).join('')}</div>`;
   const count = target ? `<p class="countdown" data-countdown="${target.getTime()}" data-label="${leave ? 'para salir de casa' : 'para llegar al aeropuerto'}"></p>` : '';

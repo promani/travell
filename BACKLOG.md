@@ -37,8 +37,9 @@ Ver lo que ya funciona en [FEATURES.md](FEATURES.md).
 ## P2 — Mejoras del uso diario
 
 ### Zonas horarias
-- [ ] **Zona horaria por ciudad** en `trip.json` y horarios con zona en transportes. Hoy las horas se interpretan en la zona del dispositivo: si el celular no cambió de zona, o en vuelos que cruzan husos, las cuentas regresivas pueden quedar corridas.
-- [ ] Manejar los días de vuelo largo y el cruce de la línea de cambio de fecha (13–14/11).
+- [x] ~~Zona horaria por ciudad~~ y días de vuelo largo: `tz` por ciudad en `trip.json`, día que empieza en la zona de origen y pasa a la de destino con el vuelo.
+- [ ] Cargar `departAt` del vuelo Kansai → Pekín (1/12): sin él, las horas de la mañana de ese día se leen en hora de Pekín (1 h de diferencia).
+- [ ] Vencimiento de tareas con zona: hoy se guarda en la hora del celular que la cargó.
 
 ### Editar desde la app
 Ya hay ABM de lugares, alojamientos, actividades, tareas y viajeros. Falta:

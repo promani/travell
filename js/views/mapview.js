@@ -39,6 +39,7 @@ export function render(params, ctx) {
       <button class="btn small" data-act="map-provider" id="prov-btn">${ic('map')} Mapa: …</button>
       <button class="btn small" data-act="map-add">${ic('plus')} Lugar acá</button>
       <button class="btn small" data-act="map-offline">${ic('download')} Guardar zona offline</button>
+      <a class="btn small" href="#/lugares">${ic('list')} Lugares: editar e importar</a>
     </div>
     <p class="hint" id="map-hint"></p>
     <ul class="nearby big" id="maplist"></ul>

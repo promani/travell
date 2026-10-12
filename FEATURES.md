@@ -2,7 +2,7 @@
 
 Estado: ✅ implementado · 🟡 parcial (ver [BACKLOG.md](BACKLOG.md))
 
-La navegación principal es una barra inferior con **Inicio · Día · Mapa · Tareas · Fotos · Gastos · Más**.
+La navegación principal es una barra inferior con **Inicio · Día · Mapa · Gastos · Más**. Tareas y Fotos están en Más (y se llega desde el inicio y desde cada día); la lista editable de Lugares, desde el Mapa.
 
 ---
 
@@ -26,6 +26,8 @@ En todos los casos hay:
 ## 2. Agenda de viaje ✅
 
 - **Itinerario** (Más → Itinerario): lista de días con fecha, ciudad y resumen. El día actual aparece resaltado.
+- **Exportar al calendario** (Itinerario): un `.ics` con las actividades con horario, las noches de hotel, la hora de salir al aeropuerto (con aviso 30 min antes) y mis tareas con vencimiento. Horarios en UTC y UID estables: reimportarlo actualiza los eventos.
+- **Zonas horarias**: cada ciudad tiene su `tz` (IANA) en `trip.json` y un día puede fijar la suya. Los horarios del JSON son siempre la hora local del lugar, no la del celular. Los días de viaje empiezan en la zona de donde salís y, después del vuelo del día, pasan a la de destino; el día de vuelta termina a la medianoche de casa. La vista de día avisa en qué hora están los horarios cuando no coincide con la del celular.
 - **Vista de día** (`#/dia/dNN`):
   - Tira de días deslizable y flechas de anterior/siguiente.
   - Título, fecha, ciudad, resumen y dónde se duerme.
@@ -170,7 +172,7 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
 
 - Elegir la capa de mapa (automática, OSM o AutoNavi).
 - Editar cotizaciones.
-- **Simulador de día** 🧪: botón 🧪 en el encabezado (y “Simular este día” en cada día) para ver toda la app como si fuera cualquier día y hora del viaje, antes de salir o después de volver. Una barra naranja avisa que se está simulando y permite pasar al día anterior/siguiente, cambiar o salir. Es solo de este celular y no toca los datos.
+- **Simulador de día** 🧪: en Ajustes, para ver toda la app como si fuera cualquier día y hora del viaje, antes de salir o después de volver. Una barra naranja avisa que se está simulando y permite pasar al día anterior/siguiente, cambiar o salir. Usa la hora local de donde vas a estar ese día. Es solo de este celular y no toca los datos.
 - **Mapas offline por ciudad**: descargar los tiles de cada ciudad (o de todas) con progreso y fecha de la última descarga.
 - **Respaldo completo**: exporta e importa todo lo que hay en el celular (fotos, adjuntos, códigos, tareas, lugares, gastos, marcas, checklists). Sirve para cambiar de celular. Al importar, se suma a lo que ya hay.
 - **Cambios sobre el JSON**: lista de registros del itinerario original editados o borrados en la app, con "Restaurar".

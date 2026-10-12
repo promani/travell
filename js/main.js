@@ -42,7 +42,7 @@ const ROUTES = {
   ubicacion: (p) => receiveLocation(p), buscar: (p, c) => search.render(p, c),
   ajustes: (p, c) => { c.after(() => more.storageInfo(c)); return more.ajustes(); },
 };
-const NAV_GROUP = { '': 'inicio', inicio: 'inicio', dia: 'dia', itinerario: 'dia', mapa: 'mapa', lugar: 'mapa', lugares: 'mapa', fotos: 'fotos', gastos: 'gastos', tareas: 'tareas', pendientes: 'tareas' };
+const NAV_GROUP = { '': 'inicio', inicio: 'inicio', dia: 'dia', itinerario: 'dia', mapa: 'mapa', lugar: 'mapa', lugares: 'mapa', gastos: 'gastos' };   // anything else lights up "Más"
 
 /** "#/ubicacion?t=<traveler>&lat=..&lon=..&ts=.." — a location shared by link (works without any server). */
 function receiveLocation(p) {

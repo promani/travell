@@ -30,30 +30,64 @@ export const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
 export const uid = (p = 'x') => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
-// URL of an AI-generated picture: {name, prompt} + trip.imageService {base, ratio, style}.
+// URL of an AI-generated picture: {name, prompt} + trip.imageService {base, ratio}. The prompt only describes the
+// scene: the look of the pictures is up to the image service, never set here.
 export function imgUrl(img, svc) {
   if (!img?.name || !img.prompt || !svc?.base) return '';
   const enc = (s) => encodeURIComponent(s).replace(/['()!*]/g, (c) => '%' + c.charCodeAt(0).toString(16).toUpperCase());
-  const prompt = [img.prompt, svc.style].filter(Boolean).join(', ');
-  return `${svc.base}/${enc(img.name)}.png?prompt=${enc(prompt)}&ratio=${img.ratio || svc.ratio || '16:9'}`;
+  return `${svc.base}/${enc(img.name)}.png?prompt=${enc(img.prompt)}&ratio=${img.ratio || svc.ratio || '16:9'}`;
 }
 
 const pad = (n) => String(n).padStart(2, '0');
 
-/** Local YYYY-MM-DD of a Date. */
-export const isoDate = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-/** Local-midnight Date of a YYYY-MM-DD string. */
+// ------------------------------------------------------------------ time zones
+// Every helper below takes an optional IANA zone ("Asia/Tokyo"). Without one it uses the device's zone, as before.
+const tzFmt = {};
+/** Wall-clock parts of a Date in a zone: { y, mo, d, h, mi }. */
+function wall(date, tz) {
+  if (!tz) return { y: date.getFullYear(), mo: date.getMonth() + 1, d: date.getDate(), h: date.getHours(), mi: date.getMinutes() };
+  tzFmt[tz] ||= new Intl.DateTimeFormat('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' });
+  const p = Object.fromEntries(tzFmt[tz].formatToParts(date).map((x) => [x.type, +x.value]));
+  return { y: p.year, mo: p.month, d: p.day, h: p.hour, mi: p.minute };
+}
+/** Minutes a zone is ahead of UTC at a given instant (Tokyo: 540, Buenos Aires: -180). */
+export function tzOffset(tz, date = new Date()) {
+  const w = wall(date, tz);
+  return Math.round((Date.UTC(w.y, w.mo - 1, w.d, w.h, w.mi) - Math.floor(date.getTime() / 60000) * 60000) / 60000);
+}
+/** "UTC+9", "UTC−3", "UTC+5:30". */
+export function fmtOffset(min) {
+  const a = Math.abs(min);
+  return `UTC${min < 0 ? '−' : '+'}${Math.floor(a / 60)}${a % 60 ? ':' + pad(a % 60) : ''}`;
+}
+export const deviceTz = () => Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+/** YYYY-MM-DD of a Date, on the wall clock of `tz` (device zone by default). */
+export const isoDate = (d, tz) => { const w = wall(d, tz); return `${w.y}-${pad(w.mo)}-${pad(w.d)}`; };
+/** Local-midnight Date of a YYYY-MM-DD string (for calendar math: weekdays, adding days). */
 export const parseDate = (s) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
 /** Whole days from a to b (YYYY-MM-DD strings). */
 export const daysBetween = (a, b) => Math.round((parseDate(b) - parseDate(a)) / 86400000);
-/** Date for a YYYY-MM-DD plus an "HH:MM" string (local). */
-export function at(dateISO, hhmm) {
-  const d = parseDate(dateISO);
+/** The instant when the wall clock of `tz` shows that date and "HH:MM" (device zone by default). */
+export function at(dateISO, hhmm, tz) {
   const m = /^(\d{1,2}):(\d{2})/.exec(hhmm || '');
-  if (m) d.setHours(+m[1], +m[2], 0, 0);
-  return d;
+  const [h, mi] = m ? [+m[1], +m[2]] : [0, 0];
+  if (!tz) { const d = parseDate(dateISO); d.setHours(h, mi, 0, 0); return d; }
+  const [y, mo, d] = dateISO.split('-').map(Number);
+  const guess = Date.UTC(y, mo - 1, d, h, mi);
+  let t = guess - tzOffset(tz, new Date(guess)) * 60000;
+  t = guess - tzOffset(tz, new Date(t)) * 60000;          // second pass: right across a DST change
+  return new Date(t);
 }
-export const hhmm = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+/** "2026-11-18T15:00" (wall clock of `tz`) or "2026-11-18T15:00+08:00" / "…Z" (explicit, `tz` ignored) → Date. */
+export function parseAt(s, tz) {
+  if (!s) return null;
+  if (/(Z|[+-]\d{2}:?\d{2})$/.test(s)) return new Date(s);
+  const [date, time = '00:00'] = s.split('T');
+  return at(date, time, tz);
+}
+/** "HH:MM" of a Date on the wall clock of `tz` (device zone by default). */
+export const hhmm = (d, tz) => { const w = wall(d, tz); return `${pad(w.h)}:${pad(w.mi)}`; };
 
 let LOCALE = 'es-AR';
 export const setLocale = (l) => { LOCALE = l || LOCALE; };

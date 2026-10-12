@@ -1,35 +1,37 @@
 // Secondary screens: menu, transport, lodging, to-do list, links, settings.
-import { D, I, settings, setSimulatedNow, DATA_BASE, kv, cols, bus, overriddenBase } from '../store.js';
+import { D, I, settings, DATA_BASE, kv, cols, bus, overriddenBase } from '../store.js';
 import { exportBackup, importBackup } from '../share.js';
 import { uploads, uploadPending, uploadSoon } from '../upload.js';
 import { tileUrls, prefetchTiles } from '../map.js';
-import { esc, ic, fmtShort, fmtDate, toast, isoDate, cap } from '../util.js';
+import { esc, ic, fmtShort, fmtDate, toast, cap, download } from '../util.js';
 import { register, statusBadge, extLink, transportIcon, cat, bookingSite } from '../ui.js';
 import { tripPhase } from '../tripstate.js';
 import { ticketBox, hasTicket, transportTicket, paintAttachments, freeUrls } from '../ticket.js';
 import { setupCard } from './people.js';
+import { buildIcs } from '../ics.js';
 
 export function menu(_, ctx) {
   ctx.after(() => setupCard(document.getElementById('setup')));
   const items = [
     ['#/tareas', 'square-check', 'Tareas y sugerencias', 'Pendientes asignables a cada viajero y lo que falta'],
+    ['#/fotos', 'camera', 'Fotos', 'Fotos por día, guardadas en el celular'],
     ['#/viajeros', 'users', 'Viajeros', 'Pasaportes, quién sos, ubicación del grupo, sincronización'],
-    ['#/lugares', 'location-dot', 'Lugares', 'Agregar, editar e importar lugares de interés'],
     ['#/docs', 'file-lines', 'Documentos', 'Visas, trámites de entrada, seguro'],
     ['#/recursos', 'book', 'Recursos', 'Enlaces, mapas del metro, guías y apps por ciudad'],
     ['#/cheatsheet', 'language', 'Cheat sheet', 'Frases y kanji útiles en chino y japonés'],
     ['#/alojamientos', 'hotel', 'Alojamientos', 'Hoteles, reservas y check-in'],
     ['#/transporte', 'train', 'Transporte', 'Vuelos y trenes por día, con pasajes y QR'],
-    ['#/fotos', 'camera', 'Fotos', 'Fotos por día, guardadas en el celular'],
-    ['#/itinerario', 'calendar-days', 'Itinerario', 'Todos los días'],
-    ['#/ajustes', 'gear', 'Ajustes', 'Mapas, simulador de fecha, datos'],
+    ['#/itinerario', 'calendar-days', 'Itinerario', 'Todos los días · exportar al calendario'],
+    ['#/ajustes', 'gear', 'Ajustes', 'Mapas offline, cotizaciones, respaldo, simulador'],
   ];
   return `<header class="pagehead"><h1>Más</h1></header><div id="setup"></div><nav class="menu">${items.map(([h, i, t, s]) => `<a href="${h}"><span>${ic(i)}</span><div><b>${t}</b><small>${s}</small></div><em>›</em></a>`).join('')}</nav>`;
 }
 
 export function itinerary() {
   const st = tripPhase();
-  return `<header class="pagehead"><h1>${ic('calendar-days')} Itinerario</h1><p class="muted">${esc(D.trip.title)}</p></header>
+  return `<header class="pagehead"><h1>${ic('calendar-days')} Itinerario</h1><p class="muted">${esc(D.trip.title)}</p>
+    <div class="row-actions"><button class="btn small" data-act="ics-export">${ic('calendar-plus')} Exportar al calendario</button></div>
+    <p class="hint">Un archivo .ics con las actividades con horario, las noches de hotel, la hora de salir al aeropuerto (con aviso) y tus tareas con vencimiento. Volver a importarlo actualiza los eventos en vez de duplicarlos (en Google Calendar, borrá antes el calendario importado).</p></header>
   <ol class="daylist">${D.days.map((d) => `<li class="${st.phase === 'during' && st.day.id === d.id ? 'today' : ''}"><a href="#/dia/${d.id}">
     <span class="n">${d.n}</span><div><b>${esc(d.title)}</b><small>${esc(cap(fmtDate(d.date, { weekday: 'short', day: 'numeric', month: 'short' })))}${d.cityId ? ' · ' + esc(I.city[d.cityId].name) : ''}</small>
     <small class="muted">${esc(d.summary || '')}</small></div></a></li>`).join('')}</ol>`;
@@ -76,27 +78,21 @@ export function lodging(_, ctx) {
 
 export function ajustes() {
   const rates = { ...D.trip.currencies.rates, ...settings.get('rates', {}) };
-  const sim = settings.get('simOffset', 0);
-  const simDate = sim ? new Date(Date.now() + sim) : null;
-  const loc = (d) => `${isoDate(d)}T${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+  const simulating = !!settings.get('simOffset', 0);
   return `<header class="pagehead"><h1>${ic('gear')} Ajustes</h1></header>
   <section class="card"><h3>${ic('map')} Mapa</h3>
     <label class="field">Capa de mapa<select data-change="set-provider">
       <option value="auto" ${settings.get('mapProvider', 'auto') === 'auto' ? 'selected' : ''}>Automática (según la ciudad)</option>
       ${Object.entries(D.trip.tileProviders).map(([k, p]) => `<option value="${k}" ${settings.get('mapProvider', 'auto') === k ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}</select></label>
     <p class="hint">En China continental se usa AutoNavi (Gaode), que funciona sin VPN. Fuera de China, OpenStreetMap. Ningún servicio de Google es necesario.</p></section>
-  <section class="card"><h3>${ic('users')} Viajeros y sincronización</h3><p class="hint">Quién usa este celular, compartir ubicación y sincronizar con el grupo.</p>
-    <div class="row-actions"><a class="btn small" href="#/viajeros">Abrir Viajeros</a></div></section>
   <section class="card"><h3>${ic('money-bill-transfer')} Cotizaciones (por 1 ${esc(D.trip.currencies.base)})</h3>
     <p class="hint">${esc(D.trip.currencies.note || '')}</p>
     <form data-submit="save-rates" class="form two">${D.trip.currencies.list.filter((c) => c !== D.trip.currencies.base).map((c) => `<label class="field">${c}<input name="${c}" type="number" step="any" min="0" value="${rates[c]}"></label>`).join('')}
       <div class="row-actions"><button class="btn primary" type="submit">Guardar</button></div></form></section>
-  <section class="card"><h3>${ic('flask')} Probar con otra fecha</h3>
-    <p class="hint">Simula la fecha y hora para ver cómo se comporta la pantalla de inicio en cada momento del viaje (cuenta regresiva, día de salida, llegada…).</p>
-    <label class="field">Fecha y hora simuladas<input type="datetime-local" id="sim-input" value="${simDate ? loc(simDate) : ''}"></label>
-    <div class="row-actions"><button class="btn primary" data-act="sim-open">${ic('flask')} Simular un día</button><button class="btn" data-act="sim-set">Aplicar fecha de arriba</button><button class="btn" data-act="sim-clear">Volver a la fecha real</button>
-      ${D.days.slice(0, 1).concat(D.days.filter((d) => d.cards.length)).map((d) => `<button class="btn small" data-act="sim-day" data-d="${d.date}">${esc(fmtShort(d.date))}</button>`).join('')}</div>
-    ${simDate ? `<p class="note warn">Fecha simulada activa: ${esc(simDate.toLocaleString('es-AR'))}</p>` : ''}</section>
+  <section class="card"><h3>${ic('flask')} Simular un día</h3>
+    <p class="hint">Mirá toda la app como si fuera otro día y otra hora del viaje (cuenta regresiva, día de salida, llegada, después de volver), en la hora local de donde vas a estar. Es solo de este celular y no toca los datos.</p>
+    <div class="row-actions"><button class="btn primary" data-act="sim-open">${ic('flask')} ${simulating ? 'Cambiar el día simulado' : 'Simular un día'}</button>
+      ${simulating ? '<button class="btn" data-act="sim-exit">Volver a la fecha real</button>' : ''}</div></section>
   <section class="card"><h3>${ic('map')} Mapas offline por ciudad</h3>
     <p class="hint">Descarga las teselas alrededor de los lugares de cada ciudad (zooms 12–15) para usar el mapa sin internet. Hacelo con wifi antes de viajar.</p>
     <ul class="people">${D.trip.cities.filter((c) => D.places.some((p) => p.cityId === c.id)).map((c) => {
@@ -183,14 +179,12 @@ register({
     try { const n = await importBackup(file); toast(`Respaldo importado (${n} fotos/archivos)`); uploadSoon(); app.rerender(); } catch (e) { toast(e.message || 'Archivo inválido'); }
   },
   'restore-one': (el, _, app) => { cols.reset(el.dataset.col, el.dataset.id); toast('Restaurado'); app.rerender(); },
+  'ics-export': () => { download(`${D.trip.id}.ics`, new Blob([buildIcs()], { type: 'text/calendar;charset=utf-8' })); toast('Calendario exportado'); },
   'set-provider': (el) => { settings.set('mapProvider', el.value); toast('Listo'); },
   'save-rates': (form) => {
     const r = {}; new FormData(form).forEach((v, k) => { if (+v > 0) r[k] = +v; });
     settings.set('rates', r); toast('Cotizaciones guardadas');
   },
-  'sim-set': () => { const v = document.getElementById('sim-input').value; if (v) { setSimulatedNow(v); toast('Fecha simulada'); } },
-  'sim-clear': () => { setSimulatedNow(null); toast('Fecha real'); },
-  'sim-day': (el) => { setSimulatedNow(`${el.dataset.d}T09:00`); },
   'upload-now': () => uploadPending(),
   'sw-refresh': async () => {
     const regs = await navigator.serviceWorker?.getRegistrations?.() || [];

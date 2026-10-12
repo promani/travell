@@ -7,7 +7,7 @@ installBrowserStubs();
 const store = await import('../js/store.js');
 const { loadData, D, I, cols, settings, overriddenBase } = store;
 const { suggestions } = await import('../js/suggest.js');
-const { tripPhase } = await import('../js/tripstate.js');
+const { tripPhase, localInstant, activityNow, departureTimes, tzAt, dayClockNote } = await import('../js/tripstate.js');
 await loadData();
 
 test('loads the trip and the extra places file', () => {
@@ -83,7 +83,7 @@ test('every day has its own picture and the URL follows the image service format
     assert.ok(!names.has(d.image.name), `${d.id} repeats image name ${d.image.name}`);
     names.add(d.image.name);
     const u = imgUrl(d.image, svc);
-    assert.ok(u.startsWith(`${svc.base}/${d.image.name}.png?prompt=`) && u.endsWith('&ratio=16:9'), u);
+    assert.equal(u, `${svc.base}/${d.image.name}.png?prompt=${encodeURIComponent(d.image.prompt).replace(/['()!*]/g, (c) => '%' + c.charCodeAt(0).toString(16).toUpperCase())}&ratio=16:9`, 'the prompt is only the scene');
     assert.ok(!/[ '()]/.test(u), `unsafe chars in ${u}`);
   }
   assert.ok(D.trip.images.pre && D.trip.images.post);
@@ -156,10 +156,52 @@ test('phrases: every phrase has Spanish plus script and romanization in a known 
 
 test('simulating a day moves the whole app to that day (and back)', async () => {
   const { setSimulatedNow, now } = store;
-  const check = (iso, phase, dayId) => { setSimulatedNow(iso); const st = tripPhase(); assert.equal(st.phase, phase, iso); if (dayId) assert.equal(st.day.id, dayId, iso); };
+  // dates and times are those of wherever the traveler is that day, not of the machine running the tests
+  const check = (iso, phase, dayId) => { setSimulatedNow(localInstant(...iso.split('T'))); const st = tripPhase(); assert.equal(st.phase, phase, iso); if (dayId) assert.equal(st.day.id, dayId, iso); };
   check('2026-11-02T09:00', 'pre'); check('2026-11-15T09:00', 'during', 'd04'); check('2026-12-02T20:00', 'during', 'd21'); check('2026-12-08T09:00', 'post');
   const { simLabel } = await import('../js/views/sim.js').catch(() => ({}));
-  if (simLabel) { setSimulatedNow('2026-11-15T09:00'); assert.match(simLabel(), /^Día 4 · .* 09:\d\d$/); }
+  if (simLabel) { setSimulatedNow(localInstant('2026-11-15', '09:00')); assert.match(simLabel(), /^Día 4 · .* 09:\d\d$/); }
   setSimulatedNow(null);
   assert.ok(Math.abs(now() - Date.now()) < 1000);
+});
+
+test('time zones: each day runs on the clock of the place where it happens', () => {
+  const { setSimulatedNow } = store;
+  const sim = (utc) => setSimulatedNow(new Date(utc));
+  // 14/11 10:00 in Buenos Aires is already 21:00 in Shanghai: dinner on the day of arrival (d03), not the flight
+  sim('2026-11-14T13:00Z');
+  assert.equal(tripPhase().day.id, 'd03');
+  assert.match(activityNow(I.day.d03).current.title, /cena/i);
+  // Shanghai → Tokyo (d07): the morning is on Chinese time, the evening on Japanese time
+  const d07 = I.day.d07;
+  const { dep, leave, tz } = departureTimes(d07.cards.find((c) => c.type === 'departure'), d07);
+  assert.equal(dep.toISOString(), '2026-11-18T07:00:00.000Z', 'takeoff 15:00 in Shanghai');
+  assert.equal(leave.toISOString(), '2026-11-18T04:00:00.000Z', 'leave the hotel 12:00 in Shanghai');
+  assert.equal(tz, 'Asia/Shanghai');
+  sim('2026-11-18T13:30Z');   // 22:30 in Tokyo
+  assert.equal(tzAt(), 'Asia/Tokyo');
+  assert.match(activityNow(d07).current.title, /Omoide/);
+  assert.match(dayClockNote(d07), /China.*Japón/);
+  // the flight home leaves Shanghai at 01:50 on 5/12 and the trip ends in Buenos Aires
+  const d01 = I.day.d01;
+  assert.equal(departureTimes(d01.cards[0], d01).dep.toISOString(), '2026-11-13T05:00:00.000Z', '02:00 in Buenos Aires');
+  sim('2026-12-05T19:00Z');   // 16:00 in Buenos Aires
+  assert.equal(tripPhase().day.id, 'd24');
+  sim('2026-12-06T04:00Z');   // 01:00 on 6/12 in Buenos Aires
+  assert.equal(tripPhase().phase, 'post');
+  setSimulatedNow(null);
+});
+
+test('calendar export: valid .ics, times in UTC, lines folded', async () => {
+  const { buildIcs } = await import('../js/ics.js');
+  const ics = buildIcs();
+  assert.match(ics, /^BEGIN:VCALENDAR\r\n/);
+  assert.match(ics, /END:VCALENDAR\r\n$/);
+  const events = ics.split('BEGIN:VEVENT').length - 1;
+  assert.ok(events >= D.days.reduce((n, d) => n + d.activities.filter((a) => a.start).length, 0) + D.lodging.length);
+  // the Shanghai → Tokyo flight leaves 15:00 in Shanghai (07:00 UTC) and lands 18:40 in Tokyo (09:40 UTC)
+  assert.match(ics, /DTSTART:20261118T070000Z\r\nDTEND:20261118T094000Z\r\nSUMMARY:Vuelo/);
+  assert.match(ics, /SUMMARY:Salir hacia el aeropuerto/);
+  for (const line of ics.split('\r\n')) assert.ok(new TextEncoder().encode(line).length <= 75, line);
+  assert.equal(new Set(ics.match(/^UID:.*$/gm)).size, events, 'unique UIDs');
 });

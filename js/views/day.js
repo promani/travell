@@ -1,7 +1,7 @@
 import { D, I, done, settings, now } from '../store.js';
 import { hasTicket, transportTicket, ticketCode, paintAttachments, freeUrls } from '../ticket.js';
 import { esc, ic, fmtShort, fmtWeekdayShort, cap } from '../util.js';
-import { tripPhase, activityNow, lodgingOfDay } from '../tripstate.js';
+import { tripPhase, activityNow, lodgingOfDay, dayClockNote } from '../tripstate.js';
 import { heroImg, actRow, renderCards, notesFor, noteHtml, dayLabel, statusBadge, extLink, transportIcon, register, cat, bookingSite } from '../ui.js';
 import { thumbsFor } from './photos.js';
 import { dayTotalText } from './expenses.js';
@@ -61,10 +61,10 @@ export function render({ id }, ctx) {
       ${next ? `<a class="icon-btn" href="#/dia/${next.id}" aria-label="Día siguiente">›</a>` : '<span></span>'}</div>
     <p>${esc(day.summary || '')}</p>
     ${weatherLine(day)}
+    ${dayClockNote(day) ? `<p class="hint">${ic('clock')} ${esc(dayClockNote(day))}</p>` : ''}
     ${day.sleepsAt ? `<p class="hero-sub">${ic('bed')} Dormís en: ${esc(l ? `${l.name}${l.area ? ' (' + l.area + ')' : ''}` : day.sleepsAt)}</p>` : ''}
     <div class="row-actions">${dayPlaces.length ? `<a class="btn small" href="#/mapa?day=${day.id}">${ic('map')} Mapa del día</a>` : ''}
-      <a class="btn small" href="#/fotos?day=${day.id}">${ic('camera')} Fotos</a><a class="btn small" href="#/gastos?day=${day.id}">${ic('money-bill-wave')} Gastos</a>
-      <button class="btn small" data-act="sim-this-day" data-d="${day.date}">${ic('flask')} Simular este día</button></div>
+      <a class="btn small" href="#/fotos?day=${day.id}">${ic('camera')} Fotos</a><a class="btn small" href="#/gastos?day=${day.id}">${ic('money-bill-wave')} Gastos</a></div>
   </header>
 
   ${renderCards(day, ctx)}

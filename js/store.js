@@ -201,8 +201,8 @@ export function now() {
   const off = settings.get('simOffset', 0);
   return new Date(Date.now() + off);
 }
-export function setSimulatedNow(localISO) {      // "2026-11-12T18:00" or null to go back to real time
-  settings.set('simOffset', localISO ? new Date(localISO).getTime() - Date.now() : 0);
+export function setSimulatedNow(when) {      // a Date (see tripstate.localInstant), "2026-11-12T18:00" (device zone) or null for real time
+  settings.set('simOffset', when ? new Date(when).getTime() - Date.now() : 0);
 }
 
 // ------------------------------------------------------------------ small per-device marks

@@ -3,3 +3,4 @@ relay-data/
 .env.*
 !.env.example
 .idea/
+.playwright-mcp/
