@@ -32,7 +32,7 @@
             "Pasaporte (vigencia y fotocopia)",
             "Códigos de pasaje guardados offline",
             "NZeTA / visa de Nueva Zelanda (escala en Auckland)",
-            "Entrada a China confirmada (exención o tránsito 240 h)",
+            "Pasaje de salida de China y reservas de hotel offline (migraciones puede pedirlos)",
             "Alipay / WeChat Pay con tarjeta internacional",
             "eSIM para China",
             "Cargador, power bank y adaptador de enchufe",
@@ -74,7 +74,14 @@
       },
       "sleepsAt": "Avión",
       "lodgingId": null,
-      "cards": [],
+      "cards": [
+        {
+          "type": "info",
+          "icon": "bed",
+          "title": "Para el vuelo largo",
+          "body": "Son ~29 h con la escala técnica en Auckland: en general se queda en la zona de tránsito, pero tené la NZeTA a mano por si la piden. Poné el reloj en hora de China apenas despegues y dormí según ese horario; tomá mucha agua y evitá el alcohol. Llevá abrigo liviano, antifaz, tapones y el cargador en el equipaje de mano. Al cruzar la línea de cambio de fecha se \"pierde\" el 13/11."
+        }
+      ],
       "activities": [
         {
           "id": "A002",
@@ -226,6 +233,12 @@
               "url": "https://www.didiglobal.com/"
             }
           ]
+        },
+        {
+          "type": "info",
+          "icon": "mobile-screen",
+          "title": "Primeras horas en China",
+          "body": "Antes de salir del aeropuerto: probá que la eSIM tenga datos, que Alipay pague (un agua en un kiosco sirve) y abrí Amap o Baidu Maps (Google Maps no anda). Para pedir DiDi, mostrá la dirección del hotel en chino desde el hotel en esta app. No hace falta dar propina en China."
         }
       ],
       "activities": [
@@ -238,7 +251,7 @@
           "category": "traslado",
           "priority": "imperdible",
           "title": "Llegada a Pudong y migraciones",
-          "detail": "Entrada a China (exención de visa o tránsito 240 h, a confirmar). Configurar Alipay/WeChat Pay y eSIM.",
+          "detail": "Entrada a China sin visa (estadía de menos de 10 días). Tené a mano el pasaje de salida y la reserva del hotel. Configurar Alipay/WeChat Pay y eSIM.",
           "area": "Pudong",
           "how": null,
           "cost": null,
@@ -298,7 +311,14 @@
       },
       "sleepsAt": "Shanghai",
       "lodgingId": "l01",
-      "cards": [],
+      "cards": [
+        {
+          "type": "info",
+          "icon": "lightbulb",
+          "title": "Tips para Shanghai",
+          "body": "Los lugares turísticos y museos piden el pasaporte para sacar la entrada: llevalo siempre. En el metro hay control de mochilas. Las luces del Bund se apagan ~22:00 (antes, ~21:30 algunos días): no dejes la vista nocturna para el final. Si llueve: Museo de Shanghai (Plaza del Pueblo) o el Shanghai Tower, que igual vale con nubes bajas."
+        }
+      ],
       "activities": [
         {
           "id": "A006",
@@ -373,11 +393,29 @@
           "placeId": "p-shtower"
         },
         {
+          "id": "A116",
+          "cityId": "shanghai",
+          "slot": "Noche",
+          "start": "18:15",
+          "end": "19:45",
+          "category": "gastronomia",
+          "priority": "recomendado",
+          "title": "Cena shanghainesa (benbang)",
+          "detail": "Cocina local: hongshao rou (cerdo braseado dulce), cangrejo peludo (es temporada en noviembre) y fideos con cebolla de verdeo. Cerca del Bund o de la calle Yunnan.",
+          "area": "Huangpu",
+          "how": "A pie o metro línea 2 desde Lujiazui",
+          "cost": "~¥120–250 por persona (aprox.)",
+          "reservation": null,
+          "status": null,
+          "link": null,
+          "placeId": null
+        },
+        {
           "id": "A010",
           "cityId": "shanghai",
           "slot": "Noche",
-          "start": "18:30",
-          "end": "22:00",
+          "start": "20:00",
+          "end": "22:30",
           "category": "noche",
           "priority": "imperdible",
           "title": "Bund iluminado + bar con vista",
@@ -405,7 +443,14 @@
       },
       "sleepsAt": "Shanghai",
       "lodgingId": "l01",
-      "cards": [],
+      "cards": [
+        {
+          "type": "info",
+          "icon": "umbrella",
+          "title": "Si llueve",
+          "body": "Cambiá la caminata por la Concesión Francesa por el Museo de Shanghai y Xintiandi (techado en parte). Otra opción: los callejones de Tianzifang tienen muchos locales cubiertos y casas de té."
+        }
+      ],
       "activities": [
         {
           "id": "A011",
@@ -462,6 +507,24 @@
           "placeId": "p-shmuseum"
         },
         {
+          "id": "A117",
+          "cityId": "shanghai",
+          "slot": "Noche",
+          "start": "18:30",
+          "end": "20:00",
+          "category": "gastronomia",
+          "priority": "recomendado",
+          "title": "Cena en la Concesión Francesa",
+          "detail": "Hot pot, cocina de Yunnan o shengjian bao (bollitos fritos de sopa, el desayuno-snack típico). Muchos locales se reservan desde Dianping o con el hotel.",
+          "area": "Xuhui",
+          "how": "A pie",
+          "cost": "~¥100–200 por persona (aprox.)",
+          "reservation": null,
+          "status": null,
+          "link": null,
+          "placeId": "p-yongkang"
+        },
+        {
           "id": "A014",
           "cityId": "shanghai",
           "slot": "Noche",
@@ -494,7 +557,14 @@
       },
       "sleepsAt": "Shanghai",
       "lodgingId": "l01",
-      "cards": [],
+      "cards": [
+        {
+          "type": "info",
+          "icon": "ticket",
+          "title": "Para el día en Suzhou",
+          "body": "Los trenes se suben con el pasaporte (no hace falta imprimir nada). Llegá a Hongqiao 30 min antes: hay control de seguridad y de documentos. Las entradas del Jardín del Administrador Humilde y del Museo se reservan con pasaporte y se presentan en la puerta. Si llueve, los jardines se disfrutan igual (y con menos gente); llevá paraguas."
+        }
+      ],
       "activities": [
         {
           "id": "A015",
@@ -549,6 +619,24 @@
           "status": "pendiente",
           "link": null,
           "placeId": "p-szmuseum"
+        },
+        {
+          "id": "A118",
+          "cityId": "suzhou",
+          "slot": "Mediodía",
+          "start": "13:00",
+          "end": "14:00",
+          "category": "gastronomia",
+          "priority": "recomendado",
+          "title": "Almuerzo en Suzhou",
+          "detail": "Pescado \"ardilla\" agridulce (songshu guiyu), el plato emblema de Suzhou, o fideos de Suzhou en caldo. Hay locales en la calle Pingjiang.",
+          "area": "Pingjiang",
+          "how": "A pie",
+          "cost": "~¥60–150 por persona (aprox.)",
+          "reservation": null,
+          "status": null,
+          "link": null,
+          "placeId": "p-pingjiang"
         },
         {
           "id": "A018",
@@ -713,6 +801,12 @@
               "url": "https://www.vjw-lp.digital.go.jp/en/"
             }
           ]
+        },
+        {
+          "type": "info",
+          "icon": "yen-sign",
+          "title": "Antes de dejar China",
+          "body": "Gastá o cambiá los yuanes que te sobren (vas a volver el 1/12, así que podés guardar algo). En Japón: tené el QR de Visit Japan Web listo antes de aterrizar y sacá yenes en un 7-Eleven o un ATM de Japan Post del aeropuerto."
         }
       ],
       "activities": [
@@ -839,7 +933,14 @@
       },
       "sleepsAt": "Tokio",
       "lodgingId": "l02",
-      "cards": [],
+      "cards": [
+        {
+          "type": "info",
+          "icon": "circle-info",
+          "title": "Primer día en Japón",
+          "body": "No se deja propina. En la calle casi no hay tachos: la basura se lleva hasta el hotel o un konbini. En las escaleras mecánicas de Tokio se para a la izquierda. Los konbini (7-Eleven, Lawson, FamilyMart) son el salvavidas: comida, ATM, baño. En templos y santuarios: no fotografiar dentro de los salones, y en el temizu se lavan manos y boca antes de entrar."
+        }
+      ],
       "activities": [
         {
           "id": "A027",
@@ -1000,7 +1101,20 @@
       },
       "sleepsAt": "Tokio",
       "lodgingId": "l02",
-      "cards": [],
+      "cards": [
+        {
+          "type": "info",
+          "icon": "cloud-sun",
+          "title": "Plan B si el Fuji está nublado",
+          "body": "Mirá la webcam o el pronóstico la noche anterior. Si viene cubierto, intercambiá este día con el 21 o el 22 (los trenes reservados se pueden cambiar antes de la salida). Si igual vas y está nublado: el festival de arces y Oshino Hakkai (estanques de agua del Fuji, 20 min en bus) valen sin la montaña.",
+          "links": [
+            {
+              "title": "Webcams del Monte Fuji",
+              "url": "https://www.fujigoko.tv/"
+            }
+          ]
+        }
+      ],
       "activities": [
         {
           "id": "A035",
@@ -1143,7 +1257,14 @@
       },
       "sleepsAt": "Tokio",
       "lodgingId": "l02",
-      "cards": [],
+      "cards": [
+        {
+          "type": "info",
+          "icon": "gamepad",
+          "title": "Para fans del animé",
+          "body": "De noche, en lugar de Shimokitazawa, Nakano Broadway (10 min desde Shinjuku por la línea Chuo): cuatro pisos de manga, figuras y juguetes usados. Muchos locales cierran ~20:00, así que ir antes de cenar."
+        }
+      ],
       "activities": [
         {
           "id": "A042",
@@ -1286,7 +1407,14 @@
       },
       "sleepsAt": "Tokio",
       "lodgingId": "l02",
-      "cards": [],
+      "cards": [
+        {
+          "type": "info",
+          "icon": "suitcase",
+          "title": "Esta noche: valija a Osaka",
+          "body": "Antes de salir a la noche dejá la valija grande lista. Para Hakone llevá un bolso chico con 2 noches de ropa, el yukata lo da el hotel. El envío (takkyubin) se paga en la recepción: ~¥2.000–3.000 por valija (aprox.)."
+        }
+      ],
       "activities": [
         {
           "id": "A049",
@@ -1325,10 +1453,28 @@
           "placeId": "p-uenomuseum"
         },
         {
+          "id": "A119",
+          "cityId": "tokyo",
+          "slot": "Mediodía",
+          "start": "12:45",
+          "end": "13:30",
+          "category": "gastronomia",
+          "priority": "recomendado",
+          "title": "Almuerzo en Akihabara",
+          "detail": "Curry japonés o ramen al paso. Para la experiencia otaku, un maid café (se paga entrada y hay reglas para las fotos).",
+          "area": "Akihabara",
+          "how": "JR Yamanote desde Ueno (~5 min)",
+          "cost": "~¥1.000–2.000 (aprox.)",
+          "reservation": null,
+          "status": null,
+          "link": null,
+          "placeId": "p-akihabara"
+        },
+        {
           "id": "A051",
           "cityId": "tokyo",
           "slot": "Tarde",
-          "start": "13:00",
+          "start": "13:30",
           "end": "17:00",
           "category": "compras",
           "priority": "imperdible",
@@ -1411,7 +1557,14 @@
       },
       "sleepsAt": "Hakone — Hotel Green Plaza",
       "lodgingId": "l03",
-      "cards": [],
+      "cards": [
+        {
+          "type": "info",
+          "icon": "ticket",
+          "title": "Hakone Free Pass",
+          "body": "Cubre el bus, el teleférico, el barco del lago Ashi y el tren de montaña durante 2 o 3 días; el Romancecar se paga aparte (suplemento). Se compra en la app EMot o en Odakyu (Shinjuku). Feriado: llegá con tiempo al andén."
+        }
+      ],
       "activities": [
         {
           "id": "A055",
@@ -1440,7 +1593,7 @@
           "category": "alojamiento",
           "priority": "imperdible",
           "title": "Check-out del hotel de Tokio",
-          "detail": null,
+          "detail": "Revisar que la valija grande haya salido por takkyubin. Si el Romancecar es tarde, dejar el bolso en lockers de la estación de Shinjuku.",
           "area": "Shinjuku",
           "how": null,
           "cost": null,
@@ -1554,7 +1707,14 @@
       },
       "sleepsAt": "Hakone — Hotel Green Plaza",
       "lodgingId": "l03",
-      "cards": [],
+      "cards": [
+        {
+          "type": "info",
+          "icon": "triangle-exclamation",
+          "title": "Plan B si cierra el teleférico",
+          "body": "Si el Owakudani cierra por gases volcánicos o viento, hay bus de Ubako a Togendai y el barco sigue igual. Si llueve fuerte: el Museo al Aire Libre de Hakone (esculturas y pabellón Picasso) y el Museo de Arte Pola, con descuento mostrando el Free Pass, y más tiempo de onsen."
+        }
+      ],
       "activities": [
         {
           "id": "A062",
@@ -1697,7 +1857,14 @@
       },
       "sleepsAt": "Osaka (hotel a reservar; sugerido Namba)",
       "lodgingId": "l04",
-      "cards": [],
+      "cards": [
+        {
+          "type": "info",
+          "icon": "bowl-food",
+          "title": "Qué probar en Osaka",
+          "body": "Osaka es la capital del kuidaore (\"comer hasta caer\"): takoyaki, okonomiyaki, kushikatsu y kitsune udon. Si la valija del takkyubin no llegó, el número de seguimiento está en el recibo que te dieron en Tokio."
+        }
+      ],
       "activities": [
         {
           "id": "A069",
@@ -1772,6 +1939,24 @@
           "placeId": null
         },
         {
+          "id": "A120",
+          "cityId": "osaka",
+          "slot": "Tarde",
+          "start": "15:45",
+          "end": "17:00",
+          "category": "gastronomia",
+          "priority": "opcional",
+          "title": "Mercado Kuromon",
+          "detail": "Puestos de mariscos, wagyu en brochette y frutas, a 10 min a pie de Namba. Muchos cierran ~17:00: ir apenas hagas el check-in.",
+          "area": "Namba",
+          "how": "A pie desde el hotel",
+          "cost": "~¥1.000–3.000 (aprox.)",
+          "reservation": null,
+          "status": null,
+          "link": null,
+          "placeId": "p-e-kuromon"
+        },
+        {
           "id": "A073",
           "cityId": "osaka",
           "slot": "Noche",
@@ -1804,7 +1989,14 @@
       },
       "sleepsAt": "Kobe — Portopia Hotel",
       "lodgingId": "l05",
-      "cards": [],
+      "cards": [
+        {
+          "type": "info",
+          "icon": "heart",
+          "title": "Noche especial",
+          "body": "Para festejar el casamiento: avisá al reservar el teppanyaki que es luna de miel; muchos restaurantes agregan un detalle. Después, el puerto iluminado desde Meriken Park o Harborland."
+        }
+      ],
       "activities": [
         {
           "id": "A074",
@@ -1911,7 +2103,14 @@
       },
       "sleepsAt": "Kobe — Portopia Hotel",
       "lodgingId": "l05",
-      "cards": [],
+      "cards": [
+        {
+          "type": "info",
+          "icon": "leaf",
+          "title": "Kioto en temporada de hojas rojas",
+          "body": "Fines de noviembre es lo más lleno del año: Fushimi Inari y Kiyomizu-dera antes de las 9 o después de las 17. En Kioto el bus va lleno: para moverte entre zonas usá metro, Keihan o caminá. Alternativa con menos gente: Tofuku-ji (arces sobre el puente Tsutenkyo), a una estación de Fushimi Inari."
+        }
+      ],
       "activities": [
         {
           "id": "A079",
@@ -1954,7 +2153,7 @@
           "cityId": "kyoto",
           "slot": "Mediodía",
           "start": "11:30",
-          "end": "14:00",
+          "end": "13:00",
           "category": "cultura",
           "priority": "imperdible",
           "title": "Kiyomizu-dera",
@@ -1966,6 +2165,24 @@
           "status": null,
           "link": null,
           "placeId": "p-kiyomizu"
+        },
+        {
+          "id": "A121",
+          "cityId": "kyoto",
+          "slot": "Mediodía",
+          "start": "13:00",
+          "end": "14:00",
+          "category": "gastronomia",
+          "priority": "recomendado",
+          "title": "Almuerzo en Higashiyama",
+          "detail": "Yudofu (tofu hervido, especialidad de Kioto), soba con nishin o un set de matcha y wagashi en una casa de té de Ninenzaka.",
+          "area": "Higashiyama",
+          "how": "A pie",
+          "cost": "~¥1.500–3.500 (aprox.)",
+          "reservation": null,
+          "status": null,
+          "link": null,
+          "placeId": "p-ninenzaka"
         },
         {
           "id": "A082",
@@ -2029,39 +2246,46 @@
       "date": "2026-11-28",
       "cityId": "nara",
       "title": "Nara",
-      "summary": "Ciervos, Todai-ji, Kasuga Taisha.",
+      "summary": "Sake en Nada, ciervos, Todai-ji, Kasuga Taisha.",
       "image": {
         "name": "d17-nara",
         "prompt": "Ciervos de Nara en un parque otoñal frente a la pagoda y el templo Todai-ji"
       },
       "sleepsAt": "Kobe — Portopia Hotel",
       "lodgingId": "l05",
-      "cards": [],
+      "cards": [
+        {
+          "type": "info",
+          "icon": "circle-info",
+          "title": "Ciervos de Nara",
+          "body": "Las galletas (shika-senbei) se compran en los puestos del parque; los ciervos hacen una reverencia y la devuelven. Pueden morder o empujar si ven comida: no tengas bolsas a la vista y no les des otra cosa."
+        }
+      ],
       "activities": [
         {
-          "id": "A085",
+          "id": "A122",
           "cityId": "nara",
           "slot": "Mañana",
-          "start": "08:30",
-          "end": "09:45",
-          "category": "traslado",
-          "priority": "imperdible",
-          "title": "Kobe → Nara",
-          "detail": "Hanshin/Kintetsu directo Sannomiya → Kintetsu-Nara.",
-          "area": null,
-          "how": "Tren (IC)",
-          "cost": "~¥1.000–1.500 (aprox.)",
+          "start": "09:00",
+          "end": "10:45",
+          "category": "gastronomia",
+          "priority": "recomendado",
+          "title": "Destilerías de sake de Nada",
+          "detail": "Arranque del día en la zona que más sake produce en Japón, de camino a Nara: museos de Kiku-Masamune (Uozaki) y Hakutsuru (Sumiyoshi), gratis y con degustación. Abren ~9:30.",
+          "area": "Higashinada",
+          "how": "Hanshin desde Sannomiya hasta Uozaki (~10 min)",
+          "cost": "Gratis; degustación paga (aprox.)",
           "reservation": null,
           "status": null,
           "link": null,
-          "placeId": "p-narastation"
+          "placeId": "p-nada"
         },
         {
           "id": "A086",
           "cityId": "nara",
-          "slot": "Mañana",
-          "start": "10:00",
-          "end": "12:30",
+          "slot": "Tarde",
+          "start": "13:00",
+          "end": "15:00",
           "category": "cultura",
           "priority": "imperdible",
           "title": "Parque de Nara y Todai-ji",
@@ -2075,15 +2299,51 @@
           "placeId": "p-naratodai"
         },
         {
+          "id": "A085",
+          "cityId": "nara",
+          "slot": "Mañana",
+          "start": "10:45",
+          "end": "12:00",
+          "category": "traslado",
+          "priority": "imperdible",
+          "title": "Kobe → Nara",
+          "detail": "Hanshin/Kintetsu directo hasta Kintetsu-Nara, sin transbordos, con la tarjeta IC.",
+          "area": null,
+          "how": "Hanshin directo desde Uozaki/Sumiyoshi a Kintetsu-Nara (~1 h 10)",
+          "cost": "~¥1.000–1.500 (aprox.)",
+          "reservation": null,
+          "status": null,
+          "link": null,
+          "placeId": "p-narastation"
+        },
+        {
+          "id": "A123",
+          "cityId": "nara",
+          "slot": "Mediodía",
+          "start": "12:00",
+          "end": "13:00",
+          "category": "gastronomia",
+          "priority": "recomendado",
+          "title": "Almuerzo en Nara",
+          "detail": "Kakinoha-zushi (sushi envuelto en hoja de caqui) y de postre los mochi de Nakatanidou, que se machacan a toda velocidad frente a la gente.",
+          "area": "Centro de Nara",
+          "how": "A pie desde Kintetsu-Nara",
+          "cost": "~¥1.500–2.500 (aprox.)",
+          "reservation": null,
+          "status": null,
+          "link": null,
+          "placeId": "p-naralunch"
+        },
+        {
           "id": "A087",
           "cityId": "nara",
           "slot": "Tarde",
-          "start": "13:30",
-          "end": "15:30",
+          "start": "15:00",
+          "end": "17:00",
           "category": "cultura",
           "priority": "recomendado",
           "title": "Kasuga Taisha + Naramachi",
-          "detail": "Santuario de los miles de faroles; después el barrio antiguo de Naramachi.",
+          "detail": "Santuario de los miles de faroles (el área paga cierra temprano en invierno: ir primero ahí); después el barrio antiguo de Naramachi.",
           "area": "Nara",
           "how": "A pie",
           "cost": "~¥500 (aprox.)",
@@ -2096,7 +2356,7 @@
           "id": "A088",
           "cityId": "kobe",
           "slot": "Noche",
-          "start": "18:00",
+          "start": "18:30",
           "end": "22:00",
           "category": "noche",
           "priority": "opcional",
@@ -2125,7 +2385,14 @@
       },
       "sleepsAt": "Kobe — Portopia Hotel",
       "lodgingId": "l05",
-      "cards": [],
+      "cards": [
+        {
+          "type": "info",
+          "icon": "hot-tub-person",
+          "title": "Arima Onsen",
+          "body": "Kin-no-yu (agua dorada, rojiza por el hierro) y Gin-no-yu (agua clara) son baños públicos: llevá toalla chica o comprala ahí. Hay un pase para los dos más barato que por separado. Probá las tansan senbei (galletas hechas con agua gasificada del pueblo)."
+        }
+      ],
       "activities": [
         {
           "id": "A089",
@@ -2182,6 +2449,42 @@
           "placeId": "p-kokoen"
         },
         {
+          "id": "A124",
+          "cityId": "himeji",
+          "slot": "Mediodía",
+          "start": "13:00",
+          "end": "13:45",
+          "category": "gastronomia",
+          "priority": "recomendado",
+          "title": "Almuerzo en Himeji",
+          "detail": "Anago (anguila de mar) sobre arroz o la oden de Himeji con salsa de jengibre, en la avenida que baja del castillo a la estación.",
+          "area": "Himeji",
+          "how": "A pie hacia la estación",
+          "cost": "~¥1.500–3.000 (aprox.)",
+          "reservation": null,
+          "status": null,
+          "link": null,
+          "placeId": "p-himejistation"
+        },
+        {
+          "id": "A125",
+          "cityId": "himeji",
+          "slot": "Tarde",
+          "start": "13:45",
+          "end": "15:00",
+          "category": "traslado",
+          "priority": "imperdible",
+          "title": "Himeji → Arima Onsen",
+          "detail": "JR Special Rapid hasta Sannomiya (~40 min) y bus directo a Arima (~30 min), o metro a Tanigami + Kobe Electric Railway.",
+          "area": null,
+          "how": "JR + bus",
+          "cost": "~¥1.000 + ~¥700 (aprox.)",
+          "reservation": null,
+          "status": null,
+          "link": null,
+          "placeId": "p-arima"
+        },
+        {
           "id": "A092",
           "cityId": "arima",
           "slot": "Tarde",
@@ -2214,7 +2517,14 @@
       },
       "sleepsAt": "Kobe — Portopia Hotel (noche a extender)",
       "lodgingId": "l06",
-      "cards": [],
+      "cards": [
+        {
+          "type": "info",
+          "icon": "clock",
+          "title": "Orden del día",
+          "body": "Arashiyama a las 7:30 es otro lugar: después de las 10 se llena. Del bambú al Kinkaku-ji, bus 11 o taxi (~25 min, conviene entre 3). Último día en Japón: aprovechá para gastar los yenes en Nishiki y comprar dulces de regalo (yatsuhashi)."
+        }
+      ],
       "activities": [
         {
           "id": "A093",
@@ -2229,6 +2539,24 @@
           "area": "Arashiyama",
           "how": "JR a Kioto + JR Sagano Line a Saga-Arashiyama (~1 h 15 total)",
           "cost": "Tenryu-ji ~¥500 (aprox.)",
+          "reservation": null,
+          "status": null,
+          "link": null,
+          "placeId": "p-arashiyama"
+        },
+        {
+          "id": "A126",
+          "cityId": "kyoto",
+          "slot": "Mañana",
+          "start": "10:30",
+          "end": "11:30",
+          "category": "gastronomia",
+          "priority": "recomendado",
+          "title": "Almuerzo temprano en Arashiyama",
+          "detail": "Yudofu o shojin ryori (cocina vegetariana budista) junto al Tenryu-ji; o croquetas y matcha soft serve en la calle principal.",
+          "area": "Arashiyama",
+          "how": "A pie",
+          "cost": "~¥1.500–4.000 (aprox.)",
           "reservation": null,
           "status": null,
           "link": null,
@@ -2278,15 +2606,15 @@
           "end": "22:00",
           "category": "gastronomia",
           "priority": "recomendado",
-          "title": "Última cena en Kobe + armar valijas",
-          "detail": null,
-          "area": "Kobe",
-          "how": "Tren",
+          "title": "Última cena juntos: despedida de Facundo",
+          "detail": "Última noche de los tres antes de que Facundo vuelva a Inglaterra. Izakaya con sake de Nada en Sannomiya o Motomachi, y armar valijas.",
+          "area": "Sannomiya",
+          "how": "Port Liner a Sannomiya",
           "cost": null,
           "reservation": null,
           "status": null,
           "link": null,
-          "placeId": null
+          "placeId": "p-sannomiya"
         }
       ]
     },
@@ -2309,7 +2637,7 @@
           "icon": "plane-arrival",
           "title": "Llegada a Pekín",
           "cityId": "beijing",
-          "intro": "Segunda entrada a China (migraciones de nuevo). Tené a mano pasaje de salida y reserva del hotel. Alipay/WeChat Pay y eSIM de nuevo en uso.",
+          "intro": "Segunda entrada a China, sin visa: el plazo de menos de 10 días arranca de nuevo. Tené a mano el pasaje de salida y la reserva del hotel. Alipay/WeChat Pay y eSIM de nuevo en uso.",
           "options": [
             {
               "icon": "train-subway",
@@ -2371,6 +2699,12 @@
               "url": "https://en.wikipedia.org/wiki/Beijing_Subway"
             }
           ]
+        },
+        {
+          "type": "info",
+          "icon": "people-arrows",
+          "title": "Hoy se separa el grupo",
+          "body": "Facundo vuelve a Inglaterra; Pehuén y Sole siguen a Pekín. Antes de despedirse: liquidar los gastos compartidos en la app (Gastos → saldos)."
         }
       ],
       "activities": [
@@ -2419,7 +2753,7 @@
           "category": "traslado",
           "priority": "imperdible",
           "title": "Aeropuerto → hotel",
-          "detail": "Entrada a China (segunda). Airport Express + metro o DiDi.",
+          "detail": "Segunda entrada a China, sin visa (el plazo de menos de 10 días arranca de nuevo). Airport Express + metro o DiDi.",
           "area": null,
           "how": "Metro / DiDi",
           "cost": "~¥25 metro / ~¥120–150 taxi (aprox.)",
@@ -2461,7 +2795,14 @@
       },
       "sleepsAt": "Pekín",
       "lodgingId": "l07",
-      "cards": [],
+      "cards": [
+        {
+          "type": "info",
+          "icon": "temperature-low",
+          "title": "Frío en la Muralla",
+          "body": "En diciembre amanece bajo cero y arriba sopla viento: capas, gorro, guantes y calzado con suela que agarre. El tobogán no funciona con lluvia, nieve o viento fuerte; en ese caso se baja en teleférico. Llevá agua y algo para comer: arriba hay poco."
+        }
+      ],
       "activities": [
         {
           "id": "A101",
@@ -2550,7 +2891,14 @@
       },
       "sleepsAt": "Pekín",
       "lodgingId": "l07",
-      "cards": [],
+      "cards": [
+        {
+          "type": "info",
+          "icon": "id-card",
+          "title": "Controles en Pekín",
+          "body": "Para Tiananmen y la Ciudad Prohibida hace falta el pasaporte original (el mismo con el que se reservó); no se aceptan copias. Llevá poco: hay control de seguridad y no se pueden entrar encendedores. La Ciudad Prohibida se recorre de sur a norte y sale frente a Jingshan."
+        }
+      ],
       "activities": [
         {
           "id": "A105",
@@ -2605,6 +2953,24 @@
           "status": null,
           "link": null,
           "placeId": "p-jingshan"
+        },
+        {
+          "id": "A127",
+          "cityId": "beijing",
+          "slot": "Mediodía",
+          "start": "13:45",
+          "end": "14:30",
+          "category": "gastronomia",
+          "priority": "recomendado",
+          "title": "Almuerzo: zhajiangmian",
+          "detail": "Fideos con salsa de soja fermentada y cerdo, el almuerzo clásico de Pekín, o jiaozi (empanaditas hervidas).",
+          "area": "Jingshan / Shichahai",
+          "how": "A pie",
+          "cost": "~¥40–80 (aprox.)",
+          "reservation": null,
+          "status": null,
+          "link": null,
+          "placeId": "p-nanluo"
         },
         {
           "id": "A108",
@@ -2671,6 +3037,12 @@
             "pasaje"
           ],
           "checklist": []
+        },
+        {
+          "type": "info",
+          "icon": "yen-sign",
+          "title": "Antes de salir de China",
+          "body": "Al salir de China hay migraciones y control de seguridad: llegá ~3 h antes. Gastá los yuanes que queden (en el aeropuerto todo acepta Alipay). En el vuelo nacional a Pudong, las baterías externas van en el equipaje de mano y tienen que tener la marca CCC (3C) visible: si no, las retienen."
         }
       ],
       "activities": [
@@ -2719,7 +3091,7 @@
           "category": "alojamiento",
           "priority": "imperdible",
           "title": "Check-out y salida al aeropuerto",
-          "detail": null,
+          "detail": "Check-out ~12:00; taxi/DiDi al aeropuerto (~40 min) o Airport Express. Vuelo nacional: igual llegá con 2 h.",
           "area": null,
           "how": "Airport Express / DiDi",
           "cost": null,
@@ -2745,6 +3117,24 @@
           "status": "pendiente",
           "link": null,
           "placeId": "p-pek"
+        },
+        {
+          "id": "A128",
+          "cityId": "beijing",
+          "slot": "Noche",
+          "start": "17:45",
+          "end": "22:00",
+          "category": "gastronomia",
+          "priority": "opcional",
+          "title": "Espera en Pudong: cena y descanso",
+          "detail": "Llegás en vuelo nacional, sin migraciones. Opción tranquila: dejar valijas en la guardería de equipaje, cenar en el aeropuerto y descansar. Opción aventura: valijas guardadas y metro línea 2 a Lujiazui (~50 min) para una última vista del skyline, volviendo antes de las 21:30.",
+          "area": "Pudong",
+          "how": "En el aeropuerto o metro línea 2",
+          "cost": "Variable",
+          "reservation": null,
+          "status": null,
+          "link": null,
+          "placeId": "p-pvg"
         },
         {
           "id": "A114",
@@ -2779,7 +3169,14 @@
       },
       "sleepsAt": "Avión",
       "lodgingId": null,
-      "cards": [],
+      "cards": [
+        {
+          "type": "info",
+          "icon": "house",
+          "title": "Llegando a casa",
+          "body": "Desde Ezeiza: remís o taxi oficial dentro del aeropuerto. Para el jet lag, tratá de no dormir siesta larga el día que llegás. En la app: subí las fotos que falten y cerrá los gastos del viaje."
+        }
+      ],
       "activities": [
         {
           "id": "A115",

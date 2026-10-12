@@ -82,7 +82,6 @@ Todo está anclado a días (`"day": "d03"`). `?data=trips/otro` carga otra carpe
 
 ## Cosas a completar / revisar
 - Códigos de reserva, QR y adjuntos: cargarlos en la app, en el pasaje, la entrada o el hotel (o `code` en `transport.json` / `documents.json`).
-- Viajeros: `travelers.json` trae "Yo" y "Viajero 2" de ejemplo (se editan en la app).
 - Cotizaciones de `trip.json` y de Ajustes son de ejemplo.
 - Coordenadas con `"approx": true` (hoteles por reservar, algunos lugares y las "sugerencias") son aproximadas.
 - Las descargas offline de mapa usan servidores públicos de tiles: usalas con moderación.

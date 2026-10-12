@@ -13,7 +13,7 @@ await loadData();
 test('loads the trip and the extra places file', () => {
   assert.equal(D.days.length, 24);
   assert.ok(I.place['p-bund'] && I.place['p-e-skytree'], 'places.json + places-extra.json');
-  assert.equal(D.days.reduce((n, d) => n + d.activities.length, 0), 115);
+  assert.equal(D.days.reduce((n, d) => n + d.activities.length, 0), 128);
 });
 
 test('every night that is not on a plane has a lodging', () => {
@@ -100,13 +100,13 @@ test('passports: validity against the end of the trip and the "missing passport"
   assert.equal(passportStatus({ number: 'AAA1', expires: '2026-12-01' }, end).level, 'expired');
   assert.equal(passportStatus({ number: 'AAA1', expires: '2027-03-01' }, end).level, 'short');
   assert.equal(passportStatus({ number: 'AAA1', expires: '2027-06-05' }, end).level, 'ok');
-  assert.ok(suggestions().some((s) => s.key === 'passport:yo'), 'no passport yet → suggestion');
-  cols.put('passports', { id: 'yo', number: 'AAA123456', expires: '2030-01-01' });
-  assert.equal(passportOf('yo').number, 'AAA123456');
-  assert.ok(!suggestions().some((s) => s.key === 'passport:yo'));
+  assert.ok(suggestions().some((s) => s.key === 'passport:pehuen'), 'no passport yet → suggestion');
+  cols.put('passports', { id: 'pehuen', number: 'AAA123456', expires: '2030-01-01' });
+  assert.equal(passportOf('pehuen').number, 'AAA123456');
+  assert.ok(!suggestions().some((s) => s.key === 'passport:pehuen'));
   assert.ok(store.cols.list('passports').length === 1 && (await import('../js/sync.js')).SYNCED.includes('passports'), 'passports travel with the group sync');
-  cols.del('passports', 'yo');
-  assert.equal(passportOf('yo'), null);
+  cols.del('passports', 'pehuen');
+  assert.equal(passportOf('pehuen'), null);
 });
 
 test('resources: seeded metro maps point to real cities, can be added, edited and deleted', () => {

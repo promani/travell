@@ -1,21 +1,5 @@
 [
   {
-    "id": "k01",
-    "title": "Confirmar entrada a China sin visa (o tránsito 240 h) con la Embajada",
-    "when": "Ya",
-    "dueAt": null,
-    "urgent": true,
-    "day": "d03",
-    "status": "pendiente",
-    "notes": "Dos entradas: 14/11 por Shanghai y 1/12 por Pekín.",
-    "assignee": null,
-    "priority": "alta",
-    "covers": [
-      "doc:doc05"
-    ],
-    "source": "json"
-  },
-  {
     "id": "k02",
     "title": "Vuelo Kansai → Pekín (1/12)",
     "when": "Ya",

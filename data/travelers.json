@@ -1,12 +1,17 @@
 [
   {
-    "id": "yo",
-    "name": "Yo",
+    "id": "pehuen",
+    "name": "Pehuén",
     "color": "#1c7ed6"
   },
   {
-    "id": "v2",
-    "name": "Viajero 2",
+    "id": "sole",
+    "name": "Sole",
     "color": "#e8590c"
+  },
+  {
+    "id": "facundo",
+    "name": "Facundo",
+    "color": "#2f9e44"
   }
 ]

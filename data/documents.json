@@ -17,15 +17,15 @@
     "id": "doc05",
     "type": "visa",
     "title": "Entrada a China",
-    "subtitle": "Exención de visa o tránsito sin visa 240 h",
+    "subtitle": "Sin visa: estadías de menos de 10 días",
     "day": "d03",
     "codeLabel": null,
     "code": "",
     "file": null,
-    "url": "https://english.www.gov.cn/news/202505/15/content_WS6825a468c6d0868f4e8f2912.html",
-    "status": "pendiente",
-    "pin": true,
-    "notes": "Dos entradas: 14/11 por Shanghai y 1/12 por Pekín. Confirmar con la Embajada."
+    "url": null,
+    "status": null,
+    "pin": false,
+    "notes": "Sin visa: hasta el 31/12/2026 se entra a China sin visa por estadías de menos de 10 días, y el plazo se reinicia con cada entrada. Dos entradas: 14/11 por Shanghai (sale 18/11) y 1/12 por Pekín (sale 5/12). Tené a mano el pasaje de salida y la reserva del hotel; la tarjeta de llegada se completa en el aeropuerto."
   },
   {
     "id": "doc06",

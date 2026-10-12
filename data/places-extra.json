@@ -125,7 +125,9 @@
     "cost": null,
     "link": null,
     "source": "extra",
-    "days": []
+    "days": [
+      "d14"
+    ]
   },
   {
     "id": "p-e-ginkakuji",

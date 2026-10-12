@@ -27,7 +27,7 @@
     "lon": 121.8083,
     "approx": false,
     "area": "Pudong",
-    "description": "Entrada a China (exención de visa o tránsito 240 h, a confirmar). Configurar Alipay/WeChat Pay y eSIM.",
+    "description": "Entrada a China sin visa (estadía de menos de 10 días). Configurar Alipay/WeChat Pay y eSIM.",
     "cost": null,
     "link": null,
     "source": "itinerario",
@@ -1344,7 +1344,7 @@
     "lon": 116.6031,
     "approx": false,
     "area": null,
-    "description": "Entrada a China (segunda). Airport Express + metro o DiDi.",
+    "description": "Segunda entrada a China, sin visa (el plazo de menos de 10 días arranca de nuevo). Airport Express + metro o DiDi.",
     "cost": "~¥25 metro / ~¥120–150 taxi (aprox.)",
     "link": null,
     "source": "itinerario",
@@ -1612,5 +1612,41 @@
     "link": null,
     "source": "sugerencia",
     "days": []
+  },
+  {
+    "id": "p-nada",
+    "name": "Destilerías de sake de Nada (Nada Gogo)",
+    "nameLocal": "灘五郷",
+    "cityId": "kobe",
+    "category": "gastronomia",
+    "lat": 34.7135,
+    "lon": 135.2668,
+    "approx": true,
+    "area": "Higashinada (Sumiyoshi / Uozaki)",
+    "description": "La zona que más sake produce en Japón. Museos gratis de Hakutsuru (Sumiyoshi) y Kiku-Masamune (Uozaki) con degustación; abren ~9:30–16:30.",
+    "cost": "Gratis; degustaciones pagas desde ~¥300 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d17"
+    ]
+  },
+  {
+    "id": "p-naralunch",
+    "name": "Calle Sanjo-dori (almuerzo en Nara)",
+    "nameLocal": "三条通り",
+    "cityId": "nara",
+    "category": "gastronomia",
+    "lat": 34.6815,
+    "lon": 135.8285,
+    "approx": true,
+    "area": "Centro de Nara",
+    "description": "Kakinoha-zushi (sushi envuelto en hoja de caqui) y los mochi de Nakatanidou, famosos por machacarlos a toda velocidad.",
+    "cost": "~¥1.500–2.500 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "days": [
+      "d17"
+    ]
   }
 ]

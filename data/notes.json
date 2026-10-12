@@ -1,14 +1,14 @@
 [
   {
     "id": "n01",
-    "title": "Visa China",
-    "detail": "La exención de 30 días para argentinos se anunció hasta el 31/5/2026; no encontré confirmación de prórroga. Plan B: tránsito sin visa de 240 h (ambas entradas < 10 días con destino a tercer país). Confirmar con la Embajada.",
-    "level": "warn",
+    "title": "Entrada a China sin visa",
+    "detail": "Sin visa: hasta el 31/12/2026 se entra a China sin visa por estadías de menos de 10 días, y el plazo se reinicia con cada entrada. Las dos entradas de este viaje (14/11 por Shanghai y 1/12 por Pekín) duran menos de 10 días. En migraciones pueden pedir el pasaje de salida y la reserva del hotel: tenelos offline.",
+    "level": "info",
     "days": [
       "d03",
       "d20"
     ],
-    "global": true
+    "global": false
   },
   {
     "id": "n02",
