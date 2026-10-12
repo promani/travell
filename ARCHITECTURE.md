@@ -80,6 +80,7 @@ js/
   store.js            Carga de JSON + índices, localStorage, IndexedDB, reloj simulable, bus de eventos
   tripstate.js        Fase del viaje (antes/durante/después), día actual, actividad actual y siguiente, horarios de salida, zona horaria de cada día y hora
   ics.js              Exportación del viaje a calendario (.ics)
+  guess.js            Sugerencias a partir de una confirmación compartida: código de reserva y a qué reserva pertenece
   ui.js               Fragmentos compartidos (badges, filas de actividad, tarjetas de día) y registro de acciones
   sync.js             Sincronización cifrada con el relay, compartir ubicación, link de ubicación
   upload.js           Sube fotos y adjuntos a R2 a través del relay (cola con reintentos)
@@ -95,8 +96,10 @@ js/
   util.js             Fechas y zonas horarias, formato, escape HTML, toasts, modales
   views/              Una pantalla por archivo: home, day, mapview, photos, expenses, docs, more,
                       tasks (tareas y sugerencias), people (viajeros, ubicación, sync), places (ABM de lugares),
-                      forms (formularios de ABM y selector de ubicación), search (buscador global)
-server/relay.mjs      Relay opcional (Node, sin dependencias); con SERVE_STATIC también sirve la app y GET /v1/weather
+                      forms (formularios de ABM y selector de ubicación), search (buscador global),
+                      inbox (lo compartido a la app: bandeja en Cache Storage que llena sw.js desde el share_target)
+server/relay.mjs      Relay opcional (Node, sin dependencias); con SERVE_STATIC también sirve la app, GET /v1/weather y
+                      redirige POST /share a #/compartido si todavía no hay service worker
 server/r2.mjs         Cliente mínimo de Cloudflare R2 (API S3, firma SigV4) para subir, leer y borrar archivos
 server/weather.mjs    Clima diario desde Open-Meteo (pronóstico o clima típico), guardado en Redis o en un archivo
 server/redis.mjs      Cliente Redis mínimo (RESP, sin dependencias)

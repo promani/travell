@@ -15,6 +15,7 @@ export function menu(_, ctx) {
   const items = [
     ['#/tareas', 'square-check', 'Tareas y sugerencias', 'Pendientes asignables a cada viajero y lo que falta'],
     ['#/fotos', 'camera', 'Fotos', 'Fotos por día, guardadas en el celular'],
+    ['#/compartido', 'inbox', 'Compartido', 'Confirmaciones y PDFs compartidos a la app, para guardar donde van'],
     ['#/viajeros', 'users', 'Viajeros', 'Pasaportes, quién sos, ubicación del grupo, sincronización'],
     ['#/docs', 'file-lines', 'Documentos', 'Visas, trámites de entrada, seguro'],
     ['#/recursos', 'book', 'Recursos', 'Enlaces, mapas del metro, guías y apps por ciudad'],
@@ -189,7 +190,7 @@ register({
   'sw-refresh': async () => {
     const regs = await navigator.serviceWorker?.getRegistrations?.() || [];
     for (const r of regs) await r.update();
-    for (const k of await caches.keys()) if (!k.includes('tiles')) await caches.delete(k);
+    for (const k of await caches.keys()) if (!k.includes('tiles') && k !== 'travell-inbox') await caches.delete(k);   // keep maps and what was shared
     toast('Actualizando…'); setTimeout(() => location.reload(), 600);
   },
   wipe: async () => {

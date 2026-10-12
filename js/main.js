@@ -18,6 +18,7 @@ import * as phrases from './views/phrases.js';
 import './views/passports.js';
 import { ticketActions, migrateDocuments } from './ticket.js';
 import * as resources from './views/resources.js';
+import * as inbox from './views/inbox.js';
 import { paintSimBar } from './views/sim.js';
 import './views/forms.js';
 import { startSync } from './sync.js';
@@ -38,7 +39,7 @@ const ROUTES = {
   tareas: (p, c) => tasks.render(p, c), pendientes: (p, c) => tasks.render(p, c),
   viajeros: (p, c) => people.render(p, c), lugares: (p, c) => places.render(p, c),
   pasaportes: () => { setTimeout(() => location.replace('#/viajeros'), 0); return ''; },   // passports are now part of each traveler
-  recursos: (p, c) => resources.render(p, c),
+  recursos: (p, c) => resources.render(p, c), compartido: (p, c) => inbox.render(p, c),
   ubicacion: (p) => receiveLocation(p), buscar: (p, c) => search.render(p, c),
   ajustes: (p, c) => { c.after(() => more.storageInfo(c)); return more.ajustes(); },
 };

@@ -205,3 +205,16 @@ test('calendar export: valid .ics, times in UTC, lines folded', async () => {
   for (const line of ics.split('\r\n')) assert.ok(new TextEncoder().encode(line).length <= 75, line);
   assert.equal(new Set(ics.match(/^UID:.*$/gm)).size, events, 'unique UIDs');
 });
+
+test('shared confirmations: booking code and destination are guessed from the text', async () => {
+  const { guessCode, guessTarget } = await import('../js/guess.js');
+  assert.equal(guessCode('Tu código de reserva: qx7p2l\nVuelo MU746'), 'QX7P2L');
+  assert.equal(guessCode('Booking confirmation 4821937655'), '', 'only digits: not a PNR');
+  assert.equal(guessCode('Hola, gracias por tu compra'), '');
+  const groups = [['Pasajes', D.transport.map((t) => [`transport:${t.id}`, t.route, `${t.route} ${t.service || ''}`])],
+    ['Alojamientos', D.lodging.map((l) => [`lodging:${l.id}`, l.name, `${l.name} ${l.area || ''}`])]];
+  const t01 = I.transport.t01;
+  assert.equal(guessTarget({ title: 'Your e-ticket', text: `${t01.service} ${t01.route}`, url: '', files: [] }, groups), 'transport:t01');
+  assert.equal(guessTarget({ title: 'Reserva confirmada', text: `Gracias por reservar en ${D.lodging[0].name}`, url: '', files: [] }, groups), `lodging:${D.lodging[0].id}`);
+  assert.equal(guessTarget({ title: 'Hola', text: 'nada que ver', url: '', files: [] }, groups), '');
+});

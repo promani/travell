@@ -196,6 +196,14 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
 - Tocar una frase la muestra en grande para mostrársela a alguien; 🔊 la lee con la voz del celular. Incluye los números de emergencia de cada país. También aparecen en el buscador.
 - Se agregan, editan y borran desde la app; en cada día aparecen los de su ciudad.
 
+## 20. Compartir a la app: confirmaciones ✅
+
+- **Android** (con la app instalada): Travell aparece en el menú *Compartir* de Gmail, el visor de PDF, la galería, etc. Recibe texto, link y archivos (PDF, capturas, `.eml`). El service worker los guarda en una bandeja (`travell-inbox`) y abre **Más → Compartido** (`#/compartido`).
+- **iPhone o compu** (Safari no soporta recibir lo compartido): en la misma pantalla se pega el texto del mail, un link o se eligen archivos. También desde Documentos → "Cargar desde una confirmación".
+- Por cada cosa recibida la app **sugiere** el código de reserva (por ejemplo después de "código de reserva", "localizador", "PNR") y a qué pasaje, hotel, entrada o documento corresponde (vuelo, nombre del hotel). Todo se revisa antes de guardar.
+- Al guardar: el código y el link van a la reserva elegida (en hoteles, a `confirmation` y al link de la reserva), los archivos quedan adjuntos (offline y subidos a la nube). También puede ir a un **recurso nuevo**.
+- Hoy la lectura es por reglas simples; el paso siguiente es leer la confirmación con IA (ver backlog).
+
 ## 19. Multiviaje 🟡
 
 - La app es genérica: el viaje se define en `data/*.json` y `?data=carpeta` carga otro.

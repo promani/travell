@@ -114,6 +114,8 @@ const server = http.createServer((req, res) => {
   }
   const m = /^\/v1\/([^/]+)\/records$/.exec(url.pathname);
   if (!m && STATIC && (req.method === 'GET' || req.method === 'HEAD') && serveStatic(req, res, url.pathname)) return;
+  // share target with no service worker yet (the app's sw.js normally answers this POST): open the inbox screen
+  if (STATIC && req.method === 'POST' && url.pathname === '/share') { req.resume(); res.writeHead(303, { location: '/index.html#/compartido' }); return res.end(); }
   if (!m || !GID.test(m[1])) return send(res, 404, { error: 'not found' });
   const g = load(m[1]);
 

@@ -62,6 +62,9 @@ Ya hay ABM de lugares, alojamientos, actividades, tareas y viajeros. Falta:
 - [ ] Más **reglas de sugerencias**: vuelos sin hora confirmada, días sin actividades, actividades fuera del horario de apertura, conexiones ajustadas entre transportes.
 
 ### Documentos
+- [x] ~~Compartir confirmaciones a la app~~ (share target en Android, pegar en iPhone): Más → Compartido.
+- [ ] **Leer la confirmación con IA** (endpoint en el relay que extrae vuelo / hotel / entrada, fechas y código) para reemplazar las reglas de `js/guess.js`, y crear el pasaje u hotel si todavía no existe.
+- [ ] Reenviar el mail a una dirección del grupo (Cloudflare Email Routing → Worker): choca con el cifrado de punta a punta del relay.
 - [ ] Generar **QR o código de barras** a partir del código cargado.
 - [ ] Vencimientos de documentos (pasaporte, seguro) con aviso.
 
