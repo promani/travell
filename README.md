@@ -3,6 +3,12 @@
 App web estática (HTML + JavaScript, sin backend ni build). Lee JSON, funciona sin internet y se instala en el celular.
 Incluido: el viaje **China y Japón 2026** (convertido del Excel), pero sirve para cualquier viaje: solo cambian los JSON.
 
+## Documentación
+- [VISION.md](VISION.md): propósito y principios
+- [ARCHITECTURE.md](ARCHITECTURE.md): arquitectura de la PWA y modo offline
+- [FEATURES.md](FEATURES.md): funcionalidades
+- [BACKLOG.md](BACKLOG.md): lo que falta implementar
+
 ## Probarla
 ```bash
 python3 -m http.server 8123      # cualquier servidor estático sirve (también GitHub Pages, Netlify…)
