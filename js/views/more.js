@@ -88,7 +88,7 @@ export function ajustes() {
     <p class="hint">En China continental se usa AutoNavi (Gaode), que funciona sin VPN. Fuera de China, OpenStreetMap. Ningún servicio de Google es necesario.</p></section>
   <section class="card"><h3>${ic('money-bill-transfer')} Cotizaciones (por 1 ${esc(D.trip.currencies.base)})</h3>
     <p class="hint">${esc(D.trip.currencies.note || '')}</p>
-    <form data-submit="save-rates" class="form two">${D.trip.currencies.list.filter((c) => c !== D.trip.currencies.base).map((c) => `<label class="field">${c}<input name="${c}" type="number" step="any" min="0" value="${rates[c]}"></label>`).join('')}
+    <form data-submit="save-rates" class="form"><div class="two">${D.trip.currencies.list.filter((c) => c !== D.trip.currencies.base).map((c) => `<label class="field">${c}<input name="${c}" type="number" step="any" min="0" inputmode="decimal" value="${rates[c]}"></label>`).join('')}</div>
       <div class="row-actions"><button class="btn primary" type="submit">Guardar</button></div></form></section>
   <section class="card"><h3>${ic('flask')} Simular un día</h3>
     <p class="hint">Mirá toda la app como si fuera otro día y otra hora del viaje (cuenta regresiva, día de salida, llegada, después de volver), en la hora local de donde vas a estar. Es solo de este celular y no toca los datos.</p>
@@ -99,24 +99,24 @@ export function ajustes() {
     <ul class="people">${D.trip.cities.filter((c) => D.places.some((p) => p.cityId === c.id)).map((c) => {
       const saved = kv.get('offlineMaps', {})[c.id];
       return `<li><span class="o-ic">${ic('map-location-dot')}</span><div><b>${esc(c.name)}</b><small>${esc(D.trip.tileProviders[c.tiles]?.name || c.tiles)} · ~${cityTiles(c).length} teselas${saved ? ` · guardado el ${esc(new Date(saved).toLocaleDateString('es-AR'))}` : ''}</small></div>
-        <button class="btn tiny ${saved ? '' : 'primary'}" data-act="offline-city" data-id="${esc(c.id)}">${saved ? 'Actualizar' : 'Descargar'}</button></li>`;
+        <button class="btn small ${saved ? '' : 'primary'}" data-act="offline-city" data-id="${esc(c.id)}">${saved ? 'Actualizar' : 'Descargar'}</button></li>`;
     }).join('')}</ul>
-    <div class="row-actions"><button class="btn small" data-act="offline-all">${ic('download')} Descargar todas</button></div></section>
+    <div class="row-actions"><button class="btn" data-act="offline-all">${ic('download')} Descargar todas</button></div></section>
 
   <section class="card"><h3>${ic('box-archive')} Respaldo completo</h3>
     <p class="hint">Un archivo con <b>todo</b> lo que está en este celular: fotos, adjuntos (PDFs, QR), códigos, tareas, lugares, gastos, actividades hechas y checklists. Sirve para cambiar de celular o por si se pierde. Al importarlo se suma a lo que ya hay.</p>
-    <div class="row-actions"><button class="btn small primary" data-act="backup-export">${ic('file-export')} Exportar respaldo</button>
-      <label class="btn small">${ic('file-import')} Importar respaldo<input type="file" accept="application/json,.json" hidden data-change="backup-import"></label></div></section>
+    <div class="row-actions"><button class="btn primary" data-act="backup-export">${ic('file-export')} Exportar respaldo</button>
+      <label class="btn">${ic('file-import')} Importar respaldo<input type="file" accept="application/json,.json" hidden data-change="backup-import"></label></div></section>
 
   ${(() => { const ov = overriddenBase(); return ov.length ? `<section class="card"><h3>${ic('rotate-left')} Cambios sobre el JSON</h3>
     <p class="hint">Registros del itinerario original que editaste o borraste en la app. Restaurar vuelve a la versión del JSON (en todos los celulares sincronizados).</p>
     <ul class="people">${ov.map((o) => `<li><div><b>${esc(o.title)}</b><small>${esc({ places: 'Lugar', lodging: 'Alojamiento', tasks: 'Tarea', travelers: 'Viajero', activities: 'Actividad' }[o.col])} · ${o.deleted ? 'borrado' : 'editado'}</small></div>
-      <button class="btn tiny" data-act="restore-one" data-col="${o.col}" data-id="${esc(o.id)}">Restaurar</button></li>`).join('')}</ul></section>` : ''; })()}
+      <button class="btn small" data-act="restore-one" data-col="${o.col}" data-id="${esc(o.id)}">Restaurar</button></li>`).join('')}</ul></section>` : ''; })()}
 
-  <section class="card"><h3>${ic('floppy-disk')} Datos del dispositivo</h3><p id="storage-info" class="muted">…</p><p id="cloud-info" class="muted"></p>
+  <section class="card"><h3>${ic('floppy-disk')} Datos del dispositivo</h3><p id="storage-info" class="info-line">…</p><p id="cloud-info" class="info-line"></p>
     <p class="hint">Viaje: <b>${esc(D.trip.title)}</b> · datos en <code>${esc(DATA_BASE)}/</code>. Editá los JSON para cambiar el itinerario; lo que cargues en la app (fotos, gastos, códigos) queda en este dispositivo.</p>
     <div class="row-actions"><button class="btn" data-act="sw-refresh">Actualizar app y datos</button><button class="btn danger" data-act="wipe">Borrar datos locales</button></div></section>
-  <p class="muted center">Travell · app web sin backend</p>`;
+  <p class="muted center hint">Travell</p>`;
 }
 
 function cityTiles(c) {

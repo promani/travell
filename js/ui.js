@@ -145,7 +145,7 @@ export function arrivalCard(card, day, ctx) {
     m.setItems(items); m.fit();
   }, 'map-card') : '';
   const legend = (card.map?.routes || []).length
-    ? `<div class="legend">${card.map.routes.map((r) => `<span><i style="background:${r.color}"></i>${esc(r.label)}</span>`).join('')}</div>` : '';
+    ? `<div class="legend">${card.map.routes.map((r) => `<span><i style="--c:${r.color}"></i>${esc(r.label)}</span>`).join('')}</div>` : '';
   return `<section class="card card-arrival">
     <h3>${icon(card.icon || 'plane-arrival')} ${esc(card.title)}</h3>
     ${card.intro ? `<p>${esc(card.intro)}</p>` : ''}
