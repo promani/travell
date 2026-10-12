@@ -6,12 +6,17 @@
 //
 //   POST /v1/:gid/records   { records: [{ c, id, u, d }] }   -> { seq }
 //   GET  /v1/:gid/records?since=N                            -> { seq, records: [...], more }
+//   GET  /v1/weather                                          -> weather for every day of the trip (see weather.mjs)
 //   GET  /health
 //
 // With SERVE_STATIC=<dir> it also serves the PWA from that folder (one container for app + relay).
+// REDIS_URL=redis://[:password@]host:6379[/db] keeps the weather in Redis (otherwise in a file in RELAY_DATA).
+// WEATHER=0 turns the daily weather download off.
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { startWeather, weatherStore } from './weather.mjs';
 
 const PORT = +(process.env.PORT || 8787);
 const DIR = process.env.RELAY_DATA || './relay-data';
@@ -43,6 +48,13 @@ function serveStatic(req, res, pathname) {
 }
 
 fs.mkdirSync(DIR, { recursive: true });
+
+const DATA_DIR = path.join(STATIC || path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'), 'data');
+let weather = null;
+try {
+  const tripId = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'trip.json'), 'utf8')).id;
+  weather = startWeather({ dataDir: DATA_DIR, store: weatherStore({ tripId, redisUrl: process.env.REDIS_URL, dir: DIR }), auto: process.env.WEATHER !== '0' });
+} catch (e) { console.log(`weather: disabled (${e.message})`); }
 const groups = new Map();            // gid -> { seq, recs: Map(key -> rec), dirty }
 
 function load(gid) {
@@ -81,6 +93,10 @@ const server = http.createServer((req, res) => {
   const url = new URL(req.url, 'http://x');
   if (req.method === 'OPTIONS') return send(res, 204);
   if (url.pathname === '/health') return send(res, 200, { ok: true, groups: groups.size });
+  if (url.pathname === '/v1/weather' && req.method === 'GET') {
+    const doc = weather?.get();
+    return doc ? send(res, 200, doc) : send(res, 503, { error: 'weather not ready' });
+  }
   const m = /^\/v1\/([^/]+)\/records$/.exec(url.pathname);
   if (!m && STATIC && (req.method === 'GET' || req.method === 'HEAD') && serveStatic(req, res, url.pathname)) return;
   if (!m || !GID.test(m[1])) return send(res, 404, { error: 'not found' });

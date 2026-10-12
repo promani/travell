@@ -1,7 +1,7 @@
 // Leaflet wrapper: picks tiles that work in the region (AutoNavi in mainland China, OSM elsewhere),
 // handles the GCJ-02 offset, draws places / lodging / routes / the user, and can pre-cache tiles for offline.
 import { D, settings } from './store.js';
-import { esc, haversine } from './util.js';
+import { esc, ic, icon as iconHtml, haversine } from './util.js';
 import { wgs2gcj, gcj2wgs, externalMapUrl, googleMapUrl, gps, onPosition, startGps } from './geo.js';
 
 const L = window.L;
@@ -23,10 +23,10 @@ export function providerForPoint(lat, lon) {
   return best?.tiles || Object.keys(D.trip.tileProviders)[0];
 }
 
-const catOf = (id) => D.trip.categories[id] || { icon: '📍', color: '#555', label: id };
-const icon = (emoji, color, cls = '') => L.divIcon({
+const catOf = (id) => D.trip.categories[id] || { icon: 'location-dot', color: '#555', label: id };
+const icon = (name, color, cls = '') => L.divIcon({
   className: 'poi-icon ' + cls, iconSize: [32, 32], iconAnchor: [16, 30], popupAnchor: [0, -26],
-  html: `<span style="--c:${color}">${emoji}</span>`,
+  html: `<span style="--c:${color}">${iconHtml(name)}</span>`,
 });
 
 export class TripMap {
@@ -58,7 +58,7 @@ export class TripMap {
 
   /** Turn the map into a location picker: tap or drag the marker. `onPick([lat, lon])` gets WGS-84. */
   enablePicker(start, onPick) {
-    const pinIcon = L.divIcon({ className: 'pick-icon', iconSize: [36, 46], iconAnchor: [18, 44], html: '<span>📍</span>' });
+    const pinIcon = L.divIcon({ className: 'pick-icon', iconSize: [36, 46], iconAnchor: [18, 44], html: `<span>${ic('location-dot')}</span>` });
     this.pick = start ? [...start] : null;
     const place = () => {
       if (!this.pick) { this.pickMarker?.remove(); this.pickMarker = null; return; }
@@ -118,7 +118,7 @@ export class TripMap {
         html = this.popup(p, c);
       } else if (it.kind === 'lodging') {
         const l = it.lodging;
-        lat = l.lat; lon = l.lon; ic = icon('🏨', catOf('alojamiento').color, 'lodging');
+        lat = l.lat; lon = l.lon; ic = icon('hotel', catOf('alojamiento').color, 'lodging');
         html = `<b>${esc(l.name)}</b><br><small>${esc(l.area || '')}${l.approx ? ' · ubicación aproximada' : ''}</small>`;
       } else if (it.kind === 'person') {
         const tr = it.traveler, age = Date.now() - it.pos.updatedAt;
@@ -127,7 +127,7 @@ export class TripMap {
           html: `<span style="--c:${tr.color || '#1c7ed6'}">${esc((tr.name || '?').trim().slice(0, 2).toUpperCase())}</span>` });
         html = `<b>${esc(tr.name)}</b><br><small>${esc(ago(age))}${it.pos.acc ? ` · ±${Math.round(it.pos.acc)} m` : ''}</small>`;
       } else {                                           // plain labelled point
-        lat = it.lat; lon = it.lon; ic = icon(it.icon || '📍', it.color || '#1c7ed6');
+        lat = it.lat; lon = it.lon; ic = icon(it.icon || 'location-dot', it.color || '#1c7ed6');
         html = `<b>${esc(it.label || '')}</b>`;
       }
       if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
@@ -143,7 +143,7 @@ export class TripMap {
   popup(p, c) {
     const link = externalMapUrl(p.lat, p.lon, p.name, this.providerId);
     const g = this.providerId === 'gaode' ? '' : ` · <a href="${googleMapUrl(p.lat, p.lon)}" target="_blank" rel="noopener">Google</a>`;
-    return `<div class="pop"><b>${c.icon} ${esc(p.name)}</b>${p.nameLocal ? `<div class="local">${esc(p.nameLocal)}</div>` : ''}
+    return `<div class="pop"><b>${iconHtml(c.icon)} ${esc(p.name)}</b>${p.nameLocal ? `<div class="local">${esc(p.nameLocal)}</div>` : ''}
       <small>${esc(c.label)}${p.area ? ' · ' + esc(p.area) : ''}${p.approx ? ' · ubicación aproximada' : ''}</small>
       ${p.description ? `<p>${esc(p.description.length > 150 ? p.description.slice(0, 147) + '…' : p.description)}</p>` : ''}
       <div class="pop-links"><a href="#/lugar/${esc(p.id)}">Detalle</a> · <a href="${link}" target="_blank" rel="noopener">Abrir mapa</a>${g}</div></div>`;

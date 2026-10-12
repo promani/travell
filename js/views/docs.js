@@ -1,11 +1,11 @@
 // Documents: booking codes, visas, tickets, confirmations. Codes are shown big; files/screenshots are attached offline.
 import { D, I, idb, docCodes } from '../store.js';
-import { esc, uid, toast, openModal, copyText, download, closeModal, fmtShort } from '../util.js';
+import { esc, ic, uid, toast, openModal, copyText, download, closeModal, fmtShort } from '../util.js';
 import { register, statusBadge, extLink } from '../ui.js';
 
 export const TYPES = {
-  pasaje: ['🎫', 'Pasajes y códigos'], visa: ['🛂', 'Visas y trámites'], entrada: ['🎟️', 'Entradas'],
-  hotel: ['🏨', 'Hospedaje'], identidad: ['🪪', 'Identidad'], seguro: ['🛡️', 'Seguro'], otro: ['📄', 'Otros'],
+  pasaje: ['ticket', 'Pasajes y códigos'], visa: ['passport', 'Visas y trámites'], entrada: ['ticket-simple', 'Entradas'],
+  hotel: ['hotel', 'Hospedaje'], identidad: ['id-card', 'Identidad'], seguro: ['shield-halved', 'Seguro'], otro: ['file-lines', 'Otros'],
 };
 const urls = [];
 const url = (b) => { const u = URL.createObjectURL(b); urls.push(u); return u; };
@@ -15,19 +15,19 @@ function card(d) {
   const code = docCodes.get(d);
   const day = d.day && I.day[d.day];
   return `<article class="doc" data-doc="${esc(d.id)}">
-    <header><h3>${TYPES[d.type]?.[0] || '📄'} ${esc(d.title)}</h3>${statusBadge(d.status)}</header>
+    <header><h3>${ic(TYPES[d.type]?.[0] || 'file-lines')} ${esc(d.title)}</h3>${statusBadge(d.status)}</header>
     ${d.subtitle ? `<p class="muted">${esc(d.subtitle)}</p>` : ''}
     ${day ? `<p><a href="#/dia/${day.id}">Día ${day.n} · ${esc(fmtShort(day.date))}</a></p>` : ''}
     ${d.codeLabel !== null ? `<div class="codebox">
       <small>${esc(d.codeLabel || 'Código')}</small>
       ${code ? `<button class="code" data-act="doc-big" data-id="${esc(d.id)}" aria-label="Mostrar código en grande">${esc(code)}</button>
         <div class="row-actions"><button class="btn small" data-act="copy" data-text="${esc(code)}">Copiar</button><button class="btn small" data-act="doc-big" data-id="${esc(d.id)}">Pantalla completa</button><button class="btn small" data-act="doc-edit" data-id="${esc(d.id)}">Editar</button></div>`
-        : `<button class="btn small" data-act="doc-edit" data-id="${esc(d.id)}">＋ Cargar código</button>`}
+        : `<button class="btn small" data-act="doc-edit" data-id="${esc(d.id)}">${ic('plus')} Cargar código</button>`}
     </div>` : ''}
     <div class="attach" data-attach="${esc(d.id)}"></div>
     ${d.notes ? `<p class="note-line">${esc(d.notes)}</p>` : ''}
     <div class="row-actions">
-      <label class="btn small">📎 Adjuntar PDF / captura<input type="file" accept="image/*,application/pdf" multiple hidden data-change="doc-attach" data-id="${esc(d.id)}"></label>
+      <label class="btn small">${ic('paperclip')} Adjuntar PDF / captura<input type="file" accept="image/*,application/pdf" multiple hidden data-change="doc-attach" data-id="${esc(d.id)}"></label>
       ${d.file ? `<a class="btn small" href="${esc(d.file)}" target="_blank" rel="noopener">Abrir archivo</a>` : ''}
       ${d.url ? extLink(d.url, 'Más info') : ''}
     </div>
@@ -39,12 +39,12 @@ export function render({ type }, ctx) {
   ctx.cleanup(free);
   ctx.after(paintAttachments);
   const t = type && TYPES[type] ? type : '';
-  const tabs = `<div class="chips"><a class="chip ${!t ? 'on' : ''}" href="#/docs">Todos</a>${Object.entries(TYPES).filter(([k]) => D.documents.some((d) => d.type === k)).map(([k, [ic, l]]) => `<a class="chip ${t === k ? 'on' : ''}" href="#/docs/${k}">${ic} ${esc(l)}</a>`).join('')}</div>`;
+  const tabs = `<div class="chips"><a class="chip ${!t ? 'on' : ''}" href="#/docs">Todos</a>${Object.entries(TYPES).filter(([k]) => D.documents.some((d) => d.type === k)).map(([k, [name, l]]) => `<a class="chip ${t === k ? 'on' : ''}" href="#/docs/${k}">${ic(name)} ${esc(l)}</a>`).join('')}</div>`;
   const docs = D.documents.filter((d) => !t || d.type === t);
   let body;
   if (t) body = docs.map(card).join('');
-  else body = Object.keys(TYPES).map((k) => { const g = docs.filter((d) => d.type === k); return g.length ? `<h2 class="grp">${TYPES[k][0]} ${esc(TYPES[k][1])}</h2>${g.map(card).join('')}` : ''; }).join('');
-  return `<header class="pagehead"><h1>🎫 Documentos</h1><p class="muted">Códigos, visas, entradas y confirmaciones. Adjuntá PDFs o capturas (QR): quedan guardados en el dispositivo y se ven sin internet.</p><div class="row-actions"><a class="btn small" href="#/pasaportes">🛂 Pasaportes</a><a class="btn small" href="#/recursos">📚 Recursos</a></div></header>${tabs}${body || '<p class="muted">No hay documentos.</p>'}`;
+  else body = Object.keys(TYPES).map((k) => { const g = docs.filter((d) => d.type === k); return g.length ? `<h2 class="grp">${ic(TYPES[k][0])} ${esc(TYPES[k][1])}</h2>${g.map(card).join('')}` : ''; }).join('');
+  return `<header class="pagehead"><h1>${ic('ticket')} Documentos</h1><p class="muted">Códigos, visas, entradas y confirmaciones. Adjuntá PDFs o capturas (QR): quedan guardados en el dispositivo y se ven sin internet.</p><div class="row-actions"><a class="btn small" href="#/pasaportes">${ic('passport')} Pasaportes</a><a class="btn small" href="#/recursos">${ic('book')} Recursos</a></div></header>${tabs}${body || '<p class="muted">No hay documentos.</p>'}`;
 }
 
 export async function paintAttachments() {
@@ -54,8 +54,8 @@ export async function paintAttachments() {
   document.querySelectorAll('[data-attach]').forEach((box) => {
     const mine = files.filter((f) => f.docId === box.dataset.attach).sort((a, b) => a.addedAt - b.addedAt);
     box.innerHTML = mine.map((f) => f.type.startsWith('image/')
-      ? `<figure class="att"><button data-act="att-open" data-id="${f.id}" aria-label="Abrir ${esc(f.name)}"><img alt="${esc(f.name)}" src="${url(f.blob)}"></button><figcaption>${esc(f.name)} <button class="btn tiny danger" data-act="att-del" data-id="${f.id}">✕</button></figcaption></figure>`
-      : `<div class="att file"><button class="btn small" data-act="att-open" data-id="${f.id}">📄 ${esc(f.name)}</button> <button class="btn tiny danger" data-act="att-del" data-id="${f.id}">✕</button></div>`).join('');
+      ? `<figure class="att"><button data-act="att-open" data-id="${f.id}" aria-label="Abrir ${esc(f.name)}"><img alt="${esc(f.name)}" src="${url(f.blob)}"></button><figcaption>${esc(f.name)} <button class="btn tiny danger" data-act="att-del" data-id="${f.id}" aria-label="Quitar archivo">${ic('xmark')}</button></figcaption></figure>`
+      : `<div class="att file"><button class="btn small" data-act="att-open" data-id="${f.id}">${ic('file-lines')} ${esc(f.name)}</button> <button class="btn tiny danger" data-act="att-del" data-id="${f.id}" aria-label="Quitar archivo">${ic('xmark')}</button></div>`).join('');
   });
 }
 

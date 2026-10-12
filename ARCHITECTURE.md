@@ -34,7 +34,7 @@ flowchart LR
 
 | Capa | Dónde | Qué guarda | Quién lo escribe |
 |---|---|---|---|
-| **Datos del viaje** | `data/*.json` (servidor) | Itinerario, transportes, hospedajes, lugares, documentos, viajeros, pendientes, alertas, enlaces | Quien arma el viaje (a mano o con un conversor) |
+| **Datos del viaje** | `data/*.json` (servidor) | Itinerario, transportes, hospedajes, lugares, documentos, viajeros, pendientes, alertas, recursos, frases | Quien arma el viaje (a mano o con un conversor) |
 | **Cambios locales (overlay)** | `localStorage`, `travell:<tripId>:col:<colección>` | Altas, modificaciones y bajas de lugares, alojamientos, actividades, tareas y viajeros. Además gastos, ubicaciones y sugerencias descartadas | La app, y la sincronización o la importación |
 | **Estado del dispositivo** | `localStorage`, `travell:<tripId>:` | Ajustes (quién soy, relay, mapa), actividades hechas, checklists, códigos cargados | La app |
 | **Archivos locales** | IndexedDB `travell-<tripId>` | Fotos (miniatura + original reducido), adjuntos de documentos (PDF, capturas) | La app |
@@ -80,6 +80,7 @@ js/
   tripstate.js        Fase del viaje (antes/durante/después), día actual, actividad actual y siguiente, horarios de salida
   ui.js               Fragmentos compartidos (badges, filas de actividad, tarjetas de día) y registro de acciones
   sync.js             Sincronización cifrada con el relay, compartir ubicación, link de ubicación
+  weather.js          Clima por día: lo baja del relay una vez por día, copia en localStorage, línea para los heros
   suggest.js          Reglas de "te falta…" (hospedajes, noches sin alojamiento, compras, reservas, preparativos)
   share.js            Exportar e importar los datos cargados en la app, y el respaldo completo (con fotos y adjuntos)
   money.js            Cálculo de gastos puro (división, saldos, transferencias), testeable sin navegador
@@ -90,7 +91,9 @@ js/
   views/              Una pantalla por archivo: home, day, mapview, photos, expenses, docs, more,
                       tasks (tareas y sugerencias), people (viajeros, ubicación, sync), places (ABM de lugares),
                       forms (formularios de ABM y selector de ubicación), search (buscador global)
-server/relay.mjs      Relay opcional (Node, sin dependencias); con SERVE_STATIC también sirve la app
+server/relay.mjs      Relay opcional (Node, sin dependencias); con SERVE_STATIC también sirve la app y GET /v1/weather
+server/weather.mjs    Clima diario desde Open-Meteo (pronóstico o clima típico), guardado en Redis o en un archivo
+server/redis.mjs      Cliente Redis mínimo (RESP, sin dependencias)
 tests/                Tests con node:test (npm test)
 Dockerfile            Imagen para Dokploy u otra plataforma: app + relay en el puerto 3000
 vendor/leaflet/       Leaflet 1.9.4 vendorizado (sin CDN, para que funcione offline y en China)
@@ -156,7 +159,7 @@ erDiagram
 | `tasks.json` | no | Tareas con `dueAt` (ISO), `urgent`, `day`, `assignee`, `priority`, `status` y `covers` (qué sugerencias ya cubren, por ejemplo `lodging:l04`) |
 | `requirements.json` | no | Preparativos sugeridos: `title`, `detail`, `category`, `countries` (vacío = siempre), `dueDaysBefore`, `covers`, `link` |
 | `notes.json` | no | Alertas por día (`days[]`) o generales |
-| `links.json` | no | Enlaces por ciudad o día, y fuentes |
+| `phrases.json` | no | Frases útiles por idioma (`languages`, `groups[].phrases[]` con `[escritura, romanización, nota?]`) |
 
 **Tarjetas de día** (`cards[]`), genéricas y configurables desde el JSON:
 

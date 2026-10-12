@@ -149,11 +149,11 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
 - Cada 60 s, al volver a la app, al recuperar la conexión y unos segundos después de cada cambio. Si dos personas editan lo mismo, gana la última edición.
 - **Sin relay**: exportar e importar un archivo con todos los datos cargados en la app.
 
-## 13. Transporte, alojamientos y enlaces ✅
+## 13. Transporte y alojamientos ✅
 
 - **Transporte**: todos los tramos por día, con medio, servicio, horarios, precio, estado, dónde y cuándo comprar, y link.
 - **Alojamientos**: fechas, noches, horarios, zona, dirección (también en idioma local, con "Mostrar al taxista"), número de reserva, notas y estado. Se pueden agregar, editar y borrar.
-- **Enlaces**: transporte por ciudad, trámites y fuentes consultadas. Se marcan con 🌐 porque necesitan internet.
+- Los enlaces (transporte por ciudad, trámites y fuentes consultadas) ahora son **Recursos** (ver 18).
 
 ## 14. Offline e instalación ✅
 
@@ -187,7 +187,11 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
 
 ## 18. Recursos ✅
 
-- **Recursos** (Más → Recursos): mapas del metro, guías, apps o frases por ciudad, con enlace y/o imágenes y PDFs adjuntos que se ven sin internet. Vienen cargados los metros de Shanghai, Tokio y Pekín (enlace oficial: adjuntá una captura del mapa).
+- **Recursos** (Más → Recursos): enlaces, mapas del metro, guías, apps y trámites por ciudad, con enlace y/o imágenes y PDFs adjuntos que se ven sin internet. Vienen cargados los metros de Shanghai, Tokio y Pekín (enlace oficial: adjuntá una captura del mapa) y Visit Japan Web. Reemplaza a la vieja sección Enlaces (`#/enlaces` redirige acá). Las **fuentes consultadas** quedan plegadas al final. El día muestra los recursos de su ciudad.
+
+## 19. Frases útiles ✅
+- **Más → Frases útiles** (`#/frases`): cómo decir gracias, por favor, la cuenta, sin picante, ¿cuánto cuesta?, a esta dirección (taxi), emergencias, etc., en **mandarín** (hanzi + pinyin) y **japonés** (kana/kanji + romaji). Elige sola el idioma de la ciudad del día.
+- Tocar una frase la muestra en grande para mostrársela a alguien; 🔊 la lee con la voz del celular. Incluye los números de emergencia de cada país. También aparecen en el buscador.
 - Se agregan, editan y borran desde la app; en cada día aparecen los de su ciudad.
 
 ## 19. Multiviaje 🟡

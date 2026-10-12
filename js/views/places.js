@@ -1,6 +1,6 @@
 // Places ABM list: the JSON places (places.json + extra files) plus the ones loaded in the app.
 import { D, I, cols, rebuild, me, bus } from '../store.js';
-import { esc, toast, uid } from '../util.js';
+import { esc, ic, icon, toast, uid } from '../util.js';
 import { register, cat } from '../ui.js';
 import { exportAsJsonFile } from '../share.js';
 
@@ -15,17 +15,17 @@ export function render(_, ctx) {
   list.forEach((p) => (byCity[p.cityId] ||= []).push(p));
   const mineCount = cols.live('places').length;
   ctx.after(() => { const s = document.getElementById('place-q'); if (s && q) { s.focus(); s.setSelectionRange(q.length, q.length); } });
-  return `<header class="pagehead"><h1>📍 Lugares</h1><p class="muted">${D.places.length} lugares: los del JSON (<code>${esc((D.trip.placeFiles || ['places.json']).join(', '))}</code>) más los que cargues acá.</p></header>
-  <div class="row-actions"><button class="btn primary" data-act="place-new">＋ Agregar lugar</button>
-    <label class="btn small">⬇ Importar JSON de lugares<input type="file" accept="application/json,.json" hidden data-change="places-import"></label>
-    ${mineCount ? `<button class="btn small" data-act="places-export">⬆ Exportar mis lugares (${mineCount})</button>` : ''}</div>
+  return `<header class="pagehead"><h1>${ic('location-dot')} Lugares</h1><p class="muted">${D.places.length} lugares: los del JSON (<code>${esc((D.trip.placeFiles || ['places.json']).join(', '))}</code>) más los que cargues acá.</p></header>
+  <div class="row-actions"><button class="btn primary" data-act="place-new">${ic('plus')} Agregar lugar</button>
+    <label class="btn small">${ic('file-import')} Importar JSON de lugares<input type="file" accept="application/json,.json" hidden data-change="places-import"></label>
+    ${mineCount ? `<button class="btn small" data-act="places-export">${ic('file-export')} Exportar mis lugares (${mineCount})</button>` : ''}</div>
   <div class="toolbar places-filter">
     <input id="place-q" type="search" placeholder="Buscar…" value="${esc(q)}" data-change="places-q" aria-label="Buscar">
     <select data-change="places-city" aria-label="Ciudad"><option value="">Todas las ciudades</option>${D.trip.cities.map((c) => `<option value="${c.id}" ${c.id === cityF ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select>
-    <select data-change="places-cat" aria-label="Categoría"><option value="">Todas las categorías</option>${Object.entries(D.trip.categories).map(([k, c]) => `<option value="${k}" ${k === catF ? 'selected' : ''}>${c.icon} ${esc(c.label)}</option>`).join('')}</select>
+    <select data-change="places-cat" aria-label="Categoría"><option value="">Todas las categorías</option>${Object.entries(D.trip.categories).map(([k, c]) => `<option value="${k}" ${k === catF ? 'selected' : ''}>${esc(c.label)}</option>`).join('')}</select>
   </div>
   ${Object.entries(byCity).map(([cid, arr]) => `<h3 class="grp">${esc(I.city[cid]?.name || 'Otros')} (${arr.length})</h3>
-    <ul class="nearby card">${arr.sort((a, b) => a.name.localeCompare(b.name)).map((p) => { const c = cat(p.category); return `<li><a href="#/lugar/${esc(p.id)}"><span class="act-ic" style="--c:${c.color}">${c.icon}</span>
+    <ul class="nearby card">${arr.sort((a, b) => a.name.localeCompare(b.name)).map((p) => { const c = cat(p.category); return `<li><a href="#/lugar/${esc(p.id)}"><span class="act-ic" style="--c:${c.color}">${icon(c.icon)}</span>
       <div><b>${esc(p.name)}</b><small>${esc(c.label)}${p.area ? ' · ' + esc(p.area) : ''}${p.source === 'app' ? ' · cargado en la app' : p.edited ? ' · editado' : ''}${p.source === 'sugerencia' || p.source === 'extra' ? ' · sugerencia' : ''}</small></div></a></li>`; }).join('')}</ul>`).join('') || '<p class="muted">No hay lugares con esos filtros.</p>'}
   <p class="hint">Para sumar lugares de forma permanente agregalos a un archivo JSON y listalo en <code>placeFiles</code> de <code>trip.json</code>; "Exportar mis lugares" te da el JSON listo para pegar.</p>`;
 }

@@ -1,0 +1,71 @@
+{
+  "languages": [
+    { "id": "zh", "name": "Mandarín", "native": "中文", "speech": "zh-CN", "countries": ["China"], "romanization": "pinyin",
+      "emergency": "Policía 110 · Ambulancia 120 · Bomberos 119" },
+    { "id": "ja", "name": "Japonés", "native": "日本語", "speech": "ja-JP", "countries": ["Japón"], "romanization": "romaji",
+      "emergency": "Policía 110 · Ambulancia y bomberos 119" }
+  ],
+  "groups": [
+    { "id": "basicos", "title": "Básicos", "icon": "comments", "phrases": [
+      { "es": "Hola", "zh": ["你好", "nǐ hǎo"], "ja": ["こんにちは", "konnichiwa"] },
+      { "es": "Buenos días", "zh": ["早上好", "zǎoshang hǎo"], "ja": ["おはようございます", "ohayō gozaimasu"] },
+      { "es": "Gracias", "zh": ["谢谢", "xièxie"], "ja": ["ありがとうございます", "arigatō gozaimasu"] },
+      { "es": "Por favor (al pedir algo)", "zh": ["请", "qǐng"], "ja": ["お願いします", "onegaishimasu", "Para pedir un servicio. Para cosas concretas: «…をください» (… o kudasai)."] },
+      { "es": "Disculpe (para llamar la atención)", "zh": ["不好意思", "bù hǎoyìsi"], "ja": ["すみません", "sumimasen", "También sirve para pedir perdón y para llamar al mozo."] },
+      { "es": "Perdón, lo siento", "zh": ["对不起", "duìbuqǐ"], "ja": ["ごめんなさい", "gomen nasai"] },
+      { "es": "Sí / No", "zh": ["是 / 不是", "shì / bú shì"], "ja": ["はい / いいえ", "hai / iie"] },
+      { "es": "No entiendo", "zh": ["我听不懂", "wǒ tīng bu dǒng"], "ja": ["わかりません", "wakarimasen"] },
+      { "es": "¿Habla inglés?", "zh": ["你会说英语吗？", "nǐ huì shuō yīngyǔ ma?"], "ja": ["英語を話せますか？", "eigo o hanasemasu ka?"] },
+      { "es": "No hablo chino / japonés", "zh": ["我不会说中文", "wǒ bú huì shuō zhōngwén"], "ja": ["日本語が話せません", "nihongo ga hanasemasen"] },
+      { "es": "Chau", "zh": ["再见", "zàijiàn"], "ja": ["さようなら", "sayōnara"] }
+    ] },
+    { "id": "restaurante", "title": "En el restaurante", "icon": "utensils", "phrases": [
+      { "es": "Mesa para dos", "zh": ["两位", "liǎng wèi"], "ja": ["二人です", "futari desu"] },
+      { "es": "El menú, por favor", "zh": ["请给我菜单", "qǐng gěi wǒ càidān"], "ja": ["メニューをお願いします", "menyū o onegaishimasu"] },
+      { "es": "¿Tienen menú en inglés?", "zh": ["有英文菜单吗？", "yǒu yīngwén càidān ma?"], "ja": ["英語のメニューはありますか？", "eigo no menyū wa arimasu ka?"] },
+      { "es": "Quiero esto (señalando)", "zh": ["我要这个", "wǒ yào zhège"], "ja": ["これをください", "kore o kudasai"] },
+      { "es": "Agua, por favor", "zh": ["请给我一杯水", "qǐng gěi wǒ yì bēi shuǐ"], "ja": ["お水をください", "omizu o kudasai"] },
+      { "es": "Sin picante", "zh": ["不要辣", "bú yào là"], "ja": ["辛くしないでください", "karaku shinaide kudasai"] },
+      { "es": "Sin carne", "zh": ["不要肉", "bú yào ròu"], "ja": ["肉抜きでお願いします", "niku nuki de onegaishimasu"] },
+      { "es": "Soy vegetariano/a", "zh": ["我吃素", "wǒ chī sù"], "ja": ["ベジタリアンです", "bejitarian desu"] },
+      { "es": "Soy alérgico/a a…", "zh": ["我对…过敏", "wǒ duì … guòmǐn"], "ja": ["…のアレルギーがあります", "… no arerugī ga arimasu"] },
+      { "es": "¡Muy rico!", "zh": ["很好吃", "hěn hǎochī"], "ja": ["おいしいです", "oishii desu"] },
+      { "es": "Para llevar", "zh": ["带走", "dàizǒu"], "ja": ["持ち帰りで", "mochikaeri de"] },
+      { "es": "La cuenta, por favor", "zh": ["请买单", "qǐng mǎidān"], "ja": ["お会計お願いします", "okaikei onegaishimasu", "En Japón no se deja propina."] },
+      { "es": "Antes de comer (buen provecho)", "ja": ["いただきます", "itadakimasu"] },
+      { "es": "Al terminar (gracias por la comida)", "ja": ["ごちそうさまでした", "gochisōsama deshita"] }
+    ] },
+    { "id": "compras", "title": "Compras y pagos", "icon": "bag-shopping", "phrases": [
+      { "es": "¿Cuánto cuesta?", "zh": ["多少钱？", "duōshao qián?"], "ja": ["いくらですか？", "ikura desu ka?"] },
+      { "es": "¿Puedo pagar con tarjeta?", "zh": ["可以刷卡吗？", "kěyǐ shuā kǎ ma?"], "ja": ["カードで払えますか？", "kādo de haraemasu ka?"] },
+      { "es": "¿Puedo pagar con Alipay / WeChat?", "zh": ["可以用支付宝 / 微信吗？", "kěyǐ yòng Zhīfùbǎo / Wēixìn ma?"] },
+      { "es": "Es muy caro, ¿un poco más barato?", "zh": ["太贵了，便宜一点吧", "tài guì le, piányi yìdiǎn ba", "Solo en mercados: en tiendas con precio fijo no se regatea."] },
+      { "es": "Solo estoy mirando", "zh": ["我只是看看", "wǒ zhǐshì kànkan"], "ja": ["見ているだけです", "mite iru dake desu"] },
+      { "es": "No necesito bolsa", "zh": ["不要袋子", "bú yào dàizi"], "ja": ["袋は要りません", "fukuro wa irimasen"] },
+      { "es": "Números del 1 al 10", "zh": ["一 二 三 四 五 六 七 八 九 十", "yī èr sān sì wǔ liù qī bā jiǔ shí"], "ja": ["一 二 三 四 五 六 七 八 九 十", "ichi ni san yon go roku nana hachi kyū jū"] }
+    ] },
+    { "id": "transporte", "title": "Transporte y direcciones", "icon": "train-subway", "phrases": [
+      { "es": "¿Dónde está el baño?", "zh": ["洗手间在哪里？", "xǐshǒujiān zài nǎlǐ?"], "ja": ["トイレはどこですか？", "toire wa doko desu ka?"] },
+      { "es": "¿Dónde está la estación?", "zh": ["地铁站在哪里？", "dìtiězhàn zài nǎlǐ?"], "ja": ["駅はどこですか？", "eki wa doko desu ka?"] },
+      { "es": "A esta dirección, por favor (taxi)", "zh": ["请带我去这个地址", "qǐng dài wǒ qù zhège dìzhǐ"], "ja": ["この住所までお願いします", "kono jūsho made onegaishimasu"] },
+      { "es": "Pare acá, por favor", "zh": ["请在这里停车", "qǐng zài zhèlǐ tíngchē"], "ja": ["ここで止めてください", "koko de tomete kudasai"] },
+      { "es": "Un boleto a…", "zh": ["一张去…的票", "yì zhāng qù … de piào"], "ja": ["…まで一枚ください", "… made ichimai kudasai"] },
+      { "es": "¿Este tren va a…?", "zh": ["这趟车去…吗？", "zhè tàng chē qù … ma?"], "ja": ["この電車は…に行きますか？", "kono densha wa … ni ikimasu ka?"] },
+      { "es": "Aeropuerto", "zh": ["机场", "jīchǎng"], "ja": ["空港", "kūkō"] },
+      { "es": "Izquierda / derecha / derecho", "zh": ["左 / 右 / 直走", "zuǒ / yòu / zhí zǒu"], "ja": ["左 / 右 / まっすぐ", "hidari / migi / massugu"] }
+    ] },
+    { "id": "hotel", "title": "En el hotel", "icon": "hotel", "phrases": [
+      { "es": "Tengo una reserva", "zh": ["我有预订", "wǒ yǒu yùdìng"], "ja": ["予約しています", "yoyaku shite imasu"] },
+      { "es": "¿Me guardan el equipaje?", "zh": ["可以寄存行李吗？", "kěyǐ jìcún xíngli ma?"], "ja": ["荷物を預かってもらえますか？", "nimotsu o azukatte moraemasu ka?"] },
+      { "es": "¿Cuál es la clave del wifi?", "zh": ["WiFi 密码是多少？", "WiFi mìmǎ shì duōshao?"], "ja": ["Wi-Fi のパスワードは何ですか？", "waifai no pasuwādo wa nan desu ka?"] }
+    ] },
+    { "id": "emergencias", "title": "Emergencias", "icon": "kit-medical", "phrases": [
+      { "es": "¡Ayuda!", "zh": ["救命！", "jiùmìng!"], "ja": ["助けて！", "tasukete!"] },
+      { "es": "Llame a una ambulancia", "zh": ["请叫救护车", "qǐng jiào jiùhùchē"], "ja": ["救急車を呼んでください", "kyūkyūsha o yonde kudasai"] },
+      { "es": "Llame a la policía", "zh": ["请报警", "qǐng bàojǐng"], "ja": ["警察を呼んでください", "keisatsu o yonde kudasai"] },
+      { "es": "Necesito un médico", "zh": ["我需要看医生", "wǒ xūyào kàn yīshēng"], "ja": ["医者が必要です", "isha ga hitsuyō desu"] },
+      { "es": "Me perdí", "zh": ["我迷路了", "wǒ mílù le"], "ja": ["道に迷いました", "michi ni mayoimashita"] },
+      { "es": "Perdí mi pasaporte", "zh": ["我的护照丢了", "wǒ de hùzhào diū le"], "ja": ["パスポートをなくしました", "pasupōto o nakushimashita"] }
+    ] }
+  ]
+}

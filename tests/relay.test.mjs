@@ -14,7 +14,7 @@ const gid = 'a'.repeat(32);
 let proc;
 
 test.before(async () => {
-  proc = spawn(process.execPath, ['server/relay.mjs'], { cwd: ROOT, env: { ...process.env, PORT: String(PORT), RELAY_DATA: DATA, SERVE_STATIC: ROOT }, stdio: 'ignore' });
+  proc = spawn(process.execPath, ['server/relay.mjs'], { cwd: ROOT, env: { ...process.env, PORT: String(PORT), RELAY_DATA: DATA, SERVE_STATIC: ROOT, WEATHER: '0', REDIS_URL: '' }, stdio: 'ignore' });
   for (let i = 0; i < 50; i++) { try { if ((await fetch(`${base}/health`)).ok) return; } catch { /* starting */ } await new Promise((r) => setTimeout(r, 100)); }
   throw new Error('relay did not start');
 });

@@ -121,6 +121,39 @@ test('resources: seeded metro maps point to real cities, can be added, edited an
   assert.ok(!I.resource.rx && /Mapa del metro de Shanghai/.test(I.resource.r01.title));
 });
 
+test('resources replace the old links: no duplicated URLs, known kinds, sources kept apart', () => {
+  // same rules as js/views/resources.js (importing the view would pull Leaflet in)
+  const KINDS = Object.fromEntries(['mapa', 'guia', 'app', 'traduccion', 'tramite', 'enlace', 'fuente', 'otro'].map((k) => [k, 1]));
+  const resourcesForDay = (day) => D.resources.filter((r) => r.kind !== 'fuente' && ((r.dayId && r.dayId === day.id) || (day.cityId && r.cityId === day.cityId)));
+  assert.equal(D.links, undefined, 'links.json is gone');
+  const urls = D.resources.filter((r) => r.url).map((r) => r.url.replace(/\/$/, ''));
+  assert.equal(new Set(urls).size, urls.length, 'every URL appears once');
+  for (const r of D.resources) {
+    assert.ok(KINDS[r.kind], `${r.id} has an unknown kind ${r.kind}`);
+    if (r.dayId) assert.ok(I.day[r.dayId], `${r.id} points to an unknown day`);
+  }
+  assert.ok(D.resources.some((r) => r.kind === 'fuente'), 'sources moved over');
+  assert.ok(!resourcesForDay(I.day.d07).some((r) => r.kind === 'fuente'), 'the day screen does not list sources');
+  assert.ok(resourcesForDay(I.day.d07).some((r) => /Visit Japan Web/.test(r.title)));
+});
+
+test('phrases: every phrase has Spanish plus script and romanization in a known language', () => {
+  const langs = D.phrases.languages.map((l) => l.id);
+  assert.deepEqual(langs, ['zh', 'ja']);
+  for (const l of D.phrases.languages) assert.ok(D.trip.cities.some((c) => l.countries.includes(c.country)), `${l.id} matches a trip country`);
+  let n = 0;
+  for (const g of D.phrases.groups) for (const p of g.phrases) {
+    assert.ok(p.es, `${g.id}: phrase without Spanish`);
+    const present = langs.filter((id) => p[id]);
+    assert.ok(present.length, `${p.es}: no language`);
+    for (const id of present) assert.ok(p[id][0] && p[id][1], `${p.es} (${id}) needs script and romanization`);
+    n++;
+  }
+  assert.ok(n >= 40);
+  const bill = D.phrases.groups.flatMap((g) => g.phrases).find((p) => /cuenta/.test(p.es));
+  assert.ok(bill.zh && bill.ja, 'the bill, in both languages');
+});
+
 test('simulating a day moves the whole app to that day (and back)', async () => {
   const { setSimulatedNow, now } = store;
   const check = (iso, phase, dayId) => { setSimulatedNow(iso); const st = tripPhase(); assert.equal(st.phase, phase, iso); if (dayId) assert.equal(st.day.id, dayId, iso); };

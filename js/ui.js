@@ -1,8 +1,9 @@
 // Shared rendering pieces: badges, activity rows, day cards (departure / arrival / info), map boxes, action registry.
 import { D, I, done, checks } from './store.js';
-import { esc, fmtDate, fmtShort, hhmm, cap, isoDate, imgUrl } from './util.js';
+import { esc, ic, icon, fmtDate, fmtShort, hhmm, cap, isoDate, imgUrl } from './util.js';
 import { departureTimes, lodgingOfDay } from './tripstate.js';
 import { TripMap } from './map.js';
+import { weatherLine } from './weather.js';
 
 // ------------------------------------------------------------------ click-action registry (event delegation)
 export const actions = {};
@@ -16,21 +17,21 @@ export function heroImg(img) {
   const u = tripImgUrl(img);
   return u ? { cls: ' hero-img', style: ` style="--hero-img:url('${esc(u)}')"` } : { cls: '', style: '' };
 }
-export const cat = (id) => D.trip.categories[id] || { icon: '📍', label: id, color: '#666' };
-export const catChip = (id) => `<span class="tag" style="--c:${cat(id).color}">${cat(id).icon} ${esc(cat(id).label)}</span>`;
-export const PRIO = { imperdible: ['⭐', 'Imperdible', 'must'], recomendado: ['👍', 'Recomendado', 'rec'], opcional: ['◦', 'Opcional', 'opt'] };
-export const prioBadge = (p) => PRIO[p] ? `<span class="badge ${PRIO[p][2]}">${PRIO[p][0]} ${PRIO[p][1]}</span>` : '';
+export const cat = (id) => D.trip.categories[id] || { icon: 'location-dot', label: id, color: '#666' };
+export const catChip = (id) => `<span class="tag" style="--c:${cat(id).color}">${icon(cat(id).icon)} ${esc(cat(id).label)}</span>`;
+export const PRIO = { imperdible: ['star', 'Imperdible', 'must'], recomendado: ['thumbs-up', 'Recomendado', 'rec'], opcional: ['circle', 'Opcional', 'opt'] };
+export const prioBadge = (p) => PRIO[p] ? `<span class="badge ${PRIO[p][2]}">${ic(PRIO[p][0])} ${PRIO[p][1]}</span>` : '';
 export function statusBadge(s) {
-  if (s === 'reservado') return '<span class="badge ok">✔ Reservado</span>';
-  if (s === 'pendiente') return '<span class="badge warn">⏳ Pendiente</span>';
-  if (s === 'hecho') return '<span class="badge ok">✔ Hecho</span>';
+  if (s === 'reservado') return `<span class="badge ok">${ic('check')} Reservado</span>`;
+  if (s === 'pendiente') return `<span class="badge warn">${ic('hourglass-half')} Pendiente</span>`;
+  if (s === 'hecho') return `<span class="badge ok">${ic('check')} Hecho</span>`;
   return '';
 }
 export const resvBadge = (r) => r === 'requerida' ? '<span class="badge warn">Reserva necesaria</span>'
   : r === 'recomendada' ? '<span class="badge info">Reserva recomendada</span>' : '';
-export const extLink = (url, text) => `<a href="${esc(url)}" target="_blank" rel="noopener" class="ext">${esc(text)} <span aria-hidden="true">↗</span><span class="net" title="Requiere internet">🌐</span></a>`;
+export const extLink = (url, text) => `<a href="${esc(url)}" target="_blank" rel="noopener" class="ext">${esc(text)} ${ic('arrow-up-right-from-square')}<span class="net" title="Requiere internet">${ic('globe')}</span></a>`;
 export const dayLabel = (day) => cap(fmtDate(day.date, { weekday: 'long', day: 'numeric', month: 'long' }));
-export const transportIcon = (k) => ({ vuelo: '✈️', tren: '🚆', bus: '🚌', auto: '🚗' }[k] || '🚉');
+export const transportIcon = (k) => ic({ vuelo: 'plane', tren: 'train', bus: 'bus', auto: 'car' }[k] || 'route');
 
 // ------------------------------------------------------------------ map box (creates a TripMap after render)
 export function mapBox(ctx, id, init, cls = '') {
@@ -50,11 +51,11 @@ export function actRow(a, { current = false, next = false } = {}) {
   const c = cat(a.category);
   const time = a.start ? `${esc(a.start)}${a.end ? `<small>${esc(a.end)}</small>` : ''}` : `<small>${esc(a.slot || '')}</small>`;
   return `<article class="act ${isDone ? 'is-done' : ''} ${current ? 'is-now' : ''} ${next ? 'is-next' : ''}" data-act-id="${esc(a.id)}">
-    <button class="act-done" data-act="toggle-done" data-id="${esc(a.id)}" aria-label="Marcar como hecho" aria-pressed="${isDone}">✓</button>
+    <button class="act-done" data-act="toggle-done" data-id="${esc(a.id)}" aria-label="Marcar como hecho" aria-pressed="${isDone}">${ic('check')}</button>
     <div class="act-main" data-act="toggle-act" role="button" tabindex="0" aria-expanded="false">
       <div class="act-time">${time}</div>
       <div class="act-body">
-        <div class="act-title"><span class="act-ic" style="--c:${c.color}">${c.icon}</span> ${esc(a.title)}</div>
+        <div class="act-title"><span class="act-ic" style="--c:${c.color}">${icon(c.icon)}</span> ${esc(a.title)}</div>
         <div class="act-tags">${current ? '<span class="badge now">Ahora</span>' : next ? '<span class="badge next">Sigue</span>' : ''}
           ${a.priority !== 'recomendado' ? prioBadge(a.priority) : ''}${a.source === 'app' ? '<span class="badge">nueva</span>' : ''}${resvBadge(a.reservation)}${a.status === 'reservado' ? statusBadge('reservado') : ''}</div>
       </div>
@@ -69,8 +70,8 @@ export function actRow(a, { current = false, next = false } = {}) {
         ${a.status && a.status !== 'reservado' ? `<dt>Estado</dt><dd>${statusBadge(a.status)}</dd>` : ''}
       </dl>
       <div class="row-actions">
-        ${a.placeId && I.place[a.placeId] ? `<a class="btn small" href="#/mapa?focus=${esc(a.placeId)}">🗺 Ver en el mapa</a>` : ''}
-        <button class="btn small" data-act="act-edit" data-id="${esc(a.id)}">✏️ Editar</button>
+        ${a.placeId && I.place[a.placeId] ? `<a class="btn small" href="#/mapa?focus=${esc(a.placeId)}">${ic('map')} Ver en el mapa</a>` : ''}
+        <button class="btn small" data-act="act-edit" data-id="${esc(a.id)}">${ic('pen')} Editar</button>
         ${a.link ? extLink(a.link, 'Más info') : ''}
       </div>
     </div>
@@ -79,8 +80,8 @@ export function actRow(a, { current = false, next = false } = {}) {
 
 // ------------------------------------------------------------------ day cards
 function docButtons(types) {
-  const names = { pasaje: ['🎫', 'Pasajes y códigos'], visa: ['🛂', 'Visas y documentos'] };
-  return (types || []).map((t) => `<a class="btn" href="#/docs${t === 'pasaje' ? '/pasaje' : ''}">${names[t]?.[0] || '📄'} ${esc(names[t]?.[1] || t)}</a>`).join('');
+  const names = { pasaje: ['ticket', 'Pasajes y códigos'], visa: ['passport', 'Visas y documentos'] };
+  return (types || []).map((t) => `<a class="btn" href="#/docs${t === 'pasaje' ? '/pasaje' : ''}">${ic(names[t]?.[0] || 'file-lines')} ${esc(names[t]?.[1] || t)}</a>`).join('');
 }
 
 export function checklistHtml(card, day) {
@@ -97,15 +98,27 @@ export function departureCard(card, day, { hero = false } = {}) {
   const target = leave || airport;
   const cells = [
     leave && ['Salir de casa', hhmm(leave), ''],
-    airport && ['Estar en el aeropuerto', hhmm(airport), place ? place.name.replace(/ \(.*\)/, '') : ''],
-    dep && ['Despega', hhmm(dep), `${fmtShort(isoDate(dep))}${t?.service ? ' · ' + t.service : ''}`],
+    airport && [hero ? 'Aeropuerto' : 'Estar en el aeropuerto', hhmm(airport), place && !hero ? place.name.replace(/ \(.*\)/, '') : ''],
+    dep && ['Despega', hhmm(dep), hero ? fmtShort(isoDate(dep)) : `${fmtShort(isoDate(dep))}${t?.service ? ' · ' + t.service : ''}`],
   ].filter(Boolean);
   const grid = `<div class="go-grid">${cells.map(([l, v, s]) => `<div><small>${l}</small><b>${v}</b>${s ? `<em>${esc(s)}</em>` : ''}</div>`).join('')}</div>`;
   const count = target ? `<p class="countdown" data-countdown="${target.getTime()}" data-label="${leave ? 'para salir de casa' : 'para llegar al aeropuerto'}"></p>` : '';
+  const airportBtn = place ? `<a class="btn" href="#/mapa?focus=${esc(place.id)}">${ic('map')} ${hero ? esc(place.name.replace(/ \(.*\)/, '')) : 'Aeropuerto'}</a>` : '';
+  // The hero only keeps the times; the checklist goes in its own card below (see checklistCard) and the
+  // document shortcuts are already on the home screen.
+  if (hero) { const g = heroImg(day.image); return `<section class="hero hero-go${g.cls}"${g.style}><h1>${icon(card.icon || 'plane-departure')} ${esc(card.title)}</h1>${weatherLine(day)}${grid}${count}
+    ${card.note ? `<p class="note-line">${esc(card.note)}</p>` : ''}${airportBtn ? `<div class="row-actions">${airportBtn}</div>` : ''}</section>`; }
   const body = `${grid}${count}${card.note ? `<p class="note-line">${esc(card.note)}</p>` : ''}${checklistHtml(card, day)}
-    <div class="row-actions">${docButtons(card.docTypes)}${place ? `<a class="btn" href="#/mapa?focus=${esc(place.id)}">🗺 Aeropuerto</a>` : ''}</div>`;
-  if (hero) { const g = heroImg(day.image); return `<section class="hero hero-go${g.cls}"${g.style}><div class="hero-emoji">${card.icon || '🛫'}</div><h1>${esc(card.title)}</h1>${body}</section>`; }
-  return `<section class="card card-go"><h3>${card.icon || '🛫'} ${esc(card.title)}</h3>${body}</section>`;
+    <div class="row-actions">${docButtons(card.docTypes)}${airportBtn}</div>`;
+  return `<section class="card card-go"><h3>${icon(card.icon || 'plane-departure')} ${esc(card.title)}</h3>${body}</section>`;
+}
+
+export function checklistCard(card, day) {
+  if (!card.checklist?.length) return '';
+  const keys = card.checklist.map((_, i) => `${day.id}:${i}`);
+  const n = keys.filter((k) => checks.has(k)).length;
+  return `<section class="card"><div class="card-head"><h3>${ic('suitcase-rolling')} Antes de salir</h3><span class="badge ${n === keys.length ? 'ok' : ''}">${n}/${keys.length}</span></div>
+    ${card.checklist.map((it, i) => `<label class="check"><input type="checkbox" data-act="toggle-check" data-key="${esc(keys[i])}" ${checks.has(keys[i]) ? 'checked' : ''}><span>${esc(it)}</span></label>`).join('')}</section>`;
 }
 
 export function arrivalCard(card, day, ctx) {
@@ -124,18 +137,18 @@ export function arrivalCard(card, day, ctx) {
   const legend = (card.map?.routes || []).length
     ? `<div class="legend">${card.map.routes.map((r) => `<span><i style="background:${r.color}"></i>${esc(r.label)}</span>`).join('')}</div>` : '';
   return `<section class="card card-arrival">
-    <h3>${card.icon || '🛬'} ${esc(card.title)}</h3>
+    <h3>${icon(card.icon || 'plane-arrival')} ${esc(card.title)}</h3>
     ${card.intro ? `<p>${esc(card.intro)}</p>` : ''}
     <h4>Cómo llegar al hospedaje</h4>
     <ul class="options">${(card.options || []).map((o) => `<li class="${o.recommended ? 'rec' : ''}">
-      <span class="o-ic">${o.icon || '➡️'}</span>
+      <span class="o-ic">${icon(o.icon || 'arrow-right')}</span>
       <div><b>${esc(o.label)}</b>${o.recommended ? ' <span class="badge ok">Sugerido</span>' : ''}
         <p>${esc(o.detail || '')}</p>
         <small>${[o.duration, o.cost].filter(Boolean).map(esc).join(' · ')}</small></div></li>`).join('')}</ul>
     ${mapHtml}${legend}
-    ${lodging ? `<div class="lodging-line"><b>🏨 ${esc(lodging.name)}</b>${lodging.area ? `<span>${esc(lodging.area)}</span>` : ''}
+    ${lodging ? `<div class="lodging-line"><b>${ic('hotel')} ${esc(lodging.name)}</b>${lodging.area ? `<span>${esc(lodging.area)}</span>` : ''}
       ${lodging.status === 'pendiente' ? '<span class="badge warn">Hotel por reservar</span>' : ''}
-      <button class="btn small" data-act="lodging-edit" data-id="${esc(lodging.id)}">✏️ Editar</button>
+      <button class="btn small" data-act="lodging-edit" data-id="${esc(lodging.id)}">${ic('pen')} Editar</button>
       ${lodging.addressLocal ? `<button class="btn small" data-act="show-address" data-id="${esc(lodging.id)}">Mostrar dirección al taxista</button>` : ''}</div>` : ''}
     ${(card.links || []).length ? `<h4>Links de interés</h4><ul class="links">${card.links.map((l) => `<li>${extLink(l.url, l.title)}</li>`).join('')}</ul>
       <p class="hint">Los links necesitan internet. Para tener un mapa de metro offline, guardá una captura y adjuntala en Documentos.</p>` : ''}
@@ -143,7 +156,7 @@ export function arrivalCard(card, day, ctx) {
 }
 
 export function infoCard(card) {
-  return `<section class="card"><h3>${card.icon || 'ℹ️'} ${esc(card.title)}</h3>${card.body ? `<p>${esc(card.body)}</p>` : ''}
+  return `<section class="card"><h3>${icon(card.icon || 'circle-info')} ${esc(card.title)}</h3>${card.body ? `<p>${esc(card.body)}</p>` : ''}
     ${(card.links || []).map((l) => `<p>${extLink(l.url, l.title)}</p>`).join('')}</section>`;
 }
 
@@ -157,4 +170,4 @@ export function renderCards(day, ctx, { skipTripStart = false } = {}) {
 
 // ------------------------------------------------------------------ notes (alerts) relevant to a day
 export const notesFor = (day) => D.notes.filter((n) => (n.days || []).includes(day.id));
-export const noteHtml = (n) => `<div class="note ${n.level === 'warn' ? 'warn' : 'info'}"><b>${n.level === 'warn' ? '⚠️' : 'ℹ️'} ${esc(n.title)}</b><p>${esc(n.detail)}</p></div>`;
+export const noteHtml = (n) => `<div class="note ${n.level === 'warn' ? 'warn' : 'info'}"><b>${ic(n.level === 'warn' ? 'triangle-exclamation' : 'circle-info')} ${esc(n.title)}</b><p>${esc(n.detail)}</p></div>`;

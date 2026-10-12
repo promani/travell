@@ -69,52 +69,52 @@
   "categories": {
     "gastronomia": {
       "label": "Gastronomía",
-      "icon": "🍜",
+      "icon": "bowl-food",
       "color": "#e8590c"
     },
     "cultura": {
       "label": "Cultura",
-      "icon": "🏯",
+      "icon": "torii-gate",
       "color": "#7048e8"
     },
     "naturaleza": {
       "label": "Naturaleza",
-      "icon": "🌿",
+      "icon": "leaf",
       "color": "#2f9e44"
     },
     "compras": {
       "label": "Compras",
-      "icon": "🛍️",
+      "icon": "bag-shopping",
       "color": "#d6336c"
     },
     "noche": {
       "label": "Noche",
-      "icon": "🌙",
+      "icon": "moon",
       "color": "#364fc7"
     },
     "aventura": {
       "label": "Aventura",
-      "icon": "⛴️",
+      "icon": "ferry",
       "color": "#1098ad"
     },
     "onsen": {
       "label": "Onsen",
-      "icon": "♨️",
+      "icon": "hot-tub-person",
       "color": "#c2255c"
     },
     "alojamiento": {
       "label": "Alojamiento",
-      "icon": "🏨",
+      "icon": "hotel",
       "color": "#495057"
     },
     "traslado": {
       "label": "Traslado",
-      "icon": "🚆",
+      "icon": "train",
       "color": "#868e96"
     },
     "vuelo": {
       "label": "Vuelo",
-      "icon": "✈️",
+      "icon": "plane",
       "color": "#228be6"
     }
   },

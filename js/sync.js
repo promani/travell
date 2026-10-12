@@ -14,6 +14,7 @@ const unb64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
 /** trip.json → sync.relayUrl: "same-origin" when the app is served by server/relay.mjs (e.g. the Docker image). */
 export const defaultRelayUrl = () => { const u = BASE.trip?.sync?.relayUrl; return u === 'same-origin' ? location.origin : (u || ''); };
 const cfg = () => ({ url: (settings.get('relayUrl', '') || defaultRelayUrl()).trim().replace(/\/+$/, ''), code: (settings.get('groupCode', '') || '').trim() });
+export const relayBase = () => cfg().url;
 export const syncConfigured = () => { const c = cfg(); return !!(c.url && c.code); };
 
 let keyCache = { code: null, p: null };

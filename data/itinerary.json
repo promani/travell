@@ -17,7 +17,7 @@
         {
           "type": "departure",
           "tripStart": true,
-          "icon": "🛫",
+          "icon": "plane-departure",
           "title": "Hoy es el día del viaje",
           "transportId": "t01",
           "airportLeadMinutes": 180,
@@ -112,13 +112,13 @@
       "cards": [
         {
           "type": "arrival",
-          "icon": "🛬",
+          "icon": "plane-arrival",
           "title": "Llegada a Shanghai",
           "cityId": "shanghai",
           "intro": "Aterrizás en Pudong (PVG) ~18:10. Después de migraciones (~19:30) vas al hotel. Antes configurá Alipay/WeChat Pay y la eSIM: las apps de Google no andan sin VPN en China.",
           "options": [
             {
-              "icon": "🚄",
+              "icon": "train",
               "label": "Maglev + metro línea 2",
               "recommended": true,
               "detail": "Maglev PVG → Longyang Rd (8 min), combinar con metro línea 2 hasta Plaza del Pueblo (zona sugerida). Verificá el último servicio del Maglev (~21:40).",
@@ -126,14 +126,14 @@
               "duration": "~1 h"
             },
             {
-              "icon": "🚕",
+              "icon": "taxi",
               "label": "Taxi / DiDi",
               "detail": "Más cómodo con valijas. Mostrale al conductor la dirección en chino. DiDi acepta Alipay/WeChat Pay.",
               "cost": "~¥180–250 (aprox.)",
               "duration": "~1 h"
             },
             {
-              "icon": "🚇",
+              "icon": "train-subway",
               "label": "Metro línea 2 directo",
               "detail": "Sin transbordos desde el aeropuerto hasta el centro; es la opción más barata y lenta.",
               "cost": "Económico",
@@ -622,7 +622,7 @@
       "cards": [
         {
           "type": "departure",
-          "icon": "🛫",
+          "icon": "plane-departure",
           "title": "Hoy volás a Tokio",
           "transportId": "t04",
           "airportLeadMinutes": 180,
@@ -636,13 +636,13 @@
         },
         {
           "type": "arrival",
-          "icon": "🛬",
+          "icon": "plane-arrival",
           "title": "Llegada a Tokio",
           "cityId": "tokyo",
           "intro": "Aterrizás en Narita T3 (sin estación: caminar o shuttle a la T2, ~10–15 min). Mostrá el QR de Visit Japan Web, comprá Welcome Suica o cargá Suica en el celular y sacá yenes en un ATM de 7-Eleven o Japan Post.",
           "options": [
             {
-              "icon": "🚆",
+              "icon": "train",
               "label": "Narita Express → Shinjuku",
               "recommended": true,
               "detail": "Directo con asientos reservados. Salida ~20:00.",
@@ -650,7 +650,7 @@
               "duration": "~1 h 30"
             },
             {
-              "icon": "🚈",
+              "icon": "train-tram",
               "label": "Skyliner → Ueno",
               "detail": "Alternativa si el hotel queda en el este de Tokio.",
               "cost": "Consultar",
@@ -2306,13 +2306,13 @@
       "cards": [
         {
           "type": "arrival",
-          "icon": "🛬",
+          "icon": "plane-arrival",
           "title": "Llegada a Pekín",
           "cityId": "beijing",
           "intro": "Segunda entrada a China (migraciones de nuevo). Tené a mano pasaje de salida y reserva del hotel. Alipay/WeChat Pay y eSIM de nuevo en uso.",
           "options": [
             {
-              "icon": "🚇",
+              "icon": "train-subway",
               "label": "Airport Express + metro",
               "recommended": true,
               "detail": "La opción más barata y sin tráfico.",
@@ -2320,7 +2320,7 @@
               "duration": "~1 h"
             },
             {
-              "icon": "🚕",
+              "icon": "taxi",
               "label": "Taxi / DiDi",
               "detail": "Mostrá la dirección en chino.",
               "cost": "~¥120–150 (aprox.)",
@@ -2660,7 +2660,7 @@
       "cards": [
         {
           "type": "departure",
-          "icon": "🛫",
+          "icon": "plane-departure",
           "title": "Hoy empezás la vuelta",
           "transportId": "t20",
           "airportLeadMinutes": 120,

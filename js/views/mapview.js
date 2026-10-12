@@ -1,7 +1,7 @@
 import { D, I, settings, bus } from '../store.js';
 import { personItems } from './people.js';
 import { openPlaceForm, openActivityForm } from './forms.js';
-import { esc, fmtDist, openModal, toast, copyText, fmtShort } from '../util.js';
+import { esc, ic, icon, fmtDist, openModal, toast, copyText, fmtShort } from '../util.js';
 import { tripPhase } from '../tripstate.js';
 import { cat, register, extLink } from '../ui.js';
 import { computeNearby, isPoi } from '../nearby.js';
@@ -32,13 +32,13 @@ export function render(params, ctx) {
         ${D.days.map((d) => `<option value="${d.id}" ${d.id === S.dayId ? 'selected' : ''}>Día ${d.n} · ${esc(fmtShort(d.date))} · ${esc(d.title)}</option>`).join('')}
       </select>
     </div>
-    <div class="chips" id="catchips"><button class="chip ${S.people ? 'on' : ''}" style="--c:#1c7ed6" data-act="map-people">👥 Viajeros</button>${allCats.map((c) => `<button class="chip ${S.cats.has(c) ? 'on' : ''}" style="--c:${cat(c).color}" data-act="map-cat" data-cat="${c}">${cat(c).icon} ${esc(cat(c).label)}</button>`).join('')}</div>
+    <div class="chips" id="catchips"><button class="chip ${S.people ? 'on' : ''}" style="--c:#1c7ed6" data-act="map-people">${ic('users')} Viajeros</button>${allCats.map((c) => `<button class="chip ${S.cats.has(c) ? 'on' : ''}" style="--c:${cat(c).color}" data-act="map-cat" data-cat="${c}">${icon(cat(c).icon)} ${esc(cat(c).label)}</button>`).join('')}</div>
     <div class="map map-full" id="bigmap" role="region" aria-label="Mapa"></div>
     <div class="map-tools">
-      <button class="btn small" data-act="map-locate">📍 Mi ubicación</button>
-      <button class="btn small" data-act="map-provider" id="prov-btn">🗺 Mapa: …</button>
-      <button class="btn small" data-act="map-add">＋ Lugar acá</button>
-      <button class="btn small" data-act="map-offline">⬇ Guardar zona offline</button>
+      <button class="btn small" data-act="map-locate">${ic('location-dot')} Mi ubicación</button>
+      <button class="btn small" data-act="map-provider" id="prov-btn">${ic('map')} Mapa: …</button>
+      <button class="btn small" data-act="map-add">${ic('plus')} Lugar acá</button>
+      <button class="btn small" data-act="map-offline">${ic('download')} Guardar zona offline</button>
     </div>
     <p class="hint" id="map-hint"></p>
     <ul class="nearby big" id="maplist"></ul>
@@ -88,7 +88,7 @@ function mount(ctx, st, params) {
     }
     document.getElementById('maplist').innerHTML = r.list.slice(0, 80).map(({ place, dist }) => {
       const c = cat(place.category);
-      return `<li class="${place.id === focusId ? 'active' : ''}"><a href="#/lugar/${esc(place.id)}" data-place="${esc(place.id)}" data-act="focus-place"><span class="act-ic" style="--c:${c.color}">${c.icon}</span>
+      return `<li class="${place.id === focusId ? 'active' : ''}"><a href="#/lugar/${esc(place.id)}" data-place="${esc(place.id)}" data-act="focus-place"><span class="act-ic" style="--c:${c.color}">${icon(c.icon)}</span>
         <div><b>${esc(place.name)}</b><small>${esc(c.label)}${place.area ? ' · ' + esc(place.area) : ''}${place.approx ? ' · ubicación aproximada' : ''}</small></div>
         <em>${dist != null && r.usingGps ? fmtDist(dist) : ''}</em></a></li>`;
     }).join('') || '<li class="muted">No hay lugares con estos filtros.</li>';
@@ -96,7 +96,7 @@ function mount(ctx, st, params) {
     if (hint) hint.textContent = S.scope === 'near' && !r.usingGps ? 'Sin GPS: se muestra la ciudad del día. Tocá “Mi ubicación” para ordenar por distancia.' : `${r.list.length} lugares`;
   };
   const highlight = (id) => { focusId = id; refresh(false); map.openPlace(id); document.querySelector(`[data-place="${id}"]`)?.scrollIntoView({ block: 'nearest' }); };
-  const provLabel = () => { const b = document.getElementById('prov-btn'); if (b) b.textContent = `🗺 Mapa: ${map.mode === 'auto' ? 'auto' : D.trip.tileProviders[map.mode].name.split(' ')[0]} (${D.trip.tileProviders[map.providerId].name.split(' ')[0]})`; };
+  const provLabel = () => { const b = document.getElementById('prov-btn'); if (b) b.innerHTML = `${ic('map')} Mapa: ${esc(map.mode === 'auto' ? 'auto' : D.trip.tileProviders[map.mode].name.split(' ')[0])} (${esc(D.trip.tileProviders[map.providerId].name.split(' ')[0])})`; };
 
   current = { map, refresh, highlight, provLabel };
   el.addEventListener('providerchange', provLabel);
@@ -174,20 +174,20 @@ export function renderPlace({ id }, ctx) {
   ctx.title = p.name;
   const days = (p.days || []).map((d) => I.day[d]).filter(Boolean);
   return `<article class="card place">
-    <div class="place-head"><span class="act-ic big" style="--c:${c.color}">${c.icon}</span><div><h1>${esc(p.name)}</h1>
+    <div class="place-head"><span class="act-ic big" style="--c:${c.color}">${icon(c.icon)}</span><div><h1>${esc(p.name)}</h1>
       ${p.nameLocal ? `<div class="local">${esc(p.nameLocal)} <button class="btn tiny" data-act="copy" data-text="${esc(p.nameLocal)}">Copiar</button></div>` : ''}
       <small>${esc(c.label)}${p.area ? ' · ' + esc(p.area) : ''}${p.source === 'sugerencia' ? ' · sugerencia' : ''}</small></div></div>
     ${p.description ? `<p>${esc(p.description)}</p>` : ''}
-    ${p.cost ? `<p>💳 ${esc(p.cost)}</p>` : ''}
+    ${p.cost ? `<p>${ic('credit-card')} ${esc(p.cost)}</p>` : ''}
     ${p.approx ? '<p class="note warn">La ubicación es aproximada; verificala antes de ir.</p>' : ''}
     ${days.length ? `<p>En el itinerario: ${days.map((d) => `<a href="#/dia/${d.id}">Día ${d.n} · ${esc(fmtShort(d.date))}</a>`).join(', ')}</p>` : ''}
-    <div class="row-actions"><a class="btn primary" href="#/mapa?focus=${esc(p.id)}">🗺 Ver en el mapa</a>
-      <a class="btn" href="${externalMapUrl(p.lat, p.lon, p.name, provider)}" target="_blank" rel="noopener">Abrir en app de mapas 🌐</a>
-      ${provider !== 'gaode' ? `<a class="btn" href="${googleMapUrl(p.lat, p.lon)}" target="_blank" rel="noopener">Google Maps 🌐</a>` : ''}
+    <div class="row-actions"><a class="btn primary" href="#/mapa?focus=${esc(p.id)}">${ic('map')} Ver en el mapa</a>
+      <a class="btn" href="${externalMapUrl(p.lat, p.lon, p.name, provider)}" target="_blank" rel="noopener">Abrir en app de mapas ${ic('globe')}</a>
+      ${provider !== 'gaode' ? `<a class="btn" href="${googleMapUrl(p.lat, p.lon)}" target="_blank" rel="noopener">Google Maps ${ic('globe')}</a>` : ''}
       ${p.link ? extLink(p.link, 'Más info') : ''}</div>
-    <div class="row-actions"><button class="btn small" data-act="place-edit" data-id="${esc(p.id)}">✏️ Editar</button>
+    <div class="row-actions"><button class="btn small" data-act="place-edit" data-id="${esc(p.id)}">${ic('pen')} Editar</button>
       <button class="btn small danger" data-act="place-del" data-id="${esc(p.id)}">Borrar</button>
-      <button class="btn small" data-act="act-new-place" data-id="${esc(p.id)}">＋ Agregar al itinerario</button></div>
+      <button class="btn small" data-act="act-new-place" data-id="${esc(p.id)}">${ic('plus')} Agregar al itinerario</button></div>
     <p class="hint">${p.source === 'app' ? 'Cargado en la app' : p.edited ? 'Del JSON, editado en la app' : `Del archivo ${esc(p.file || 'places.json')}`}${Number.isFinite(p.lat) ? ` · ${p.lat.toFixed(5)}, ${p.lon.toFixed(5)}` : ''}</p>
   </article>`;
 }

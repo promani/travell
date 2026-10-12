@@ -1,6 +1,6 @@
 // Photos live in IndexedDB on the device (works offline). Each is anchored to a day.
 import { D, I, idb } from '../store.js';
-import { esc, uid, toast, openModal, download, fmtShort, cap } from '../util.js';
+import { esc, ic, uid, toast, openModal, download, fmtShort, cap } from '../util.js';
 import { tripPhase } from '../tripstate.js';
 import { register } from '../ui.js';
 
@@ -61,14 +61,14 @@ export function render(params, ctx) {
   ctx.title = 'Fotos';
   ctx.after(() => paint(ctx));
   ctx.cleanup(freeUrls);
-  return `<header class="pagehead"><h1>📷 Fotos</h1><p class="muted">Se guardan en este dispositivo (funcionan sin internet) y quedan asociadas a un día.</p></header>
+  return `<header class="pagehead"><h1>${ic('camera')} Fotos</h1><p class="muted">Se guardan en este dispositivo (funcionan sin internet) y quedan asociadas a un día.</p></header>
     <section class="card">
       <label class="field">Guardar en el día
         <select id="photo-day" data-change="photo-day"><option value="">Sin día</option>
           ${D.days.map((d) => `<option value="${d.id}" ${d.id === target ? 'selected' : ''}>Día ${d.n} · ${esc(fmtShort(d.date))} · ${esc(d.title)}</option>`).join('')}</select></label>
       <div class="row-actions">
-        <label class="btn primary">＋ Elegir fotos<input type="file" accept="image/*" multiple hidden data-change="photo-files"></label>
-        <label class="btn">📸 Sacar foto<input type="file" accept="image/*" capture="environment" hidden data-change="photo-files"></label>
+        <label class="btn primary">${ic('plus')} Elegir fotos<input type="file" accept="image/*" multiple hidden data-change="photo-files"></label>
+        <label class="btn">${ic('camera')} Sacar foto<input type="file" accept="image/*" capture="environment" hidden data-change="photo-files"></label>
       </div>
     </section>
     <div class="chips" id="photo-filter"></div>
@@ -86,7 +86,7 @@ async function paint(ctx) {
   if (f) f.innerHTML = `<button class="chip ${!filterDay ? 'on' : ''}" data-act="photo-filter" data-day="">Todas (${all.length})</button>` +
     Object.keys(counts).sort().map((k) => `<button class="chip ${filterDay === k ? 'on' : ''}" data-act="photo-filter" data-day="${k}">${k ? `Día ${I.day[k].n}` : 'Sin día'} (${counts[k]})</button>`).join('');
   const shown = all.filter((p) => !filterDay || (p.dayId || '') === filterDay).sort((a, b) => (a.dayId || 'z').localeCompare(b.dayId || 'z') || a.takenAt - b.takenAt);
-  if (!shown.length) { box.innerHTML = '<p class="muted center">Todavía no hay fotos. Sumá la primera 👆</p>'; return; }
+  if (!shown.length) { box.innerHTML = `<p class="muted center">Todavía no hay fotos. Sumá la primera ${ic('hand-point-up')}</p>`; return; }
   const groups = {};
   shown.forEach((p) => (groups[p.dayId || ''] ||= []).push(p));
   box.innerHTML = Object.entries(groups).map(([k, arr]) => `<h3 class="grp">${k ? `Día ${I.day[k].n} · ${esc(cap(I.day[k].title))}` : 'Sin día'}</h3>
@@ -113,7 +113,7 @@ register({
     const dlg = openModal(`<img class="lightbox" src="${u}" alt="">
       <input class="caption" placeholder="Agregar descripción" value="${esc(rec.caption || '')}" aria-label="Descripción">
       <label class="field">Día <select class="pday"><option value="">Sin día</option>${D.days.map((d) => `<option value="${d.id}" ${d.id === rec.dayId ? 'selected' : ''}>Día ${d.n} · ${esc(d.title)}</option>`).join('')}</select></label>
-      <div class="row-actions"><button class="btn" data-x="dl">⬇ Descargar</button><button class="btn danger" data-x="del">Eliminar</button><button class="btn" data-act="close-modal">Cerrar</button></div>`, { cls: 'wide',
+      <div class="row-actions"><button class="btn" data-x="dl">${ic('download')} Descargar</button><button class="btn danger" data-x="del">Eliminar</button><button class="btn" data-act="close-modal">Cerrar</button></div>`, { cls: 'wide',
       onClose: () => paint() });
     dlg.querySelector('.caption').onchange = async (e) => { rec.caption = e.target.value; await idb.put('photos', rec); };
     dlg.querySelector('.pday').onchange = async (e) => { rec.dayId = e.target.value || null; await idb.put('photos', rec); };

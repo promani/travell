@@ -1,8 +1,8 @@
 // ABM (alta / baja / modificación) forms: places, lodging, activities, tasks, travelers.
 // Saved as overlay records (store.cols) on top of the JSON; location from the map, GPS or typed coordinates.
 import { D, I, cols, me, settings } from '../store.js';
-import { esc, uid, toast, openModal, closeModal, fmtShort, haversine } from '../util.js';
-import { register, cat } from '../ui.js';
+import { esc, ic, uid, toast, openModal, closeModal, fmtShort, haversine } from '../util.js';
+import { register } from '../ui.js';
 import { TripMap } from '../map.js';
 import { gps, currentPosition } from '../geo.js';
 import { tripPhase, focusCity } from '../tripstate.js';
@@ -18,7 +18,7 @@ const travelerOptions = (blank) => [...(blank ? [['', blank]] : []), ...D.travel
 const buttons = (delAct, id, rec, col) => `<div class="row-actions"><button class="btn primary" type="submit">Guardar</button>
   <button class="btn" type="button" data-act="close-modal">Cancelar</button>
   ${delAct && id ? `<button class="btn danger" type="button" data-act="${delAct}" data-id="${esc(id)}">Borrar</button>` : ''}
-  ${rec?.edited ? `<button class="btn" type="button" data-act="restore-original" data-col="${col}" data-id="${esc(id)}" title="Descarta los cambios hechos en la app">↺ Restaurar original</button>` : ''}</div>`;
+  ${rec?.edited ? `<button class="btn" type="button" data-act="restore-original" data-col="${col}" data-id="${esc(id)}" title="Descarta los cambios hechos en la app">${ic('rotate-left')} Restaurar original</button>` : ''}</div>`;
 const val = (f, k) => { const v = (f.get(k) ?? '').toString().trim(); return v === '' ? null : v; };
 
 function nearestCity(lat, lon) {
@@ -30,7 +30,7 @@ function nearestCity(lat, lon) {
 // ------------------------------------------------------------------ location picker inside a form
 const locBlock = (lat, lon, required) => `<fieldset class="field loc"><legend>Ubicación${required ? '' : ' (opcional)'}</legend>
   <div class="map map-pick" data-pick></div>
-  <div class="row-actions"><button type="button" class="btn small" data-x="gps">📍 Usar mi ubicación</button>
+  <div class="row-actions"><button type="button" class="btn small" data-x="gps">${ic('location-dot')} Usar mi ubicación</button>
     <button type="button" class="btn small" data-x="clear">Quitar</button></div>
   <div class="two">${input('Latitud', 'lat', lat, 'inputmode="decimal" autocomplete="off"')}${input('Longitud', 'lon', lon, 'inputmode="decimal" autocomplete="off"')}</div>
   <p class="hint" data-loc-hint>Tocá el mapa o arrastrá el marcador. También podés pegar "lat, lon" en Latitud.</p></fieldset>`;
@@ -87,7 +87,7 @@ const confirmDel = (what) => confirm(`¿Borrar ${what}? Se puede volver a cargar
 
 // ------------------------------------------------------------------ places
 export function openPlaceForm(p = {}) {
-  const cats = Object.entries(D.trip.categories).filter(([k]) => k !== 'vuelo' && k !== 'alojamiento').map(([k, c]) => [k, `${c.icon} ${c.label}`]);
+  const cats = Object.entries(D.trip.categories).filter(([k]) => k !== 'vuelo' && k !== 'alojamiento').map(([k, c]) => [k, c.label]);
   open(`<h3>${p.id ? 'Editar lugar' : 'Nuevo lugar'}</h3><form class="form" data-submit="place-save">
     <input type="hidden" name="id" value="${esc(p.id || '')}">
     ${input('Nombre *', 'name', p.name, 'required maxlength="100"')}
@@ -106,7 +106,7 @@ export function openLodgingForm(l = {}) {
   open(`<h3>${l.id ? 'Editar alojamiento' : 'Nuevo alojamiento'}</h3><form class="form" data-submit="lodging-save">
     <input type="hidden" name="id" value="${esc(l.id || '')}">
     ${input('Nombre *', 'name', l.name, 'required maxlength="100"')}
-    <div class="two">${select('Ciudad', 'cityId', cityOptions(), l.cityId)}${select('Estado', 'status', [['pendiente', '⏳ Por reservar'], ['reservado', '✔ Reservado']], l.status || 'pendiente')}</div>
+    <div class="two">${select('Ciudad', 'cityId', cityOptions(), l.cityId)}${select('Estado', 'status', [['pendiente', 'Por reservar'], ['reservado', 'Reservado']], l.status || 'pendiente')}</div>
     <div class="two">${input('Check-in *', 'checkIn', l.checkIn, 'type="date" required')}${input('Check-out *', 'checkOut', l.checkOut, 'type="date" required')}</div>
     <div class="two">${input('Hora check-in', 'checkInTime', l.checkInTime, 'type="time"')}${input('Hora check-out', 'checkOutTime', l.checkOutTime, 'type="time"')}</div>
     ${input('Zona / barrio', 'area', l.area)}
@@ -122,19 +122,19 @@ export function openLodgingForm(l = {}) {
 export function openActivityForm(a = {}) {
   const day = I.day[a.dayId] || tripPhase().day || D.days[0];
   const places = D.places.filter((p) => !day.cityId || p.cityId === day.cityId || p.id === a.placeId).sort((x, y) => x.name.localeCompare(y.name));
-  const cats = Object.entries(D.trip.categories).map(([k, c]) => [k, `${c.icon} ${c.label}`]);
+  const cats = Object.entries(D.trip.categories).map(([k, c]) => [k, c.label]);
   open(`<h3>${a.id ? 'Editar actividad' : 'Nueva actividad'}</h3><form class="form" data-submit="act-save">
     <input type="hidden" name="id" value="${esc(a.id || '')}">
     ${select('Día *', 'dayId', dayOptions().slice(1), day.id)}
     ${input('Actividad *', 'title', a.title, 'required maxlength="120"')}
     <div class="two">${input('Desde', 'start', a.start, 'type="time"')}${input('Hasta', 'end', a.end, 'type="time"')}</div>
-    <div class="two">${select('Categoría', 'category', cats, a.category || 'cultura')}${select('Prioridad', 'priority', [['imperdible', '⭐ Imperdible'], ['recomendado', '👍 Recomendado'], ['opcional', '◦ Opcional']], a.priority || 'recomendado')}</div>
-    ${select('Lugar', 'placeId', [['', '— Sin lugar —'], ...places.map((p) => [p.id, `${cat(p.category).icon} ${p.name}`])], a.placeId)}
+    <div class="two">${select('Categoría', 'category', cats, a.category || 'cultura')}${select('Prioridad', 'priority', [['imperdible', 'Imperdible'], ['recomendado', 'Recomendado'], ['opcional', 'Opcional']], a.priority || 'recomendado')}</div>
+    ${select('Lugar', 'placeId', [['', '— Sin lugar —'], ...places.map((p) => [p.id, p.name])], a.placeId)}
     <p class="hint">¿El lugar no está? Cargalo primero en Más → Lugares (con su ubicación).</p>
     ${textarea('Detalle', 'detail', a.detail)}
     <div class="two">${input('Zona', 'area', a.area)}${input('Cómo llegar', 'how', a.how)}</div>
     <div class="two">${input('Costo', 'cost', a.cost)}${input('Link', 'link', a.link, 'type="url" placeholder="https://"')}</div>
-    <div class="two">${select('Reserva', 'reservation', [['', 'No hace falta'], ['recomendada', 'Recomendada'], ['requerida', 'Necesaria']], a.reservation)}${select('Estado', 'status', [['', '—'], ['pendiente', '⏳ Pendiente'], ['reservado', '✔ Reservado']], a.status)}</div>
+    <div class="two">${select('Reserva', 'reservation', [['', 'No hace falta'], ['recomendada', 'Recomendada'], ['requerida', 'Necesaria']], a.reservation)}${select('Estado', 'status', [['', '—'], ['pendiente', 'Pendiente'], ['reservado', 'Reservado']], a.status)}</div>
     ${buttons('act-del', a.id, a, 'activities')}</form>`);
 }
 
@@ -150,7 +150,7 @@ export function openTaskForm(t = {}) {
     ${input('Tarea *', 'title', t.title, 'required maxlength="140"')}
     ${select('Asignada a', 'assignee', travelerOptions('Sin asignar (cualquiera)'), t.assignee ?? (t.id ? '' : me() || ''))}
     <div class="two">${input('Vence (fecha)', 'dueDate', dDate, 'type="date"')}${input('Hora', 'dueTime', dTime, 'type="time"')}</div>
-    <div class="two">${select('Prioridad', 'priority', [['normal', 'Normal'], ['alta', '🔥 Alta']], t.priority || 'normal')}${select('Estado', 'status', [['pendiente', '⏳ Pendiente'], ['hecho', '✔ Hecha']], t.status || 'pendiente')}</div>
+    <div class="two">${select('Prioridad', 'priority', [['normal', 'Normal'], ['alta', 'Alta']], t.priority || 'normal')}${select('Estado', 'status', [['pendiente', 'Pendiente'], ['hecho', 'Hecha']], t.status || 'pendiente')}</div>
     ${select('Para el día', 'day', dayOptions(), t.day)}
     ${textarea('Notas', 'notes', t.notes)}
     ${buttons('task-del', t.id, t, 'tasks')}</form>`);

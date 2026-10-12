@@ -1,10 +1,12 @@
 import { D, I, done, settings, now, docCodes } from '../store.js';
-import { esc, fmtShort, fmtWeekdayShort, cap } from '../util.js';
+import { esc, ic, fmtShort, fmtWeekdayShort, cap } from '../util.js';
 import { tripPhase, activityNow, lodgingOfDay } from '../tripstate.js';
 import { heroImg, actRow, renderCards, notesFor, noteHtml, dayLabel, statusBadge, extLink, transportIcon, register, cat } from '../ui.js';
 import { thumbsFor } from './photos.js';
 import { dayTotalText } from './expenses.js';
-import { resourcesForDay, KINDS } from './resources.js';
+import { resourcesForDay, resRow } from './resources.js';
+import { paintAttachments } from './docs.js';
+import { weatherLine } from '../weather.js';
 
 let onlyMust = false;
 
@@ -18,8 +20,8 @@ function transportRow(t) {
   return `<li class="trow"><span class="o-ic">${transportIcon(t.kind)}</span><div>
     <b>${esc(t.route)}</b> ${statusBadge(t.status)}
     <small>${esc([t.medium, t.service].filter(Boolean).join(' · '))}${times ? ' · ' + esc(times) : ''}</small>
-    ${t.price ? `<small>💳 ${esc(t.price)}</small>` : ''}
-    ${t.buyWhere && t.status === 'pendiente' ? `<small>🛒 ${esc(t.buyWhere)}${t.buyWhen ? ' — ' + esc(t.buyWhen) : ''}</small>` : ''}
+    ${t.price ? `<small>${ic('credit-card')} ${esc(t.price)}</small>` : ''}
+    ${t.buyWhere && t.status === 'pendiente' ? `<small>${ic('cart-shopping')} ${esc(t.buyWhere)}${t.buyWhen ? ' — ' + esc(t.buyWhen) : ''}</small>` : ''}
     ${t.link ? `<small>${extLink(t.link, 'Más info')}</small>` : ''}</div></li>`;
 }
 
@@ -36,12 +38,13 @@ export function render({ id }, ctx) {
   const trans = D.transport.filter((t) => t.day === day.id);
   const lodgIn = D.lodging.filter((x) => x.checkInDay === day.id), lodgOut = D.lodging.filter((x) => x.checkOutDay === day.id);
   const docs = D.documents.filter((x) => x.day === day.id);
-  const links = D.links.filter((x) => x.category !== 'fuente' && (x.day === day.id || (x.cityId && x.cityId === day.cityId)));
+  const res = resourcesForDay(day);
   const dayPlaces = [...new Set(day.activities.map((a) => a.placeId).filter(Boolean))];
 
   ctx.after(() => {
     document.querySelector('#daystrip .on')?.scrollIntoView({ inline: 'center', block: 'nearest' });
     thumbsFor(day.id, document.getElementById('day-photos'), ctx);
+    if (res.length) paintAttachments();
     dayTotalText(day.id).then((t) => { const el = document.getElementById('day-spend'); if (el) el.innerHTML = t; });
   });
   ctx.title = `Día ${day.n} · ${day.title}`;
@@ -54,10 +57,11 @@ export function render({ id }, ctx) {
       <div><small>Día ${day.n} de ${D.days.length}${isToday ? ' · <b>hoy</b>' : ''}</small><h1>${esc(day.title)}</h1><small>${esc(dayLabel(day))}${day.cityId ? ' · ' + esc(I.city[day.cityId].name) : ''}</small></div>
       ${next ? `<a class="icon-btn" href="#/dia/${next.id}" aria-label="Día siguiente">›</a>` : '<span></span>'}</div>
     <p>${esc(day.summary || '')}</p>
-    ${day.sleepsAt ? `<p class="hero-sub">🛏 Dormís en: ${esc(l ? `${l.name}${l.area ? ' (' + l.area + ')' : ''}` : day.sleepsAt)}</p>` : ''}
-    <div class="row-actions">${dayPlaces.length ? `<a class="btn small" href="#/mapa?day=${day.id}">🗺 Mapa del día</a>` : ''}
-      <a class="btn small" href="#/fotos?day=${day.id}">📷 Fotos</a><a class="btn small" href="#/gastos?day=${day.id}">💸 Gastos</a>
-      <button class="btn small" data-act="sim-this-day" data-d="${day.date}">🧪 Simular este día</button></div>
+    ${weatherLine(day)}
+    ${day.sleepsAt ? `<p class="hero-sub">${ic('bed')} Dormís en: ${esc(l ? `${l.name}${l.area ? ' (' + l.area + ')' : ''}` : day.sleepsAt)}</p>` : ''}
+    <div class="row-actions">${dayPlaces.length ? `<a class="btn small" href="#/mapa?day=${day.id}">${ic('map')} Mapa del día</a>` : ''}
+      <a class="btn small" href="#/fotos?day=${day.id}">${ic('camera')} Fotos</a><a class="btn small" href="#/gastos?day=${day.id}">${ic('money-bill-wave')} Gastos</a>
+      <button class="btn small" data-act="sim-this-day" data-d="${day.date}">${ic('flask')} Simular este día</button></div>
   </header>
 
   ${renderCards(day, ctx)}
@@ -65,26 +69,26 @@ export function render({ id }, ctx) {
 
   <section class="card">
     <div class="card-head"><h3>Actividades del día</h3>
-      <div class="row-actions" style="margin:0"><button class="btn small ${onlyMust ? 'on' : ''}" data-act="toggle-must">⭐ Imperdibles</button>
-      <button class="btn small primary" data-act="act-new" data-day="${day.id}">＋ Actividad</button></div></div>
+      <div class="row-actions" style="margin:0"><button class="btn small ${onlyMust ? 'on' : ''}" data-act="toggle-must">${ic('star')} Imperdibles</button>
+      <button class="btn small primary" data-act="act-new" data-day="${day.id}">${ic('plus')} Actividad</button></div></div>
     <div class="timeline">${acts.map((a) => actRow(a, { current: a === current, next: a === nextA })).join('') || '<p class="muted">Sin actividades.</p>'}</div>
-    <p class="hint">Tocá una actividad para ver el detalle. El círculo ✓ la marca como hecha (se guarda en este dispositivo).</p>
+    <p class="hint">Tocá una actividad para ver el detalle. El círculo ${ic('check')} la marca como hecha (se guarda en este dispositivo).</p>
   </section>
 
-  ${!l && !/avi[oó]n/i.test(day.sleepsAt || '') && i < D.days.length - 1 ? `<div class="note warn"><b>🛏️ No hay hospedaje cargado para esta noche</b>
-    <div class="row-actions"><button class="btn small" data-act="lodging-new" data-prefill='${esc(JSON.stringify({ checkIn: day.date, checkOut: next.date, cityId: day.cityId }))}'>＋ Cargar hospedaje</button></div></div>` : ''}
+  ${!l && !/avi[oó]n/i.test(day.sleepsAt || '') && i < D.days.length - 1 ? `<div class="note warn"><b>${ic('bed')} No hay hospedaje cargado para esta noche</b>
+    <div class="row-actions"><button class="btn small" data-act="lodging-new" data-prefill='${esc(JSON.stringify({ checkIn: day.date, checkOut: next.date, cityId: day.cityId }))}'>${ic('plus')} Cargar hospedaje</button></div></div>` : ''}
   ${(trans.length || lodgIn.length || lodgOut.length) ? `<section class="card"><h3>Logística</h3><ul class="tlist">
-    ${lodgOut.map((x) => `<li class="trow"><span class="o-ic">🧳</span><div><b>Check-out · ${esc(x.name)}</b><small>${esc(x.checkOutTime || '')}</small></div></li>`).join('')}
+    ${lodgOut.map((x) => `<li class="trow"><span class="o-ic">${ic('suitcase-rolling')}</span><div><b>Check-out · ${esc(x.name)}</b><small>${esc(x.checkOutTime || '')}</small></div></li>`).join('')}
     ${trans.map(transportRow).join('')}
-    ${lodgIn.map((x) => `<li class="trow"><span class="o-ic">🏨</span><div><b>Check-in · ${esc(x.name)}</b> ${statusBadge(x.status)} <button class="btn tiny" data-act="lodging-edit" data-id="${esc(x.id)}">Editar</button><small>${esc([x.area, x.checkInTime, x.notes].filter(Boolean).join(' · '))}</small>
+    ${lodgIn.map((x) => `<li class="trow"><span class="o-ic">${ic('hotel')}</span><div><b>Check-in · ${esc(x.name)}</b> ${statusBadge(x.status)} <button class="btn tiny" data-act="lodging-edit" data-id="${esc(x.id)}">Editar</button><small>${esc([x.area, x.checkInTime, x.notes].filter(Boolean).join(' · '))}</small>
       ${x.link ? `<small>${extLink(x.link, 'Hotel')}</small>` : ''}</div></li>`).join('')}</ul></section>` : ''}
 
-  ${docs.length ? `<section class="card"><h3>📄 Documentos de este día</h3><ul class="doc-mini">${docs.map((x) => `<li><a href="#/docs/${esc(x.type)}"><b>${esc(x.title)}</b><small>${esc(docCodes.get(x) || x.subtitle || '')}</small></a></li>`).join('')}</ul></section>` : ''}
-  ${resourcesForDay(day).length ? `<section class="card"><h3>📚 Recursos${day.cityId ? ' · ' + esc(I.city[day.cityId].name) : ''}</h3><ul class="links">${resourcesForDay(day).map((r) => `<li><a href="#/recursos?city=${esc(r.cityId || '')}">${(KINDS[r.kind] || KINDS.otro)[0]} ${esc(r.title)}</a></li>`).join('')}</ul></section>` : ''}
-  ${links.length ? `<section class="card"><h3>🔗 Links de interés</h3><ul class="links">${links.map((x) => `<li>${extLink(x.url, x.title)}</li>`).join('')}</ul></section>` : ''}
+  ${docs.length ? `<section class="card"><h3>${ic('file-lines')} Documentos de este día</h3><ul class="doc-mini">${docs.map((x) => `<li><a href="#/docs/${esc(x.type)}"><b>${esc(x.title)}</b><small>${esc(docCodes.get(x) || x.subtitle || '')}</small></a></li>`).join('')}</ul></section>` : ''}
+  ${res.length ? `<section class="card"><div class="card-head"><h3>${ic('book')} Recursos${day.cityId ? ' · ' + esc(I.city[day.cityId].name) : ''}</h3><a href="#/recursos${day.cityId ? '?city=' + esc(day.cityId) : ''}">Ver →</a></div>
+    <ul class="res-list">${res.map((r) => resRow(r, { actions: false })).join('')}</ul></section>` : ''}
 
-  <section class="card"><div class="card-head"><h3>📷 Fotos del día</h3><a href="#/fotos?day=${day.id}">Ver / agregar →</a></div><div class="thumbs" id="day-photos"></div></section>
-  <section class="card"><div class="card-head"><h3>💸 Gastos del día</h3><a href="#/gastos?day=${day.id}">Ver / agregar →</a></div><p id="day-spend" class="muted">…</p></section>`;
+  <section class="card"><div class="card-head"><h3>${ic('camera')} Fotos del día</h3><a href="#/fotos?day=${day.id}">Ver / agregar →</a></div><div class="thumbs" id="day-photos"></div></section>
+  <section class="card"><div class="card-head"><h3>${ic('money-bill-wave')} Gastos del día</h3><a href="#/gastos?day=${day.id}">Ver / agregar →</a></div><p id="day-spend" class="muted">…</p></section>`;
 }
 
 register({

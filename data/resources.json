@@ -22,5 +22,132 @@
     "cityId": "beijing",
     "url": "https://www.bjsubway.com/",
     "notes": "Sitio oficial del metro de Pekín. Adjuntá una captura del mapa para usarlo sin internet."
+  },
+  {
+    "id": "f01",
+    "title": "Horarios MU745/MU746 2026",
+    "kind": "fuente",
+    "cityId": null,
+    "url": "https://www.aeroroutes.com/eng/251030-muns26eze"
+  },
+  {
+    "id": "f02",
+    "title": "MU745 a 4 semanales desde 5/12/2026",
+    "kind": "fuente",
+    "cityId": null,
+    "url": "https://www.aeroroutes.com/eng/260527-mudec26eze"
+  },
+  {
+    "id": "f03",
+    "title": "Exención de visa China para Argentina",
+    "kind": "fuente",
+    "cityId": null,
+    "url": "https://english.www.gov.cn/news/202505/15/content_WS6825a468c6d0868f4e8f2912.html"
+  },
+  {
+    "id": "f04",
+    "title": "Rutas China–Japón canceladas",
+    "kind": "fuente",
+    "cityId": null,
+    "url": "https://www.aeroroutes.com/eng/260119-cnnw25jp"
+  },
+  {
+    "id": "f05",
+    "title": "Narita → Tokio: opciones y tarifas",
+    "kind": "fuente",
+    "cityId": null,
+    "url": "https://thejapanode.com/guides/narita-airport-transport-guide"
+  },
+  {
+    "id": "f06",
+    "title": "Mercado de Tsukiji: horarios y cierres",
+    "kind": "fuente",
+    "cityId": null,
+    "url": "https://www.gotokyo.org/en/story/guide/tsukijioutermarket/"
+  },
+  {
+    "id": "f07",
+    "title": "Fuji Excursion: reservas",
+    "kind": "fuente",
+    "cityId": null,
+    "url": "https://shinkansen-ticket.com/blogs/news/new-advance-reservation-system-for-the-shinjuku-kawaguchiko-train-mt-fuji-route"
+  },
+  {
+    "id": "f08",
+    "title": "Festival de hojas rojas de Kawaguchiko 2026",
+    "kind": "fuente",
+    "cityId": null,
+    "url": "https://hiddenjapan-gems.com/kawaguchiko-autumn-leaves-festival/"
+  },
+  {
+    "id": "f09",
+    "title": "Festival de ginkgos de Jingu Gaien",
+    "kind": "fuente",
+    "cityId": null,
+    "url": "https://en.japantravel.com/tokyo/jingu-gaien-ginkgo-festival/60691"
+  },
+  {
+    "id": "f10",
+    "title": "Shibuya Sky: entradas",
+    "kind": "fuente",
+    "cityId": null,
+    "url": "https://www.trvlogue.com/en/shibuya-sky-tokyo-guide"
+  },
+  {
+    "id": "f11",
+    "title": "teamLab Borderless",
+    "kind": "fuente",
+    "cityId": null,
+    "url": "https://mileasia.com/japan/teamlab-borderless/"
+  },
+  {
+    "id": "f12",
+    "title": "Akihabara peatonal",
+    "kind": "fuente",
+    "cityId": null,
+    "url": "https://fun-japan.jp/en/articles/11765"
+  },
+  {
+    "id": "f13",
+    "title": "Romancecar: tarifas y reservas",
+    "kind": "fuente",
+    "cityId": null,
+    "url": "https://ekitan.com/en/article/hakone-romancecar"
+  },
+  {
+    "id": "f14",
+    "title": "Hotel Green Plaza Hakone",
+    "kind": "fuente",
+    "cityId": null,
+    "url": "https://hakonetrip.odakyu-global.com/stay/hotel-green-plaza-hakone/"
+  },
+  {
+    "id": "f15",
+    "title": "Bay Shuttle Kobe–Kansai",
+    "kind": "fuente",
+    "cityId": null,
+    "url": "https://www.kansai-airport.or.jp/en/access/to-airport/ferry"
+  },
+  {
+    "id": "f16",
+    "title": "Kansai–Pekín: aerolíneas",
+    "kind": "fuente",
+    "cityId": null,
+    "url": "https://www.airlineinformation.com/KIX-PEK"
+  },
+  {
+    "id": "f17",
+    "title": "Shanghai–Suzhou en tren",
+    "kind": "fuente",
+    "cityId": null,
+    "url": "https://www.chinatravel.com/china-trains/shanghai-suzhou-train"
+  },
+  {
+    "id": "u04",
+    "title": "Visit Japan Web",
+    "kind": "tramite",
+    "cityId": "tokyo",
+    "url": "https://www.vjw-lp.digital.go.jp/en/",
+    "dayId": "d07"
   }
 ]

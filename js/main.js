@@ -14,11 +14,13 @@ import * as tasks from './views/tasks.js';
 import * as people from './views/people.js';
 import * as places from './views/places.js';
 import * as search from './views/search.js';
+import * as phrases from './views/phrases.js';
 import * as passports from './views/passports.js';
 import * as resources from './views/resources.js';
 import { paintSimBar } from './views/sim.js';
 import './views/forms.js';
 import { startSync } from './sync.js';
+import { refreshWeather } from './weather.js';
 
 const main = $('#app');
 let active = null, renderedToday = null;
@@ -27,8 +29,9 @@ const ROUTES = {
   '': (p, c) => home.render(p, c), inicio: (p, c) => home.render(p, c),
   dia: (p, c) => day.render(p, c), mapa: (p, c) => mapview.render(p, c), lugar: (p, c) => mapview.renderPlace(p, c),
   fotos: (p, c) => photos.render(p, c), gastos: (p, c) => expenses.render(p, c), docs: (p, c) => docs.render(p, c),
-  mas: () => more.menu(), itinerario: () => more.itinerary(), transporte: () => more.transport(),
-  alojamientos: () => more.lodging(), enlaces: () => more.enlaces(),
+  mas: (p, c) => more.menu(p, c), itinerario: () => more.itinerary(), transporte: () => more.transport(),
+  alojamientos: () => more.lodging(), frases: (p, c) => phrases.render(p, c),
+  enlaces: () => { setTimeout(() => location.replace('#/recursos'), 0); return ''; },   // the old "Enlaces" section is now part of Recursos
   tareas: (p, c) => tasks.render(p, c), pendientes: (p, c) => tasks.render(p, c),
   viajeros: (p, c) => people.render(p, c), lugares: (p, c) => places.render(p, c),
   pasaportes: (p, c) => passports.render(p, c), recursos: (p, c) => resources.render(p, c),
@@ -76,6 +79,7 @@ function route({ keepScroll = false } = {}) {
   $$('#nav a').forEach((a) => a.classList.toggle('on', a.dataset.nav === group));
   const dn = $('#nav [data-nav=dia]'); if (dn) dn.href = `#/dia/${(tripPhase().day || D.days[0]).id}`;
   window.scrollTo(0, keepScroll ? y : 0);
+  people.pendingSetup().then((items) => $('#nav [data-nav=mas]')?.classList.toggle('pending', items.length > 0)).catch(() => null);
   tick();
 }
 const app = { rerender: () => route({ keepScroll: true }), navigate: (h) => { location.hash = h; } };
@@ -102,11 +106,11 @@ document.addEventListener('submit', (e) => {
 document.addEventListener('keydown', (e) => {
   if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[role=button][data-act]')) { e.preventDefault(); e.target.click(); }
 });
-window.addEventListener('hashchange', () => route());
+window.addEventListener('hashchange', () => { document.querySelectorAll('dialog[open]').forEach((d) => d.close()); route(); });   // a modal never outlives its screen
 
 Object.assign(actions, {
   'close-modal': (el) => closeModal(el),
-  'toggle-check': (el) => { checks.toggle(el.dataset.key); },
+  'toggle-check': (el, _, app) => { checks.toggle(el.dataset.key); app.rerender(); },
   'show-address': (el) => {
     const l = I.lodging[el.dataset.id];
     openModal(`<h3>${esc(l.name)}</h3><p class="bigtext">${esc(l.addressLocal)}</p>${l.address ? `<p>${esc(l.address)}</p>` : ''}<div class="row-actions"><button class="btn" data-act="close-modal">Cerrar</button></div>`, { cls: 'wide bigmodal' });
@@ -118,7 +122,7 @@ function tick() {
   const t = now().getTime();
   $$('[data-countdown]').forEach((el) => {
     const target = +el.dataset.countdown, diff = target - t;
-    el.textContent = diff > 0 ? `Faltan ${fmtDuration(diff)} ${el.dataset.label}` : '⏰ Ya pasó la hora, ¡a moverse!';
+    el.textContent = diff > 0 ? `Faltan ${fmtDuration(diff)} ${el.dataset.label}` : '¡Ya pasó la hora, a moverse!';
     el.classList.toggle('late', diff <= 0);
   });
 }
@@ -145,6 +149,11 @@ setInterval(() => {
   bus.on('settings', (k) => { if (k === 'simOffset') route({ keepScroll: true }); });   // simulated date changed
   // data changed on another phone: redraw, unless the user is in the middle of a form
   bus.on('remote-change', () => { if (!document.querySelector('dialog[open]') && !document.activeElement?.matches('input, textarea, select')) route({ keepScroll: true }); });
+  // weather: at most one download a day (the relay refreshes it daily); kept on the device for offline use
+  bus.on('weather', () => { if (!document.querySelector('dialog[open]') && !document.activeElement?.matches('input, textarea, select')) route({ keepScroll: true }); });
+  refreshWeather();
+  window.addEventListener('online', () => refreshWeather());
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') refreshWeather(); });
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
     const hadController = !!navigator.serviceWorker.controller;
     navigator.serviceWorker.register('sw.js').then((reg) => setInterval(() => reg.update().catch(() => null), 30 * 60000)).catch((e) => console.warn('SW', e));

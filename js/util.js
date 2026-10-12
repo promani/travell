@@ -3,6 +3,25 @@
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
   ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+/** Font Awesome icon (solid set, vendored in vendor/fontawesome). */
+export const ic = (name, cls = '') => `<i class="fa-solid fa-${name}${cls ? ' ' + cls : ''}" aria-hidden="true"></i>`;
+
+// Emojis that older data (JSON files, edits saved on the device, synced records) may still carry.
+const EMOJI_ICON = {
+  '📍': 'location-dot', '🏨': 'hotel', '🛏': 'bed', '🚆': 'train', '🚄': 'train', '🚈': 'train-tram', '🚇': 'train-subway',
+  '🚉': 'train', '🚌': 'bus', '🚗': 'car', '🚕': 'taxi', '✈': 'plane', '🛫': 'plane-departure', '🛬': 'plane-arrival',
+  '⛴': 'ferry', '➡': 'arrow-right', '🍜': 'bowl-food', '🏯': 'torii-gate', '🌿': 'leaf', '🛍': 'bag-shopping', '🌙': 'moon',
+  '♨': 'hot-tub-person', 'ℹ': 'circle-info', '⚠': 'triangle-exclamation', '🎫': 'ticket', '🎟': 'ticket', '📄': 'file-lines',
+  '🛂': 'passport', '✅': 'square-check', '✔': 'check', '🧳': 'suitcase-rolling', '💳': 'credit-card', '🔑': 'key',
+};
+/** Renders an icon value from data: a Font Awesome name ("train"), a legacy emoji, or any other text as-is. */
+export function icon(v, cls = '') {
+  if (!v) return '';
+  if (/^[a-z0-9-]+$/.test(v)) return ic(v, cls);
+  const name = EMOJI_ICON[String(v).replace(/\uFE0F/g, '')];
+  return name ? ic(name, cls) : esc(v);
+}
+
 export const $ = (sel, root = document) => root.querySelector(sel);
 export const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 

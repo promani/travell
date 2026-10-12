@@ -9,14 +9,14 @@ const params = new URLSearchParams(location.search);
 export const DATA_BASE = (params.get('data') || 'data').replace(/\/$/, '');
 
 const REQUIRED = ['trip', 'itinerary'];
-const OPTIONAL = ['transport', 'lodging', 'documents', 'travelers', 'tasks', 'notes', 'links', 'requirements', 'resources'];
+const OPTIONAL = ['transport', 'lodging', 'documents', 'travelers', 'tasks', 'notes', 'requirements', 'resources', 'phrases'];
 /** Collections the user can create/edit in the app (merged over the JSON). */
 export const EDITABLE = ['places', 'lodging', 'activities', 'tasks', 'travelers', 'resources'];
 /** Collections that only live in the overlay. */
 export const LOCAL_ONLY = ['expenses', 'positions', 'suggestions', 'passports'];
 
 export const BASE = {};
-export const D = { trip: null, days: [], transport: [], lodging: [], places: [], documents: [], travelers: [], tasks: [], notes: [], links: [], requirements: [], resources: [] };
+export const D = { trip: null, days: [], transport: [], lodging: [], places: [], documents: [], travelers: [], tasks: [], notes: [], requirements: [], resources: [], phrases: { languages: [], groups: [] } };
 export const I = {};
 
 async function getJSON(name, required) {
@@ -152,7 +152,8 @@ export function overriddenBase() {
 /** Recompute D and I from BASE + overlay. Cheap enough to run after every edit. */
 export function rebuild() {
   D.trip = BASE.trip;
-  for (const k of ['transport', 'documents', 'notes', 'links', 'requirements']) D[k] = BASE[k];
+  for (const k of ['transport', 'documents', 'notes', 'requirements']) D[k] = BASE[k];
+  D.phrases = Array.isArray(BASE.phrases) ? { languages: [], groups: [] } : BASE.phrases;
   D.travelers = merged(BASE.travelers, 'travelers');
   D.places = merged(BASE.places, 'places');
   D.tasks = merged(BASE.tasks, 'tasks');

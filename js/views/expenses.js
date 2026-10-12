@@ -1,12 +1,12 @@
 // Split expenses: stored locally, multi-currency, equal or exact splits, who-pays-whom, export/import to sync between phones.
 import { D, I, cols, settings } from '../store.js';
 import { exportShared, importShared } from '../share.js';
-import { esc, uid, toast, openModal, fmtMoney, fmtShort, closeModal } from '../util.js';
+import { esc, ic, uid, toast, openModal, fmtMoney, fmtShort, closeModal } from '../util.js';
 import { tripPhase } from '../tripstate.js';
 import { register } from '../ui.js';
 import { owedMap as owedMapOf, balances as balancesOf, settlements, converter } from '../money.js';
 
-const CATS = { comida: '🍜 Comida', transporte: '🚆 Transporte', alojamiento: '🏨 Alojamiento', entradas: '🎟️ Entradas', compras: '🛍️ Compras', otros: '🧾 Otros' };
+const CATS = { comida: ['bowl-food', 'Comida'], transporte: ['train', 'Transporte'], alojamiento: ['hotel', 'Alojamiento'], entradas: ['ticket', 'Entradas'], compras: ['bag-shopping', 'Compras'], otros: ['receipt', 'Otros'] };
 let filterDay = null;
 
 const all = () => cols.list('expenses');
@@ -37,7 +37,7 @@ function expRow(e) {
   const split = e.split.mode === 'exact' ? 'a medida' : ids.length === D.travelers.length ? 'entre todos' : `entre ${ids.map(tName).join(', ')}`;
   const base = e.currency !== settleCur() ? ` <small class="muted">≈ ${fmtMoney(conv(e.amount, e.currency, settleCur()), settleCur())}</small>` : '';
   return `<li class="exp" data-id="${e.id}"><div><b>${esc(e.desc)}</b>
-    <small>${esc(CATS[e.category] || '')} · pagó ${esc(tName(e.paidBy))} · ${split}${e.dayId ? ` · Día ${I.day[e.dayId]?.n}` : ''}</small></div>
+    <small>${CATS[e.category] ? `${ic(CATS[e.category][0])} ${esc(CATS[e.category][1])}` : ''} · pagó ${esc(tName(e.paidBy))} · ${split}${e.dayId ? ` · Día ${I.day[e.dayId]?.n}` : ''}</small></div>
     <div class="amt">${fmtMoney(e.amount, e.currency)}${base}</div>
     <div class="row-actions"><button class="btn tiny" data-act="exp-edit" data-id="${e.id}">Editar</button><button class="btn tiny danger" data-act="exp-del" data-id="${e.id}">Borrar</button></div></li>`;
 }
@@ -49,7 +49,7 @@ export function render(params, ctx) {
   const cur = settleCur(), net = balances(list, cur), sets = settlements(net);
   const total = list.reduce((s, e) => s + conv(e.amount, e.currency, cur), 0);
   ctx.title = 'Gastos';
-  return `<header class="pagehead"><h1>💸 Gastos compartidos</h1>
+  return `<header class="pagehead"><h1>${ic('money-bill-wave')} Gastos compartidos</h1>
     <p class="muted">Anotá quién pagó y entre quiénes se divide. Todo queda en este dispositivo; exportá el archivo para juntar las cuentas de todos.</p></header>
   <section class="card">
     <div class="card-head"><h3>Resumen</h3>
@@ -59,11 +59,11 @@ export function render(params, ctx) {
       ${Object.entries(net).map(([id, v]) => { const b = v.paid - v.owed; return `<tr><td>${esc(tName(id))}</td><td>${fmtMoney(v.paid, cur)}</td><td>${fmtMoney(v.owed, cur)}</td>
         <td class="${b > 0.005 ? 'pos' : b < -0.005 ? 'neg' : ''}">${b > 0.005 ? '+' : ''}${fmtMoney(b, cur)}</td></tr>`; }).join('')}</tbody></table>
     ${sets.length ? `<h4>Para quedar a mano</h4><ul class="settle">${sets.map((s) => `<li><b>${esc(tName(s.from))}</b> le paga <b>${fmtMoney(s.amt, cur)}</b> a <b>${esc(tName(s.to))}</b></li>`).join('')}</ul>`
-      : list.length ? '<p class="ok-line">✔ Están a mano.</p>' : ''}
+      : list.length ? `<p class="ok-line">${ic('check')} Están a mano.</p>` : ''}
   </section>
-  <div class="row-actions"><button class="btn primary" data-act="exp-add">＋ Agregar gasto</button>
-    <button class="btn" data-act="exp-export">⬆ Exportar</button>
-    <label class="btn">⬇ Importar<input type="file" accept="application/json,.json" hidden data-change="exp-import"></label></div>
+  <div class="row-actions"><button class="btn primary" data-act="exp-add">${ic('plus')} Agregar gasto</button>
+    <button class="btn" data-act="exp-export">${ic('file-export')} Exportar</button>
+    <label class="btn">${ic('file-import')} Importar<input type="file" accept="application/json,.json" hidden data-change="exp-import"></label></div>
   <div class="chips"><button class="chip ${!filterDay ? 'on' : ''}" data-act="exp-filter" data-day="">Todos</button>
     ${[...new Set(list.map((e) => e.dayId).filter(Boolean))].sort().map((d) => `<button class="chip ${filterDay === d ? 'on' : ''}" data-act="exp-filter" data-day="${d}">Día ${I.day[d].n}</button>`).join('')}</div>
   <ul class="explist">${shown.map(expRow).join('') || '<li class="muted center">Todavía no hay gastos.</li>'}</ul>`;
@@ -90,7 +90,7 @@ function form(e = {}) {
       <div class="exact">${D.travelers.map((t) => `<label class="field">${esc(t.name)}<input name="share-${t.id}" type="number" step="0.01" min="0" inputmode="decimal" value="${e.split?.shares?.[t.id] ?? ''}"></label>`).join('')}</div>
     </fieldset>
     <div class="two">
-      <label class="field">Categoría<select name="category">${Object.entries(CATS).map(([k, v]) => `<option value="${k}" ${k === (e.category || 'comida') ? 'selected' : ''}>${v}</option>`).join('')}</select></label>
+      <label class="field">Categoría<select name="category">${Object.entries(CATS).map(([k, v]) => `<option value="${k}" ${k === (e.category || 'comida') ? 'selected' : ''}>${v[1]}</option>`).join('')}</select></label>
       <label class="field">Día<select name="dayId"><option value="">—</option>${D.days.map((d) => `<option value="${d.id}" ${d.id === dayId ? 'selected' : ''}>Día ${d.n} · ${esc(fmtShort(d.date))}</option>`).join('')}</select></label>
     </div>
     <div class="row-actions"><button class="btn primary" type="submit">Guardar</button><button class="btn" type="button" data-act="close-modal">Cancelar</button></div>

@@ -1,47 +1,55 @@
-// Resources: things you want at hand in a city (metro maps, guides, apps, phrases): a link and/or files attached offline.
+// Resources: everything you want at hand, by city — links (metro maps, apps, procedures, sources) and/or files attached
+// offline (screenshots, PDFs). The old "Enlaces" section lives here too: a link is just a resource with a URL.
 import { D, I, cols, idb } from '../store.js';
-import { esc, uid, toast, openModal, closeModal } from '../util.js';
+import { esc, ic, uid, toast, openModal, closeModal } from '../util.js';
 import { register, extLink } from '../ui.js';
 import { paintAttachments } from './docs.js';
 
-export const KINDS = { mapa: ['🗺️', 'Mapa'], guia: ['📖', 'Guía'], app: ['📱', 'App'], traduccion: ['🈯', 'Traducción'], otro: ['📎', 'Otro'] };
+export const KINDS = {
+  mapa: ['map', 'Mapa'], guia: ['book-open', 'Guía'], app: ['mobile-screen', 'App'], traduccion: ['language', 'Traducción'],
+  tramite: ['passport', 'Trámite'], enlace: ['link', 'Enlace'], fuente: ['book', 'Fuente consultada'], otro: ['paperclip', 'Otro'],
+};
 const kind = (r) => KINDS[r.kind] || KINDS.otro;
 const cityName = (id) => (id ? I.city[id]?.name || id : 'Todo el viaje');
-const order = (r) => { const i = D.trip.cities.findIndex((c) => c.id === r.cityId); return i < 0 ? 999 : i; };
+const order = (id) => { if (!id) return -1; const i = D.trip.cities.findIndex((c) => c.id === id); return i < 0 ? 999 : i; };
+const isSource = (r) => r.kind === 'fuente';
 
-/** Resources that belong to a day's city (or to the day itself), for the day screen. */
-export const resourcesForDay = (day) => D.resources.filter((r) => (r.dayId && r.dayId === day.id) || (day.cityId && r.cityId === day.cityId));
+/** Resources that belong to a day's city (or to the day itself), for the day screen. Sources stay in "Recursos". */
+export const resourcesForDay = (day) => D.resources.filter((r) => !isSource(r) && ((r.dayId && r.dayId === day.id) || (day.cityId && r.cityId === day.cityId)));
 
-function card(r) {
-  return `<article class="doc" data-res="${esc(r.id)}">
-    <header><h3>${kind(r)[0]} ${esc(r.title)}</h3><span class="badge">${esc(cityName(r.cityId))}</span></header>
-    ${r.notes ? `<p class="note-line">${esc(r.notes)}</p>` : ''}
-    <div class="attach" data-attach="res:${esc(r.id)}"></div>
-    <div class="row-actions">
-      ${r.url ? extLink(r.url, 'Abrir enlace') : ''}
-      <label class="btn small">📎 Adjuntar imagen / PDF<input type="file" accept="image/*,application/pdf" multiple hidden data-change="doc-attach" data-id="res:${esc(r.id)}"></label>
-      <button class="btn small" data-act="res-edit" data-id="${esc(r.id)}">✏️ Editar</button>
-    </div></article>`;
+/** A resource as a list row: the title opens the link; files attached on this phone show underneath. */
+export function resRow(r, { actions = true } = {}) {
+  const day = r.dayId && I.day[r.dayId];
+  const meta = [kind(r)[1], day ? `Día ${day.n}` : ''].filter(Boolean).join(' · ');
+  return `<li class="res"><span class="o-ic">${ic(kind(r)[0])}</span>
+    <div><b>${r.url ? extLink(r.url, r.title) : esc(r.title)}</b><small>${esc(meta)}</small>
+      ${r.notes ? `<small class="note-line">${esc(r.notes)}</small>` : ''}<div class="attach" data-attach="res:${esc(r.id)}"></div></div>
+    ${actions ? `<span class="res-acts"><label class="icon-btn sm" title="Adjuntar imagen o PDF">${ic('paperclip')}<input type="file" accept="image/*,application/pdf" multiple hidden data-change="doc-attach" data-id="res:${esc(r.id)}"></label>
+      <button class="icon-btn sm" data-act="res-edit" data-id="${esc(r.id)}" aria-label="Editar">${ic('pen')}</button></span>` : ''}</li>`;
 }
 
 export function render({ city }, ctx) {
   ctx.title = 'Recursos';
   ctx.after(paintAttachments);
-  const cities = [...new Set(D.resources.map((r) => r.cityId || ''))];
+  const main = D.resources.filter((r) => !isSource(r)), sources = D.resources.filter(isSource);
+  const cities = [...new Set(main.map((r) => r.cityId || ''))].sort((a, b) => order(a) - order(b));
   const sel = city !== undefined && cities.includes(city) ? city : null;
-  const list = D.resources.filter((r) => sel === null || (r.cityId || '') === sel).sort((a, b) => order(a) - order(b));
   const chips = cities.length > 1 ? `<div class="chips"><a class="chip ${sel === null ? 'on' : ''}" href="#/recursos">Todos</a>${cities.map((c) =>
     `<a class="chip ${sel === c ? 'on' : ''}" href="#/recursos?city=${esc(c)}">${esc(cityName(c))}</a>`).join('')}</div>` : '';
-  return `<header class="pagehead"><h1>📚 Recursos</h1>
-    <p class="muted">Mapas del metro, guías, apps y todo lo que quieras tener a mano. Adjuntá imágenes o PDFs: quedan guardados en este celular y se ven sin internet.</p></header>
-  <div class="row-actions"><button class="btn primary" data-act="res-new">＋ Agregar recurso</button></div>
-  ${chips}${list.map(card).join('') || '<p class="muted">Todavía no hay recursos.</p>'}`;
+  const groups = cities.filter((c) => sel === null || c === sel).map((c) => `<section class="card"><h3>${esc(cityName(c))}</h3>
+    <ul class="res-list">${main.filter((r) => (r.cityId || '') === c).map((r) => resRow(r)).join('')}</ul></section>`).join('');
+  const src = sel === null && sources.length ? `<details class="card src"><summary>${ic('book')} Fuentes consultadas <span class="badge">${sources.length}</span></summary>
+    <ul class="res-list">${sources.map((r) => resRow(r)).join('')}</ul></details>` : '';
+  return `<header class="pagehead"><h1>${ic('book')} Recursos</h1>
+    <p class="muted">Enlaces, mapas del metro, apps y guías por ciudad. Adjuntá capturas o PDFs para tenerlos sin internet.</p>
+    <div class="row-actions"><button class="btn primary small" data-act="res-new">${ic('plus')} Agregar recurso</button><a class="btn small" href="#/frases">${ic('language')} Frases útiles</a></div></header>
+  ${chips}${groups || '<p class="muted">Todavía no hay recursos.</p>'}${src}`;
 }
 
 function openForm(r = {}) {
   const dlg = openModal(`<h3>${r.id ? 'Editar recurso' : 'Nuevo recurso'}</h3><form class="form" data-submit="res-save"><input type="hidden" name="id" value="${esc(r.id || '')}">
     <label class="field">Título<input name="title" value="${esc(r.title || '')}" placeholder="Mapa del metro de Shanghai" required autocomplete="off"></label>
-    <label class="field">Tipo<select name="kind">${Object.entries(KINDS).map(([k, [ic, l]]) => `<option value="${k}" ${(r.kind || 'mapa') === k ? 'selected' : ''}>${ic} ${esc(l)}</option>`).join('')}</select></label>
+    <label class="field">Tipo<select name="kind">${Object.entries(KINDS).map(([k, [, l]]) => `<option value="${k}" ${(r.kind || 'enlace') === k ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></label>
     <label class="field">Ciudad<select name="cityId"><option value="">Todo el viaje</option>${D.trip.cities.map((c) => `<option value="${esc(c.id)}" ${r.cityId === c.id ? 'selected' : ''}>${esc(c.name)}</option>`).join('')}</select></label>
     <label class="field">Enlace (opcional)<input name="url" type="url" value="${esc(r.url || '')}" placeholder="https://…"></label>
     <label class="field">Notas (opcional)<textarea name="notes" rows="3">${esc(r.notes || '')}</textarea></label>
@@ -58,7 +66,8 @@ register({
     const f = new FormData(form), g = (k) => (f.get(k) ?? '').toString().trim();
     if (!g('title')) return toast('Falta el título');
     const id = g('id') || uid('r');
-    cols.put('resources', { id, title: g('title'), kind: g('kind') || 'otro', cityId: g('cityId') || null, url: g('url') || null, notes: g('notes') || null });
+    const { edited, ...prev } = I.resource[id] || {};   // keep fields the form doesn't show (dayId)
+    cols.put('resources', { ...prev, id, title: g('title'), kind: g('kind') || 'otro', cityId: g('cityId') || null, url: g('url') || null, notes: g('notes') || null });
     const files = [...form.querySelector('input[type=file]').files];
     if (files.length) {
       navigator.storage?.persist?.();
