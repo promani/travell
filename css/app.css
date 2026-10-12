@@ -48,8 +48,8 @@ main { max-width: 760px; margin: 0 auto; padding: 1rem 1rem calc(var(--nav-h) + 
 .hero-pre { text-align: center; } .hero-pre h1 { font-size: 1.4rem; font-weight: 600; }
 .hero-go { background: linear-gradient(135deg, #d9480f, #c2255c); } .hero-go h1 { font-size: 1.35rem; }
 .hero-go .go-grid { grid-template-columns: repeat(3, 1fr); } .hero-go .go-grid b { font-size: 1.55rem; } .hero-go .go-grid em { display: block; margin-top: .15rem; }
-.hero-go .go-grid > div { background: #fff2; } .hero-go .btn { background: #fff; color: #7a1f3d; }
-.hero-go .checklist { background: #0003; } .hero-go .check span { color: #fff; }
+.hero-go .go-grid > div { background: none; padding: 0; } .hero-go .btn { background: #fff; color: #7a1f3d; }
+.hero-go .checklist { background: none; padding: 0; } .hero-go .check span { color: #fff; }
 .hero-post { background: linear-gradient(135deg, #2b8a3e, #0b7285); text-align: center; }
 
 .go-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); gap: .5rem; margin: .8rem 0; }
@@ -218,6 +218,7 @@ textarea { resize: vertical; min-height: 4.5rem; }
 #top { flex-wrap: wrap; }
 #sim-bar { flex: 1 0 100%; display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin: .1rem -1rem -.55rem; padding: .4rem 1rem; background: #f59f00; color: #1f1500; font-size: .82rem; }
 #sim-bar[hidden] { display: none; } .sim-txt { flex: 1 1 auto; } @media (max-width: 560px) { .sim-txt { flex-basis: calc(100% - 1.6rem); } } #sim-bar .btn { min-height: 30px; } #sim-bar .btn { background: #fff8; border-color: #0003; color: #1f1500; }
+.top-sim { color: #fff; background: none; border: 0; font-size: 1.1rem; line-height: 1; padding: .2rem; cursor: pointer; }
 /* passports + key/value lists */
 .kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: .5rem .8rem; margin: .6rem 0 0; } .kv dt { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; } .kv dd { margin: 0; font-weight: 600; }
 .kv.big { grid-template-columns: 1fr; } .kv.big dd { font-size: 1.25rem; }
@@ -283,9 +284,9 @@ details.src[open] summary { margin-bottom: .5rem; } details.src summary .fa-soli
 .phrase-big { text-align: center; } .phrase-big .bigtext { font-size: 2.6rem; line-height: 1.25; margin: .6rem 0 .4rem; overflow-wrap: anywhere; } .phrase-big em { font-style: normal; color: var(--pri); font-size: 1.1rem; }
 .phrase-big .row-actions { justify-content: center; margin-top: 1rem; }
 
-/* hero: date and weather as frosted pills, readable over any picture */
+/* hero: date and weather straight on the picture, the text shadow keeps them readable */
 .hero .hero-sub, .hero .wx { align-self: flex-start; display: inline-flex; flex-wrap: wrap; align-items: center; gap: .1rem .45rem; width: auto; max-width: 100%;
-  background: #0006; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-radius: 14px; padding: .4rem .8rem; margin: .45rem 0 0; font-size: .95rem; font-weight: 600; opacity: 1; text-shadow: none; }
+  margin: .45rem 0 0; font-size: .95rem; font-weight: 600; opacity: 1; }
 .hero-pre .hero-sub, .hero-pre .wx, .hero-post .hero-sub { align-self: center; }
 .hero .wx b { font-size: 1.25rem; } .hero .wx-min, .hero .wx-txt { opacity: 1; } .hero .wx-txt i { opacity: .85; }
 .hero .wx-pre { flex-basis: 100%; opacity: .85; font-size: .7rem; }
@@ -295,7 +296,7 @@ ul.card { padding: .3rem 1rem; }
 .card-head { flex-wrap: wrap; }
 .hero-meta { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .55rem; } .hero-meta > p { margin: 0 !important; }
 .hero-pre .hero-meta { justify-content: center; }
-.hero .btn, .hero .go-grid { text-shadow: none; }
+.hero .btn { text-shadow: none; }
 
 /* booking proof (ticket.js): code, QR codes, link, attachments */
 .ticket { margin-top: .5rem; } .ticket .attach:empty { display: none; } .ticket .codebox { margin-top: 0; }
