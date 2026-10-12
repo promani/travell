@@ -260,5 +260,8 @@
   "placeFiles": [
     "places.json",
     "places-extra.json"
-  ]
+  ],
+  "sync": {
+    "relayUrl": "same-origin"
+  }
 }

@@ -4,7 +4,7 @@ import { esc, toast, copyText, fmtDist, haversine } from '../util.js';
 import { register, mapBox } from '../ui.js';
 import { gps, startGps, currentPosition, permissionState, onPosition } from '../geo.js';
 import { ago } from '../map.js';
-import { syncNow, syncState, syncConfigured, shareMyPosition, locationLink, otherPositions } from '../sync.js';
+import { syncNow, syncState, syncConfigured, shareMyPosition, locationLink, otherPositions, defaultRelayUrl } from '../sync.js';
 import { exportShared, importShared } from '../share.js';
 
 export function personItems() {
@@ -73,7 +73,7 @@ export function render(_, ctx) {
   <section class="card"><h3>🔄 Sincronizar con el grupo</h3>
     <p class="hint">Opcional. Con un <b>relay</b> (servidor mínimo incluido en <code>server/relay.mjs</code>) los celulares comparten tareas, lugares, gastos, viajeros y ubicaciones. Los datos viajan <b>cifrados</b> con el código del grupo: el servidor no puede leerlos. Todos tienen que usar el mismo código.</p>
     <form class="form" data-submit="sync-save">
-      <label class="field">URL del relay<input name="relayUrl" type="url" placeholder="https://mi-relay.example.com" value="${esc(settings.get('relayUrl', ''))}"></label>
+      <label class="field">URL del relay<input name="relayUrl" type="url" placeholder="https://mi-relay.example.com" value="${esc(settings.get('relayUrl', '') || defaultRelayUrl())}"></label>
       <label class="field">Código del grupo (secreto)<input name="groupCode" autocomplete="off" spellcheck="false" placeholder="una frase larga que compartan" value="${esc(settings.get('groupCode', ''))}"></label>
       <div class="row-actions"><button class="btn primary" type="submit">Guardar y sincronizar</button><button class="btn" type="button" data-act="sync-now">Sincronizar ahora</button></div>
     </form>

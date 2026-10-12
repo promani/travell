@@ -17,6 +17,12 @@ python3 -m http.server 8123      # cualquier servidor estático sirve (también 
 Con HTTPS (o localhost) se registra el service worker: la primera visita con internet deja todo guardado y después anda offline.
 Para ver cada momento del viaje: **Más → Ajustes → Probar con otra fecha**.
 
+## Deploy con Docker (app + sincronización en un contenedor)
+```bash
+docker build -t travell . && docker run -p 3000:3000 -v travell-data:/data travell
+```
+`server/relay.mjs` sirve la PWA (solo `index.html`, `css/`, `js/`, `data/`, `icons/`, `vendor/`, `sw.js` y el manifest) y la sincronización en el mismo puerto (`PORT`, 3000 por defecto). Como `trip.json` tiene `"sync": {"relayUrl": "same-origin"}`, en la app solo hay que cargar el código del grupo. Sirve para Dokploy o cualquier plataforma que construya desde el `Dockerfile`.
+
 ## Sincronización opcional (relay)
 ```bash
 PORT=8787 RELAY_DATA=./relay-data node server/relay.mjs   # Node 18+, sin dependencias

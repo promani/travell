@@ -7,6 +7,8 @@
 //   POST /v1/:gid/records   { records: [{ c, id, u, d }] }   -> { seq }
 //   GET  /v1/:gid/records?since=N                            -> { seq, records: [...], more }
 //   GET  /health
+//
+// With SERVE_STATIC=<dir> it also serves the PWA from that folder (one container for app + relay).
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -15,6 +17,30 @@ const PORT = +(process.env.PORT || 8787);
 const DIR = process.env.RELAY_DATA || './relay-data';
 const MAX_BODY = 2 * 1024 * 1024, MAX_RECORDS = 50000, MAX_D = 256 * 1024, PAGE = 500;
 const GID = /^[a-f0-9]{32}$/, COL = /^[a-z]{1,24}$/;
+const STATIC = process.env.SERVE_STATIC ? path.resolve(process.env.SERVE_STATIC) : null;
+const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8',
+  '.css': 'text/css; charset=utf-8', '.json': 'application/json; charset=utf-8', '.webmanifest': 'application/manifest+json',
+  '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.ico': 'image/x-icon', '.txt': 'text/plain; charset=utf-8' };
+const PUBLIC = /^\/(index\.html|manifest\.webmanifest|sw\.js|(css|js|data|icons|vendor)\/.+)$/;   // never serve server/, .git, docs…
+
+function serveStatic(req, res, pathname) {
+  if (pathname === '/') pathname = '/index.html';
+  let file;
+  try { file = path.join(STATIC, decodeURIComponent(pathname)); } catch { return false; }
+  if (!PUBLIC.test(pathname) || !file.startsWith(STATIC + path.sep)) return false;
+  fs.stat(file, (err, st) => {
+    if (err || !st.isFile()) { res.writeHead(404, { 'content-type': 'text/plain' }); return res.end('not found'); }
+    res.writeHead(200, {
+      'content-type': TYPES[path.extname(file)] || 'application/octet-stream',
+      // the service worker handles offline caching; let the browser revalidate so updates arrive
+      'cache-control': pathname.startsWith('/vendor/') || pathname.startsWith('/icons/') ? 'public, max-age=86400' : 'no-cache',
+      'x-content-type-options': 'nosniff',
+    });
+    if (req.method === 'HEAD') return res.end();
+    fs.createReadStream(file).pipe(res);
+  });
+  return true;
+}
 
 fs.mkdirSync(DIR, { recursive: true });
 const groups = new Map();            // gid -> { seq, recs: Map(key -> rec), dirty }
@@ -56,6 +82,7 @@ const server = http.createServer((req, res) => {
   if (req.method === 'OPTIONS') return send(res, 204);
   if (url.pathname === '/health') return send(res, 200, { ok: true, groups: groups.size });
   const m = /^\/v1\/([^/]+)\/records$/.exec(url.pathname);
+  if (!m && STATIC && (req.method === 'GET' || req.method === 'HEAD') && serveStatic(req, res, url.pathname)) return;
   if (!m || !GID.test(m[1])) return send(res, 404, { error: 'not found' });
   const g = load(m[1]);
 
@@ -87,4 +114,4 @@ const server = http.createServer((req, res) => {
     send(res, 200, { seq: g.seq });
   });
 });
-server.listen(PORT, () => console.log(`travell relay on :${PORT}, data in ${DIR}`));
+server.listen(PORT, () => console.log(`travell relay on :${PORT}, data in ${DIR}${STATIC ? `, serving app from ${STATIC}` : ''}`));

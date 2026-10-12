@@ -235,6 +235,7 @@ sequenceDiagram
 - **Conflictos**: gana la última escritura por registro (`updatedAt`). Alcanza para un grupo chico de viaje.
 - **Ubicación**: con "Compartir mi ubicación" activo, cada fix del GPS escribe `positions/<yo>` si pasaron 2 minutos o hubo más de 50 m de movimiento. Dejar de compartir borra el registro. Solo funciona con la app abierta: una web no puede seguir la ubicación en segundo plano.
 - **Avisos**: al recibir una tarea asignada a mí y creada por otro viajero, muestra un toast y, si hay permiso, una notificación del sistema.
+- **Deploy**: el `Dockerfile` corre `server/relay.mjs` con `SERVE_STATIC=/app`, así un solo contenedor sirve la PWA (con una lista blanca de rutas públicas) y el relay. Con `trip.json → sync.relayUrl: "same-origin"`, la app usa su propio origen como relay. Los datos del relay van al volumen `/data`.
 - **Requisitos**: el relay tiene que estar en HTTPS si la app está en HTTPS (contenido mixto), y conviene alojarlo donde sea accesible desde China. Ejecución: `PORT=8787 RELAY_DATA=./relay-data node server/relay.mjs`.
 
 ### Sugerencias
