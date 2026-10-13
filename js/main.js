@@ -19,6 +19,7 @@ import './views/passports.js';
 import { ticketActions, migrateDocuments } from './ticket.js';
 import * as resources from './views/resources.js';
 import { paintSimBar } from './views/sim.js';
+import { watchTheme } from './theme.js';
 import { checkTripRev, onTripReload } from './admin.js';
 import './views/forms.js';
 import { startSync } from './sync.js';
@@ -179,6 +180,7 @@ setInterval(() => {
   document.title = D.trip.title;
   $('#brand').textContent = D.trip.title;
   applyBrand();
+  watchTheme();
   if (!location.hash) history.replaceState(null, '', '#/inicio');
   await migrateDocuments().catch((e) => console.warn('migrate', e));
   route();

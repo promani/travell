@@ -74,7 +74,7 @@ flowchart LR
 index.html            Shell: header, <main id="app">, navegación inferior, carga Leaflet y main.js
 manifest.webmanifest  Metadatos de instalación (nombre, íconos, colores, start_url)
 sw.js                 Service worker (offline)
-css/app.css           Estilos sin librería (mobile first, modo oscuro con prefers-color-scheme). Todo sale de los tokens de :root: 5 tamaños de texto (--fs-*), espaciado (--s1…--s6), radios (--r-*) y 2 alturas de control (--ctl 44px, --ctl-sm 36px)
+css/app.css           Estilos sin librería (mobile first, modo oscuro según la hora del celular: de 18:00 a 07:00, con `data-theme` en `<html>` que pone `js/theme.js`). Todo sale de los tokens de :root: 5 tamaños de texto (--fs-*), espaciado (--s1…--s6), radios (--r-*) y 2 alturas de control (--ctl 44px, --ctl-sm 36px)
 js/
   main.js             Arranque, router por hash, delegación de eventos, reloj
   store.js            Carga de JSON + índices, localStorage, IndexedDB, reloj simulable, bus de eventos

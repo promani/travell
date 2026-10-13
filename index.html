@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="vendor/fontawesome/css/fontawesome.min.css">
   <link rel="stylesheet" href="vendor/fontawesome/css/solid.min.css">
   <link rel="stylesheet" href="css/app.css">
+  <script>document.documentElement.dataset.theme = ((h) => (h >= 18 || h < 7 ? 'dark' : 'light'))(new Date().getHours());</script>
 </head>
 <body>
   <header id="top"><a href="#/inicio" id="brand">Mi viaje</a><span class="top-right"><span id="net" class="net-pill" hidden>sin conexión</span><button class="top-sim" data-act="sim-open" aria-label="Simular un día" title="Simular un día"><i class="fa-solid fa-flask" aria-hidden="true"></i></button><a href="#/buscar" class="top-search" aria-label="Buscar"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></a></span><div id="sim-bar" hidden></div></header>
