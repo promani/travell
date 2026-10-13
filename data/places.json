@@ -33,7 +33,8 @@
     "source": "itinerario",
     "days": [
       "d03",
-      "d07"
+      "d07",
+      "d23"
     ]
   },
   {
@@ -69,7 +70,8 @@
     "link": null,
     "source": "itinerario",
     "days": [
-      "d05"
+      "d05",
+      "d23"
     ]
   },
   {
@@ -1360,7 +1362,7 @@
     "source": "itinerario",
     "days": [
       "d19",
-      "d23"
+      "d21"
     ]
   },
   {
@@ -1396,7 +1398,7 @@
     "link": null,
     "source": "itinerario",
     "days": [
-      "d21"
+      "d19"
     ]
   },
   {
@@ -1413,9 +1415,7 @@
     "cost": null,
     "link": null,
     "source": "itinerario",
-    "days": [
-      "d21"
-    ]
+    "days": []
   },
   {
     "id": "p-tiananmen",
@@ -1432,7 +1432,7 @@
     "link": null,
     "source": "itinerario",
     "days": [
-      "d22"
+      "d20"
     ]
   },
   {
@@ -1450,7 +1450,7 @@
     "link": null,
     "source": "itinerario",
     "days": [
-      "d22"
+      "d20"
     ]
   },
   {
@@ -1468,7 +1468,7 @@
     "link": null,
     "source": "itinerario",
     "days": [
-      "d22"
+      "d20"
     ]
   },
   {
@@ -1486,7 +1486,7 @@
     "link": null,
     "source": "itinerario",
     "days": [
-      "d22"
+      "d20"
     ]
   },
   {
@@ -1504,7 +1504,7 @@
     "link": null,
     "source": "itinerario",
     "days": [
-      "d22"
+      "d20"
     ]
   },
   {
@@ -1521,9 +1521,7 @@
     "cost": "~¥35 (aprox.)",
     "link": null,
     "source": "itinerario",
-    "days": [
-      "d23"
-    ]
+    "days": []
   },
   {
     "id": "p-yonghe",
@@ -1539,9 +1537,7 @@
     "cost": "~¥25 (aprox.)",
     "link": null,
     "source": "itinerario",
-    "days": [
-      "d23"
-    ]
+    "days": []
   },
   {
     "id": "p-x-jiajia",
@@ -1673,8 +1669,6 @@
     "cost": null,
     "link": null,
     "source": "itinerario",
-    "days": [
-      "d20"
-    ]
+    "days": []
   }
 ]

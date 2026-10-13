@@ -207,9 +207,7 @@
     "cost": null,
     "link": null,
     "source": "extra",
-    "days": [
-      "d20"
-    ]
+    "days": []
   },
   {
     "id": "p-e-beihai",
@@ -225,9 +223,7 @@
     "cost": null,
     "link": null,
     "source": "extra",
-    "days": [
-      "d19"
-    ]
+    "days": []
   },
   {
     "id": "p-e-798",
@@ -243,8 +239,79 @@
     "cost": null,
     "link": null,
     "source": "extra",
+    "days": []
+  },
+  {
+    "cityId": "zhangjiajie",
+    "approx": true,
+    "cost": null,
+    "link": null,
+    "source": "itinerario",
+    "id": "p-dyg",
+    "name": "Aeropuerto de Zhangjiajie Hehua (DYG)",
+    "nameLocal": "张家界荷花国际机场",
+    "category": "traslado",
+    "lat": 29.1028,
+    "lon": 110.443,
+    "area": "Yongding",
+    "description": "A ~15 min del centro de Zhangjiajie y del teleférico de Tianmen; a ~50 min de Wulingyuan.",
     "days": [
-      "d20"
+      "d21",
+      "d23"
+    ]
+  },
+  {
+    "cityId": "zhangjiajie",
+    "approx": true,
+    "cost": "~¥260–280 con teleférico (aprox.)",
+    "link": "https://www.tianmenshan.com.cn/",
+    "source": "itinerario",
+    "id": "p-tianmen",
+    "name": "Montaña Tianmen",
+    "nameLocal": "天门山",
+    "category": "aventura",
+    "lat": 29.1153,
+    "lon": 110.4795,
+    "area": "Yongding",
+    "description": "Teleférico desde el centro de la ciudad, caminos de vidrio en el acantilado y la Puerta del Cielo, un arco natural con 999 escalones.",
+    "days": [
+      "d21"
+    ]
+  },
+  {
+    "cityId": "zhangjiajie",
+    "approx": true,
+    "cost": "~¥225 (aprox.)",
+    "link": null,
+    "source": "itinerario",
+    "id": "p-wulingyuan",
+    "name": "Parque Forestal Nacional de Zhangjiajie",
+    "nameLocal": "张家界国家森林公园",
+    "category": "naturaleza",
+    "lat": 29.3489,
+    "lon": 110.5464,
+    "area": "Wulingyuan",
+    "description": "Miles de columnas de piedra arenisca entre la niebla: Yuanjiajie (las montañas de Avatar), el ascensor Bailong y Tianzi Shan. La entrada vale varios días.",
+    "days": [
+      "d22"
+    ]
+  },
+  {
+    "cityId": "zhangjiajie",
+    "approx": true,
+    "cost": null,
+    "link": null,
+    "source": "itinerario",
+    "id": "p-72qilou",
+    "name": "72 Qilou",
+    "nameLocal": "七十二奇楼",
+    "category": "noche",
+    "lat": 29.1189,
+    "lon": 110.4813,
+    "area": "Yongding",
+    "description": "Complejo de edificios con forma de montaña que se ilumina de noche, en el centro de Zhangjiajie.",
+    "days": [
+      "d22"
     ]
   }
 ]

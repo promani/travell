@@ -142,5 +142,37 @@
     "cityId": "tokyo",
     "url": "https://www.vjw-lp.digital.go.jp/en/",
     "dayId": "d07"
+  },
+  {
+    "id": "u-zjj-1",
+    "title": "Hotel: Pullman Zhangjiajie (cerca de la montaña, Wulingyuan)",
+    "url": "https://www.trip.com/w/idBSKz9jjW2",
+    "kind": "enlace",
+    "cityId": "zhangjiajie",
+    "dayId": "d21"
+  },
+  {
+    "id": "u-zjj-2",
+    "title": "Hotel: Country Garden Phoenix (cerca de la montaña)",
+    "url": "https://www.trip.com/w/D3IX3l9jjW2",
+    "kind": "enlace",
+    "cityId": "zhangjiajie",
+    "dayId": "d21"
+  },
+  {
+    "id": "u-zjj-3",
+    "title": "Hotel: Hampton by Hilton 72 Qilou (cerca del aeropuerto)",
+    "url": "https://www.trip.com/w/PaRwtJAjjW2",
+    "kind": "enlace",
+    "cityId": "zhangjiajie",
+    "dayId": "d21"
+  },
+  {
+    "id": "u-zjj-4",
+    "title": "Hotel: Pusu Weilan Theme Inn (barato)",
+    "url": "https://www.trip.com/w/uov7k5AjjW2",
+    "kind": "enlace",
+    "cityId": "zhangjiajie",
+    "dayId": "d21"
   }
 ]

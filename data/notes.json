@@ -95,7 +95,7 @@
   {
     "id": "n09",
     "title": "Clima",
-    "detail": "Tokio y Kioto ~8–16 °C; Hakone más frío; Pekín cerca de 0 °C.",
+    "detail": "Tokio y Kioto ~8–16 °C; Hakone más frío; Pekín cerca de 0 °C; Zhangjiajie ~5–12 °C, húmedo y con niebla.",
     "days": [],
     "kind": "tip"
   },
@@ -104,7 +104,7 @@
     "title": "Ciudad Prohibida",
     "detail": "Cerrada los lunes; reserva obligatoria con pasaporte.",
     "days": [
-      "d22"
+      "d20"
     ],
     "kind": "alerta"
   },
@@ -334,9 +334,9 @@
     "id": "n-d21-1",
     "kind": "tip",
     "title": "Frío en la Muralla",
-    "detail": "En diciembre amanece bajo cero y arriba sopla viento: capas, gorro, guantes y calzado con suela que agarre. El tobogán no funciona con lluvia, nieve o viento fuerte; en ese caso se baja en teleférico. Llevá agua y algo para comer: arriba hay poco.",
+    "detail": "A fines de noviembre arriba sopla viento y a la tarde la temperatura baja rápido: capas, gorro, guantes y calzado con suela que agarre (sacalos del equipaje de mano antes de aterrizar). En invierno la Muralla cierra ~17:00. El tobogán no funciona con lluvia, nieve o viento fuerte; en ese caso se baja en teleférico. Arriba hay poco para comer: algo del avión o del aeropuerto.",
     "days": [
-      "d21"
+      "d19"
     ],
     "icon": "temperature-low"
   },
@@ -346,7 +346,7 @@
     "title": "Controles en Pekín",
     "detail": "Para Tiananmen y la Ciudad Prohibida hace falta el pasaporte original (el mismo con el que se reservó); no se aceptan copias. Llevá poco: hay control de seguridad y no se pueden entrar encendedores. La Ciudad Prohibida se recorre de sur a norte y sale frente a Jingshan.",
     "days": [
-      "d22"
+      "d20"
     ],
     "icon": "id-card"
   },
@@ -401,5 +401,36 @@
       "d15",
       "d17"
     ]
+  },
+  {
+    "id": "n-d20-3",
+    "kind": "alerta",
+    "title": "Mañana, vuelo a las 08:00",
+    "detail": "El CA1953 sale de la T3 de Pekín a las 08:00: salida del hotel ~05:30. Valijas hechas y check-out pedido esta noche.",
+    "days": [
+      "d20"
+    ],
+    "icon": "plane-departure"
+  },
+  {
+    "id": "n-d21-2",
+    "kind": "tip",
+    "title": "Zhangjiajie",
+    "detail": "Las entradas de Tianmen y del Parque Forestal se compran con pasaporte y lo piden en los molinetes. La niebla es frecuente: si tapa todo a la mañana, suele abrirse a la tarde. Las distancias son largas: el centro de Zhangjiajie (aeropuerto, Tianmen) y Wulingyuan (Parque Forestal) están a ~50 min. Llevá capas y algo impermeable.",
+    "days": [
+      "d21",
+      "d22"
+    ],
+    "icon": "mountain"
+  },
+  {
+    "id": "n-d23-3",
+    "kind": "tip",
+    "title": "Tarde en Shanghai con valijas guardadas",
+    "detail": "La consigna de equipaje de Pudong está en las dos terminales y cobra por bulto y por día. El MU355 llega a la T1; fijate de qué terminal sale el MU745 antes de dejar las valijas. Con el Maglev + línea 2, el Bund queda a ~1 h.",
+    "days": [
+      "d23"
+    ],
+    "icon": "suitcase-rolling"
   }
 ]

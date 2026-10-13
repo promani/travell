@@ -33,17 +33,18 @@
   },
   {
     "id": "k03",
-    "title": "Vuelo Pekín → Shanghai Pudong (4/12)",
+    "title": "Vuelos Pekín → Zhangjiajie (2/12) y Zhangjiajie → Pudong (4/12)",
     "when": "Ya",
     "dueAt": null,
-    "urgent": true,
-    "day": "d23",
-    "status": "pendiente",
-    "notes": "Salida a media tarde.",
+    "urgent": false,
+    "day": "d21",
+    "status": "hecho",
+    "notes": "Air China CA1953 08:00 → 10:35 y China Eastern MU355 11:50 → 13:40.",
     "assignee": null,
     "priority": "alta",
     "covers": [
-      "transport:t20"
+      "transport:t20",
+      "transport:t22"
     ],
     "source": "json"
   },
@@ -97,7 +98,7 @@
   },
   {
     "id": "k08",
-    "title": "Hotel Pekín 30/11–4/12",
+    "title": "Hotel Pekín 30/11–2/12",
     "when": "Ya",
     "dueAt": null,
     "urgent": true,
@@ -235,11 +236,11 @@
   },
   {
     "id": "k16",
-    "title": "Ciudad Prohibida (3/12)",
-    "when": "~26/11 (a confirmar)",
-    "dueAt": "2026-11-26T00:00:00-03:00",
+    "title": "Ciudad Prohibida (1/12)",
+    "when": "~24/11 (a confirmar)",
+    "dueAt": "2026-11-24T00:00:00-03:00",
     "urgent": false,
-    "day": "d22",
+    "day": "d20",
     "status": "pendiente",
     "notes": "Cupo diario; pasaporte.",
     "assignee": null,
@@ -253,18 +254,18 @@
   },
   {
     "id": "k17",
-    "title": "Traslado/tour a la Muralla (2/12)",
+    "title": "Auto con chofer aeropuerto → Muralla → hotel (30/11)",
     "when": "Unos días antes",
     "dueAt": null,
     "urgent": false,
-    "day": "d21",
+    "day": "d19",
     "status": "pendiente",
-    "notes": null,
+    "notes": "Con el número de vuelo CA162 (llega 11:25 a la T3).",
     "assignee": null,
     "priority": "normal",
     "covers": [
       "transport:t19",
-      "activity:A101",
+      "activity:A099",
       "activity:A102"
     ],
     "source": "json"
@@ -361,5 +362,38 @@
     "priority": "normal",
     "covers": [],
     "source": "json"
+  },
+  {
+    "dueAt": null,
+    "urgent": true,
+    "status": "pendiente",
+    "notes": "Elegir entre las 4 opciones guardadas en Recursos.",
+    "assignee": null,
+    "priority": "alta",
+    "source": "json",
+    "id": "k25",
+    "title": "Hotel Zhangjiajie 2–4/12",
+    "when": "Ya",
+    "day": "d21",
+    "covers": [
+      "lodging:l08"
+    ]
+  },
+  {
+    "dueAt": null,
+    "urgent": false,
+    "status": "pendiente",
+    "notes": "Con pasaporte, en Trip.com o en los sitios oficiales.",
+    "assignee": null,
+    "priority": "normal",
+    "source": "json",
+    "id": "k26",
+    "title": "Entradas Tianmen (2/12) y Parque Forestal de Zhangjiajie (3/12)",
+    "when": "Unos días antes",
+    "day": "d21",
+    "covers": [
+      "activity:A148",
+      "activity:A152"
+    ]
   }
 ]
