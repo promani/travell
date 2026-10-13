@@ -56,6 +56,7 @@ h1 > .fa-solid, h2 > .fa-solid, h3 > .fa-solid { color: var(--pri); margin-right
 /* ------------------------------------------------------------------ shell: top bar, main, bottom nav */
 #top { position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s2);
   padding: calc(var(--s2) + env(safe-area-inset-top)) var(--s4) var(--s2); min-height: 52px; background: var(--brand); color: var(--brand-ink); }
+#app [id] { scroll-margin-top: calc(52px + env(safe-area-inset-top) + var(--s3)); }   /* a "#/pantalla#seccion" link lands below the top bar */
 #top a { color: inherit; text-decoration: none; font-weight: 700; letter-spacing: .01em; }
 .top-right { display: flex; align-items: center; gap: var(--s1); }
 .top-sim, .top-search { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%;

@@ -57,13 +57,14 @@ function receiveLocation(p) {
 
 function parseHash() {
   const raw = location.hash.replace(/^#\/?/, '');
-  const [path, qs = ''] = raw.split('?');
+  const [route, anchor = ''] = raw.split('#');                  // "#/tareas#sugerencias": screen + section to scroll to
+  const [path, qs = ''] = route.split('?');
   const [name = '', arg] = path.split('/');
   const q = Object.fromEntries(new URLSearchParams(qs));
   const params = { ...q };
   if (name === 'dia' || name === 'lugar') params.id = arg;
   if (name === 'docs') params.type = arg;
-  return { name, params };
+  return { name, params, anchor };
 }
 
 function cleanup() { if (active) { active.cleanups.forEach((f) => { try { f(); } catch { /* ignore */ } }); active = null; } }
@@ -71,7 +72,7 @@ function cleanup() { if (active) { active.cleanups.forEach((f) => { try { f(); }
 function route({ keepScroll = false } = {}) {
   const y = window.scrollY;
   cleanup();
-  const { name, params } = parseHash();
+  const { name, params, anchor } = parseHash();
   // first run: nothing else until we know who uses this phone (a received location link still opens)
   const onboarding = people.needsMe() && name !== 'ubicacion';
   document.body.classList.toggle('onboarding', onboarding);
@@ -87,7 +88,8 @@ function route({ keepScroll = false } = {}) {
   const group = NAV_GROUP[name] || 'mas';
   $$('#nav a').forEach((a) => a.classList.toggle('on', a.dataset.nav === group));
   const dn = $('#nav [data-nav=dia]'); if (dn) dn.href = `#/dia/${(tripPhase().day || D.days[0]).id}`;
-  window.scrollTo(0, keepScroll ? y : 0);
+  const target = !keepScroll && anchor && document.getElementById(anchor);
+  if (target) target.scrollIntoView({ block: 'start' }); else window.scrollTo(0, keepScroll ? y : 0);
   showPictures();
   people.pendingSetup().then((items) => $('#nav [data-nav=mas]')?.classList.toggle('pending', items.length > 0)).catch(() => null);
   tick();
