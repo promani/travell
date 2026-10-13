@@ -74,8 +74,7 @@
     "link": null,
     "code": null,
     "departAt": "2026-11-18T15:00",
-    "arriveAt": "2026-11-18T18:40",
-    "notes": "Aerolínea china: chequear política de cambios."
+    "arriveAt": "2026-11-18T18:40"
   },
   {
     "id": "t05",
@@ -401,7 +400,6 @@
     "link": "https://www.aeroroutes.com/eng/260527-mudec26eze",
     "code": null,
     "departAt": "2026-12-05T01:50",
-    "arriveAt": "2026-12-05T16:45",
-    "notes": "Confirmar el horario exacto: desde el 5/12 cambia el cronograma."
+    "arriveAt": "2026-12-05T16:45"
   }
 ]

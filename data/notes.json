@@ -12,15 +12,6 @@
     "icon": "passport"
   },
   {
-    "id": "n02",
-    "title": "Vuelos China–Japón",
-    "detail": "Las aerolíneas chinas recortaron muchas rutas a Japón. Spring Airlines es china: chequear política de cambios.",
-    "days": [
-      "d07"
-    ],
-    "kind": "alerta"
-  },
-  {
     "id": "n03",
     "title": "Narita T3",
     "detail": "La Terminal 3 no tiene estación de tren: caminar o shuttle a la T2.",
@@ -123,16 +114,6 @@
       "d07"
     ],
     "kind": "tip"
-  },
-  {
-    "id": "n13",
-    "title": "MU745",
-    "detail": "Desde el 5/12 cambia el cronograma: confirmar horario exacto en la reserva.",
-    "days": [
-      "d23",
-      "d24"
-    ],
-    "kind": "alerta"
   },
   {
     "id": "n-d02-1",
