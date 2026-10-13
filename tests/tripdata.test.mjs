@@ -119,7 +119,7 @@ test('MCP server: same key, reads the trip, previews and applies changes', async
       { op: 'put', col: 'passports', id: t, data: { number: 'AAA123456', expires: '2031-05-01' } },
     ];
     assert.ok(!(await tool('apply_changes', { changes: booking })).isError);
-    assert.equal((await (await fetch(`${b}/data/tickets.json`)).json())[0].code, 'QX7P2L');
+    assert.equal((await (await fetch(`${b}/data/tickets.json`)).json()).find((x) => x.id === 'transport:t01').code, 'QX7P2L');
     assert.equal((await (await fetch(`${b}/data/expenses.json`)).json())[0].amount, 900);
     for (const bad of [{ op: 'put', col: 'tickets', id: 'transport:nope', data: { code: 'X' } }, { op: 'put', col: 'tickets', id: 'hotel:l01', data: { code: 'X' } },
       { op: 'put', col: 'expenses', id: 'ex-2', data: { desc: 'x', amount: 1, currency: 'USD', paidBy: 'nadie', split: { mode: 'equal', among: [t] } } },

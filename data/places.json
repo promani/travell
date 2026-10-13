@@ -1341,7 +1341,7 @@
     "link": "https://www.kansai-airport.or.jp/en/access/to-airport/ferry",
     "source": "itinerario",
     "days": [
-      "d20"
+      "d19"
     ]
   },
   {
@@ -1359,7 +1359,7 @@
     "link": null,
     "source": "itinerario",
     "days": [
-      "d20",
+      "d19",
       "d23"
     ]
   },
@@ -1378,7 +1378,7 @@
     "link": null,
     "source": "itinerario",
     "days": [
-      "d20"
+      "d19"
     ]
   },
   {
@@ -1660,21 +1660,21 @@
     ]
   },
   {
-    "id": "p-fukuchiyama",
-    "name": "Vía abandonada del Fukuchiyama (Namaze – Takedao)",
-    "nameLocal": "JR福知山線廃線敷",
-    "cityId": "kobe",
-    "category": "aventura",
-    "lat": 34.832,
-    "lon": 135.316,
+    "id": "p-qianmen",
+    "name": "Qianmen y Dashilan",
+    "nameLocal": "前门 / 大栅栏",
+    "cityId": "beijing",
+    "category": "noche",
+    "lat": 39.8957,
+    "lon": 116.3976,
     "approx": true,
-    "area": "Nishinomiya / Takarazuka (Hyogo)",
-    "description": "Caminata de unos 5 km por la vieja vía del tren junto al río Muko, con puentes y túneles sin luz. Sin baños ni negocios en el camino.",
-    "cost": "Gratis",
-    "link": "https://www.hyogo-tourism.jp/world/spot/detail_1037.html",
+    "area": "Dongcheng / Xicheng",
+    "description": "Calle peatonal al sur de Tiananmen y callejones con tiendas centenarias y comida callejera; lindo de noche.",
+    "cost": null,
+    "link": null,
     "source": "itinerario",
     "days": [
-      "d19"
+      "d20"
     ]
   }
 ]

@@ -17,13 +17,13 @@
   },
   {
     "id": "k02",
-    "title": "Vuelo Kansai → Pekín (1/12)",
+    "title": "Vuelo Kansai → Pekín (30/11)",
     "when": "Ya",
     "dueAt": null,
-    "urgent": true,
-    "day": "d20",
-    "status": "pendiente",
-    "notes": "Salida ideal 11:00–14:00.",
+    "urgent": false,
+    "day": "d19",
+    "status": "hecho",
+    "notes": "Air China CA162, 09:00 → 11:25.",
     "assignee": null,
     "priority": "alta",
     "covers": [
@@ -96,28 +96,12 @@
     "source": "json"
   },
   {
-    "id": "k07",
-    "title": "Extender Portopia la noche del 30/11",
+    "id": "k08",
+    "title": "Hotel Pekín 30/11–4/12",
     "when": "Ya",
     "dueAt": null,
     "urgent": true,
     "day": "d19",
-    "status": "pendiente",
-    "notes": null,
-    "assignee": null,
-    "priority": "alta",
-    "covers": [
-      "lodging:l06"
-    ],
-    "source": "json"
-  },
-  {
-    "id": "k08",
-    "title": "Hotel Pekín 1–4/12",
-    "when": "Ya",
-    "dueAt": null,
-    "urgent": true,
-    "day": "d20",
     "status": "pendiente",
     "notes": null,
     "assignee": null,

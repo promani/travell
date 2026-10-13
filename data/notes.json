@@ -2,11 +2,11 @@
   {
     "id": "n01",
     "title": "Entrada a China sin visa",
-    "detail": "No hace falta visa: hasta el 31/12/2026 se entra a China sin visa por estadías de menos de 10 días, y el plazo se reinicia con cada entrada. Las dos entradas de este viaje (14/11 por Shanghai y 1/12 por Pekín) duran menos de 10 días. En migraciones pueden pedir el pasaje de salida y la reserva del hotel (tenelos offline); la tarjeta de llegada se completa en el aeropuerto.",
+    "detail": "No hace falta visa: hasta el 31/12/2026 se entra a China sin visa por estadías de menos de 10 días, y el plazo se reinicia con cada entrada. Las dos entradas de este viaje (14/11 por Shanghai y 30/11 por Pekín) duran menos de 10 días. En migraciones pueden pedir el pasaje de salida y la reserva del hotel (tenelos offline); la tarjeta de llegada se completa en el aeropuerto.",
     "days": [
       "d01",
       "d03",
-      "d20"
+      "d19"
     ],
     "kind": "tip",
     "icon": "passport"
@@ -313,20 +313,20 @@
   {
     "id": "n-d19-1",
     "kind": "tip",
-    "title": "Para la caminata",
-    "detail": "Linterna (o la del celular con batería cargada): los túneles no tienen luz. Calzado cómodo, agua y comida comprada antes, porque en el camino no hay negocios ni baños (usá los de la estación Namaze). Se camina sobre balasto y durmientes: ojo con los tobillos.",
+    "title": "Vuelo temprano",
+    "detail": "El CA162 sale 09:00 de la T1 de Kansai y el check-in cierra ~1 h antes. Confirmá el horario del primer Bay Shuttle (sale del aeropuerto de Kobe, a una parada de Port Liner del Portopia); si no llega con tiempo, bus limusina desde Sannomiya. Valijas hechas la noche anterior.",
     "days": [
       "d19"
     ],
-    "icon": "person-hiking"
+    "icon": "plane-departure"
   },
   {
     "id": "n-d20-2",
     "kind": "tip",
     "title": "Hoy se separa el grupo",
-    "detail": "Facundo vuelve a Inglaterra; Pehuén y Sole siguen a Pekín. Antes de despedirse: liquidar los gastos compartidos en la app (Gastos → saldos).",
+    "detail": "Pehuén y Sole vuelan a Pekín; Facundo se queda en Japón y vuelve a Inglaterra el 1/12. Liquidar los gastos compartidos en la cena de la noche anterior (Gastos → saldos).",
     "days": [
-      "d20"
+      "d19"
     ],
     "icon": "people-arrows"
   },
@@ -396,11 +396,10 @@
     "kind": "tip",
     "icon": "robot",
     "title": "Robot gigante en Kobe",
-    "detail": "En Shin-Nagata (10 min en JR desde Sannomiya) hay una estatua de 18 m de Tetsujin 28, el robot gigante clásico, primo de Mazinger Z. Va bien la noche libre del 28/11 o el 30/11.",
+    "detail": "En Shin-Nagata (10 min en JR desde Sannomiya) hay una estatua de 18 m de Tetsujin 28, el robot gigante clásico, primo de Mazinger Z. Va bien la noche libre del 28/11.",
     "days": [
       "d15",
-      "d17",
-      "d19"
+      "d17"
     ]
   }
 ]

@@ -207,7 +207,9 @@
     "cost": null,
     "link": null,
     "source": "extra",
-    "days": []
+    "days": [
+      "d20"
+    ]
   },
   {
     "id": "p-e-beihai",
@@ -223,7 +225,9 @@
     "cost": null,
     "link": null,
     "source": "extra",
-    "days": []
+    "days": [
+      "d19"
+    ]
   },
   {
     "id": "p-e-798",
@@ -239,6 +243,8 @@
     "cost": null,
     "link": null,
     "source": "extra",
-    "days": []
+    "days": [
+      "d20"
+    ]
   }
 ]
