@@ -53,7 +53,7 @@ const CHANGE_RULES = `Formato de cada cambio (es lo único que puede modificar e
 - "patch" agrega o cambia campos de un registro que ya existe (preferilo). "put" crea uno nuevo con todos sus campos. "del" lo borra.
 - Respetá la forma de los registros de ejemplo (mismos nombres de campo). Fechas AAAA-MM-DD; horas HH:MM en la hora local del lugar.
 - Las actividades llevan "dayId" con el id del día. Un id nuevo: corto, en minúsculas, con prefijo de la colección (ej. "l-hanting-bund", "t-mu746").
-- tickets = el comprobante de algo que ya existe: código de reserva, link a la reserva y QRs (el texto que contiene el QR; la app lo dibuja). Su id es "<${Object.keys(TICKET_KINDS).join('|')}>:<id>" (ej. "transport:t01", "activity:A052", "doc:doc04"). El código de un hotel va en lodging.confirmation y su link en lodging.bookingUrl, no en tickets.
+- tickets = el comprobante de algo que ya existe: código de reserva, link a la reserva y QRs (el texto que contiene el QR; la app lo dibuja). Su id es "<${Object.keys(TICKET_KINDS).join('|')}>:<id>" (ej. "transport:t01", "activity:A052", "doc:doc04"). El código de un hotel va en lodging.confirmation y su link en lodging.bookingUrl, no en tickets. Un hotel todavía sin elegir puede llevar lodging.options: [{ "name", "note", "url" }] con los candidatos; al reservar, se completan name, status "reservado" y la reserva.
 - expenses: gastos compartidos. amount en la moneda de currency, paidBy y split con ids de viajeros, category: comida | transporte | alojamiento | entradas | compras | otros.
 - passports: id = id del viajero.
 - Los archivos (PDF, capturas) no se suben por acá: guardá lo que dicen (código, horarios, link). La persona los adjunta desde la app si los quiere ver sin internet.

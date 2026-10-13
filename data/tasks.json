@@ -367,16 +367,17 @@
     "dueAt": null,
     "urgent": true,
     "status": "pendiente",
-    "notes": "Elegir entre las 4 opciones guardadas en Recursos.",
+    "notes": "Las opciones están en cada alojamiento.",
     "assignee": null,
     "priority": "alta",
     "source": "json",
     "id": "k25",
-    "title": "Hotel Zhangjiajie 2–4/12",
+    "title": "Hoteles Zhangjiajie: 2/12 en Wulingyuan y 3/12 cerca del aeropuerto",
     "when": "Ya",
     "day": "d21",
     "covers": [
-      "lodging:l08"
+      "lodging:l08",
+      "lodging:l09"
     ]
   },
   {

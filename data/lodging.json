@@ -135,22 +135,68 @@
     "id": "l08",
     "cityId": "zhangjiajie",
     "name": "Hotel a elegir",
-    "area": "Wulingyuan (al lado del Parque Forestal) o Yongding (ciudad, cerca de Tianmen y del aeropuerto)",
-    "checkInDay": "d21",
-    "checkIn": "2026-12-02",
-    "checkOutDay": "d23",
-    "checkOut": "2026-12-04",
     "checkInTime": null,
     "checkOutTime": null,
-    "nights": 2,
+    "nights": 1,
     "status": "pendiente",
-    "notes": "2 noches. Opciones (links en Recursos → Zhangjiajie): cerca de la montaña, Pullman Zhangjiajie (Wulingyuan) o Country Garden Phoenix (entre Yongding y Wulingyuan); cerca del aeropuerto, Hampton by Hilton 72 Qilou; barato, Pusu Weilan Theme Inn (estación Zhangjiajie West).",
     "link": null,
     "address": null,
     "addressLocal": null,
     "confirmation": null,
-    "lat": 29.1167,
-    "lon": 110.4792,
-    "approx": true
+    "approx": true,
+    "area": "Wulingyuan, cerca del Parque Forestal",
+    "checkInDay": "d21",
+    "checkIn": "2026-12-02",
+    "checkOutDay": "d22",
+    "checkOut": "2026-12-03",
+    "notes": "1 noche, lejos del aeropuerto: al lado de la entrada del Parque Forestal para entrar temprano el 3/12. El 3/12 se dejan las valijas en el hotel y se pasan a buscar al salir del parque.",
+    "lat": 29.3474,
+    "lon": 110.5402,
+    "options": [
+      {
+        "name": "Pullman Zhangjiajie",
+        "note": "Cerca de la montaña, en el centro de Wulingyuan",
+        "url": "https://www.trip.com/w/idBSKz9jjW2"
+      },
+      {
+        "name": "Country Garden Phoenix",
+        "note": "Cerca de la montaña",
+        "url": "https://www.trip.com/w/D3IX3l9jjW2"
+      }
+    ]
+  },
+  {
+    "id": "l09",
+    "cityId": "zhangjiajie",
+    "name": "Hotel a elegir",
+    "checkInTime": null,
+    "checkOutTime": null,
+    "nights": 1,
+    "status": "pendiente",
+    "link": null,
+    "address": null,
+    "addressLocal": null,
+    "confirmation": null,
+    "approx": true,
+    "area": "Yongding, cerca del aeropuerto",
+    "checkInDay": "d22",
+    "checkIn": "2026-12-03",
+    "checkOutDay": "d23",
+    "checkOut": "2026-12-04",
+    "notes": "1 noche, cerca del aeropuerto para el vuelo de las 11:50 del 4/12.",
+    "lat": 29.1189,
+    "lon": 110.4813,
+    "options": [
+      {
+        "name": "Hampton by Hilton 72 Qilou",
+        "note": "Cerca del aeropuerto, al lado del 72 Qilou iluminado",
+        "url": "https://www.trip.com/w/PaRwtJAjjW2"
+      },
+      {
+        "name": "Pusu Weilan Theme Inn",
+        "note": "Barato, junto a la estación Zhangjiajie West",
+        "url": "https://www.trip.com/w/uov7k5AjjW2"
+      }
+    ]
   }
 ]

@@ -31,6 +31,8 @@ export function statusBadge(s) {
 export const resvBadge = (r) => r === 'requerida' ? '<span class="badge warn">Reserva necesaria</span>'
   : r === 'recomendada' ? '<span class="badge info">Reserva recomendada</span>' : '';
 export { extLink };
+/** The hotels being considered for a lodging not booked yet: [{ name, note, url }]. */
+export const lodgingOptions = (l) => (l.status !== 'reservado' && (l.options || []).length ? `<ul class="lodg-opts">${l.options.map((o) => `<li><b>${o.url ? extLink(o.url, o.name) : esc(o.name)}</b>${o.note ? ` <small>${esc(o.note)}</small>` : ''}</li>`).join('')}</ul>` : '');
 /** "Reserva en Booking.com" from a booking URL (the site's name, or a generic label). */
 export function bookingSite(url) {
   let host = '';
@@ -160,7 +162,7 @@ export function arrivalCard(card, day, ctx) {
       ${lodging.status === 'pendiente' ? '<span class="badge warn">Hotel por reservar</span>' : ''}
       <button class="btn small" data-act="lodging-edit" data-id="${esc(lodging.id)}">${ic('pen')} Editar</button>
       ${lodging.bookingUrl ? extLink(lodging.bookingUrl, bookingSite(lodging.bookingUrl)) : ''}
-      ${lodging.addressLocal ? `<button class="btn small" data-act="show-address" data-id="${esc(lodging.id)}">Mostrar dirección al taxista</button>` : ''}</div>` : ''}
+      ${lodging.addressLocal ? `<button class="btn small" data-act="show-address" data-id="${esc(lodging.id)}">Mostrar dirección al taxista</button>` : ''}${lodgingOptions(lodging)}</div>` : ''}
     ${(card.links || []).length ? `<h4>Links de interés</h4><ul class="links">${card.links.map((l) => `<li>${extLink(l.url, l.title)}</li>`).join('')}</ul>
       <p class="hint">Los links necesitan internet. Para tener un mapa de metro offline, guardá una captura y adjuntala en Documentos.</p>` : ''}
   </section>`;

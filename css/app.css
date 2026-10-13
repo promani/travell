@@ -269,6 +269,7 @@ progress { width: 100%; accent-color: var(--pri); }
 .trow { display: flex; gap: var(--s3); padding: var(--s3) 0; }
 .trow2 { display: flex; gap: var(--s3); } .trow2 small { margin-top: .1rem; }
 .lodging-line { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s3); align-items: center; margin: var(--s3) 0; padding: var(--s3); } .lodging-line span { color: var(--muted); font-size: var(--fs-sm); }
+.lodg-opts { list-style: none; margin: var(--s2) 0 0; padding: 0; flex-basis: 100%; display: grid; gap: var(--s1); } .lodg-opts li { font-size: var(--fs-sm); } .lodg-opts small { color: var(--muted); }
 .legend { display: flex; flex-wrap: wrap; gap: var(--s3); font-size: var(--fs-xs); color: var(--muted); margin-top: var(--s1); }
 .legend i { display: inline-block; background: var(--c); width: 1.4rem; height: .3rem; border-radius: 2px; margin-right: var(--s1); vertical-align: middle; }
 .doc-mini li a { display: block; padding: var(--s2) 0; color: var(--text); text-decoration: none; }

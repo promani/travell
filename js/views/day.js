@@ -2,7 +2,7 @@ import { D, I, done, settings, now } from '../store.js';
 import { hasTicket, transportTicket, ticketCode, paintAttachments, freeUrls } from '../ticket.js';
 import { esc, ic, fmtShort, fmtWeekdayShort, cap } from '../util.js';
 import { tripPhase, activityNow, lodgingOfDay, dayClockNote } from '../tripstate.js';
-import { heroImg, actRow, renderCards, notesCard, dayLabel, statusBadge, extLink, transportIcon, register, cat, bookingSite } from '../ui.js';
+import { heroImg, actRow, renderCards, notesCard, dayLabel, statusBadge, extLink, transportIcon, register, cat, bookingSite, lodgingOptions } from '../ui.js';
 import { thumbsFor } from './photos.js';
 import { dayTotalText } from './expenses.js';
 import { resourcesForDay, resRow } from './resources.js';
@@ -85,7 +85,7 @@ export function render({ id }, ctx) {
     ${trans.map(transportRow).join('')}
     ${lodgIn.map((x) => `<li class="trow"><span class="o-ic">${ic('hotel')}</span><div><b>Check-in · ${esc(x.name)}</b> ${statusBadge(x.status)} <button class="btn tiny" data-act="lodging-edit" data-id="${esc(x.id)}">Editar</button><small>${esc([x.area, x.checkInTime, x.notes].filter(Boolean).join(' · '))}</small>
       ${x.confirmation ? `<small>${ic('key')} Reserva: <b>${esc(x.confirmation)}</b></small>` : ''}
-      ${x.bookingUrl ? `<small>${extLink(x.bookingUrl, bookingSite(x.bookingUrl))}</small>` : ''}${x.link ? `<small>${extLink(x.link, 'Hotel')}</small>` : ''}</div></li>`).join('')}</ul></section>` : ''}
+      ${x.bookingUrl ? `<small>${extLink(x.bookingUrl, bookingSite(x.bookingUrl))}</small>` : ''}${x.link ? `<small>${extLink(x.link, 'Hotel')}</small>` : ''}${lodgingOptions(x)}</div></li>`).join('')}</ul></section>` : ''}
 
   ${docs.length ? `<section class="card"><h3>${ic('file-lines')} Documentos de este día</h3><ul class="doc-mini">${docs.map((x) => `<li><a href="#/docs/${esc(x.type)}"><b>${esc(x.title)}</b><small>${esc(ticketCode(`doc:${x.id}`, x.code) || x.subtitle || '')}</small></a></li>`).join('')}</ul></section>` : ''}
   ${res.length ? `<section class="card"><div class="card-head"><h3>${ic('book')} Recursos${day.cityId ? ' · ' + esc(I.city[day.cityId].name) : ''}</h3><a href="#/recursos${day.cityId ? '?city=' + esc(day.cityId) : ''}">Ver →</a></div>

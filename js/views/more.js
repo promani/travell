@@ -4,7 +4,7 @@ import { exportBackup, importBackup } from '../share.js';
 import { uploads, uploadPending, uploadSoon } from '../upload.js';
 import { tileUrls, prefetchTiles } from '../map.js';
 import { esc, ic, fmtShort, fmtDate, toast, cap, download } from '../util.js';
-import { register, statusBadge, extLink, transportIcon, cat, bookingSite } from '../ui.js';
+import { register, statusBadge, extLink, transportIcon, cat, bookingSite, lodgingOptions } from '../ui.js';
 import { tripPhase } from '../tripstate.js';
 import { ticketBox, hasTicket, transportTicket, paintAttachments, freeUrls } from '../ticket.js';
 import { setupCard } from './people.js';
@@ -68,6 +68,7 @@ export function lodging(_, ctx) {
       ${l.confirmation ? `<p>${ic('key')} Reserva: <b>${esc(l.confirmation)}</b></p>` : ''}
       ${l.bookingUrl ? `<p>${extLink(l.bookingUrl, bookingSite(l.bookingUrl))}</p>` : ''}
       ${l.notes ? `<p class="note-line">${esc(l.notes)}</p>` : ''}
+      ${lodgingOptions(l)}
       ${l.approx && Number.isFinite(l.lat) ? '<p class="hint">Ubicación aproximada (zona).</p>' : ''}
       <div class="row-actions"><button class="btn small" data-act="lodging-edit" data-id="${esc(l.id)}">${ic('pen')} Editar</button>
         ${l.checkInDay ? `<a class="btn small" href="#/dia/${l.checkInDay}">Día de llegada</a>` : ''}
