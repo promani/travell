@@ -7,8 +7,11 @@
       "China"
     ],
     "dueDaysBefore": 20,
-    "detail": "Algunos países lo piden a quienes llegan desde países con zonas de riesgo, y Argentina tiene zonas de riesgo. Verificá con la embajada de China y el Ministerio de Salud si te lo van a pedir. La vacuna tiene que darse al menos 10 días antes del viaje. Llevá la libreta amarilla y adjuntá una foto en Documentos.",
-    "link": "https://www.argentina.gob.ar/salud/viajeros"
+    "detail": "China lo pide a quienes llegan desde Argentina. La vacuna tiene que darse al menos 10 días antes de llegar (antes del 4/11). Llevá la libreta amarilla original y adjuntá una foto en Documentos.",
+    "link": "https://www.argentina.gob.ar/salud/viajeros",
+    "covers": [
+      "doc:doc15"
+    ]
   },
   {
     "id": "pasaporte",

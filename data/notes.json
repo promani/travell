@@ -2,12 +2,14 @@
   {
     "id": "n01",
     "title": "Entrada a China sin visa",
-    "detail": "Sin visa: hasta el 31/12/2026 se entra a China sin visa por estadías de menos de 10 días, y el plazo se reinicia con cada entrada. Las dos entradas de este viaje (14/11 por Shanghai y 1/12 por Pekín) duran menos de 10 días. En migraciones pueden pedir el pasaje de salida y la reserva del hotel: tenelos offline.",
+    "detail": "No hace falta visa: hasta el 31/12/2026 se entra a China sin visa por estadías de menos de 10 días, y el plazo se reinicia con cada entrada. Las dos entradas de este viaje (14/11 por Shanghai y 1/12 por Pekín) duran menos de 10 días. En migraciones pueden pedir el pasaje de salida y la reserva del hotel (tenelos offline); la tarjeta de llegada se completa en el aeropuerto.",
     "days": [
+      "d01",
       "d03",
       "d20"
     ],
-    "kind": "tip"
+    "kind": "tip",
+    "icon": "passport"
   },
   {
     "id": "n02",
@@ -59,13 +61,27 @@
   {
     "id": "n07",
     "title": "Onsen",
-    "detail": "Se entra desnudo y después de ducharse. Algunos no admiten tatuajes.",
+    "detail": "Se entra desnudo y después de ducharse. Muchos no admiten tatuajes, aunque varios los aceptan tapados con un parche.",
     "days": [
       "d12",
       "d13",
       "d18"
     ],
     "kind": "tip"
+  },
+  {
+    "id": "n14",
+    "kind": "recordatorio",
+    "icon": "hot-tub-person",
+    "title": "Sole: parche para los tatuajes",
+    "detail": "Sole tiene que comprarse un parche para tapar los tatuajes antes de Hakone: muchos onsen no dejan entrar con tatuajes a la vista. Se consiguen en farmacias y konbini de Japón (\"tattoo cover seal\") o se llevan desde Argentina.",
+    "days": [
+      "d01",
+      "d08",
+      "d12",
+      "d13",
+      "d18"
+    ]
   },
   {
     "id": "n08",
@@ -207,8 +223,8 @@
   {
     "id": "n-d10-1",
     "kind": "tip",
-    "title": "Para fans del animé",
-    "detail": "De noche, en lugar de Shimokitazawa, Nakano Broadway (10 min desde Shinjuku por la línea Chuo): cuatro pisos de manga, figuras y juguetes usados. Muchos locales cierran ~20:00, así que ir antes de cenar.",
+    "title": "Anime en Tokio",
+    "detail": "Shibuya Parco (piso 6): Pokémon Center, Nintendo y Jump Shop (One Piece, Dragon Ball). Para lo retro (Mazinger Z, Caballeros del Zodiaco, Evangelion): Mandarake en Nakano Broadway (10 min desde Shinjuku por la línea Chuo) o en Akihabara. El Pokémon Center más grande es el Mega Tokyo de Ikebukuro (Sunshine City). Muchos locales cierran ~20:00.",
     "days": [
       "d10"
     ],
@@ -353,5 +369,38 @@
       "d24"
     ],
     "icon": "house"
+  },
+  {
+    "id": "n-d12-2",
+    "kind": "tip",
+    "icon": "robot",
+    "title": "Hakone es Tokio-3",
+    "detail": "En Evangelion, Tokio-3 está en Hakone: hay colaboraciones y merchandising de Eva en la zona (Hakone-Yumoto, Togendai). Chequeá qué hay vigente.",
+    "days": [
+      "d12",
+      "d13"
+    ]
+  },
+  {
+    "id": "n-d14-2",
+    "kind": "tip",
+    "icon": "gamepad",
+    "title": "Anime en Osaka",
+    "detail": "Den Den Town (Nipponbashi), al lado de Kuromon: tiendas de figuras, Mandarake y retro (Mazinger Z, Caballeros del Zodiaco). Pokémon Center Osaka DX en el Daimaru de Shinsaibashi, a pasos de Dotonbori (abre hasta ~20:00).",
+    "days": [
+      "d14"
+    ]
+  },
+  {
+    "id": "n-d15-2",
+    "kind": "tip",
+    "icon": "robot",
+    "title": "Robot gigante en Kobe",
+    "detail": "En Shin-Nagata (10 min en JR desde Sannomiya) hay una estatua de 18 m de Tetsujin 28, el robot gigante clásico, primo de Mazinger Z. Va bien la noche libre del 28/11 o el 30/11.",
+    "days": [
+      "d15",
+      "d17",
+      "d19"
+    ]
   }
 ]

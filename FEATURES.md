@@ -62,7 +62,7 @@ Se configuran en el JSON del día.
 
 ## 5. Documentos y comprobantes ✅
 
-- **Documentos** (`#/docs`) solo tiene lo que no está modelado en otro lado: visas y trámites (NZeTA, entrada a China, Visit Japan Web) y seguro.
+- **Documentos** (`#/docs`) solo tiene lo que no está modelado en otro lado: visas y trámites (NZeTA, Visit Japan Web), salud (certificado de fiebre amarilla) y seguro. La entrada a China sin visa es una nota, no un documento.
 - Los **pasajes** están en cada transporte (Más → Transporte y la logística del día), las **entradas** en su actividad (con reserva), las **reservas de hotel** en su alojamiento y el **pasaporte** en cada viajero.
 - Cada uno tiene un **comprobante**: código de reserva (se copia y se muestra en **pantalla completa**), **QR escaneados con la cámara** del celular o desde una captura (se vuelven a dibujar en grande, en blanco y negro, para mostrar en la puerta de embarque o el molinete; los códigos Aztec/PDF417 se guardan como foto), **link a la reserva** y PDFs/capturas adjuntos. Todo se ve sin internet.
 - Los QR se pueden marcar por viajero ("Yo", "Viajero 2"). El código y los QR se sincronizan con el grupo; los adjuntos se suben a R2.
@@ -173,7 +173,7 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
 - **Color de la app**: el de la barra de arriba (y la del celular). Por defecto el `brand` de `trip.json`; cada celular puede elegir otro. El texto pasa a oscuro si el color es claro.
 - Elegir la capa de mapa (automática, OSM o AutoNavi).
 - Editar cotizaciones.
-- **Simulador de día** 🧪: en Ajustes, para ver toda la app como si fuera cualquier día y hora del viaje, antes de salir o después de volver. Una barra naranja avisa que se está simulando y permite pasar al día anterior/siguiente, cambiar o salir. Usa la hora local de donde vas a estar ese día. Es solo de este celular y no toca los datos.
+- **Simulador de día** 🧪: desde el botón 🧪 de la barra de arriba, para ver toda la app como si fuera cualquier día y hora del viaje, antes de salir o después de volver. Una barra naranja avisa que se está simulando y permite pasar al día anterior/siguiente, cambiar o salir. Usa la hora local de donde vas a estar ese día. Es solo de este celular y no toca los datos.
 - **Mapas offline por ciudad**: descargar los tiles de cada ciudad (o de todas) con progreso y fecha de la última descarga.
 - **Respaldo completo**: exporta e importa todo lo que hay en el celular (fotos, adjuntos, códigos, tareas, lugares, gastos, marcas, checklists). Sirve para cambiar de celular. Al importar, se suma a lo que ya hay.
 - **Cambios sobre el JSON**: lista de registros del itinerario original editados o borrados en la app, con "Restaurar".

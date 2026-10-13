@@ -16,7 +16,7 @@ Los datos viven en `data/*.json`, en el repo, y se completan editándolos ahí (
 - [ ] **Transportes por reservar** (`status: "pendiente"` en `transport.json`, con cuándo comprar cada uno): Shanghai ↔ Suzhou, Narita Express, Fuji Excursion (venta desde el 20/10), Romancecar (desde el 23/10), Hakone Free Pass, Hikari Odawara → Shin-Osaka, Kansai → Pekín, Pekín ↔ Mutianyu y Pekín → Pudong.
 - [ ] **Códigos de reserva y QR** de los vuelos (MU746, MU745, 9C6217), hoteles y entradas: se cargan en la app, en cada pasaje, entrada u hotel.
 - [ ] **Documentos sin código**: Visit Japan Web, NZeTA y seguro de viaje (`documents.json`). China no pide visa (estadías de menos de 10 días, hasta el 31/12/2026).
-- [ ] **Revisar `requirements.json`** (preparativos sugeridos): confirmar con fuentes oficiales qué pide cada país, por ejemplo si China exige el certificado de fiebre amarilla viniendo de Argentina. Hoy dice "verificar".
+- [ ] **Revisar `requirements.json`** (preparativos sugeridos): confirmar con fuentes oficiales el resto de lo que pide cada país (el certificado de fiebre amarilla para China ya está confirmado y es un documento).
 - [ ] **Verificar coordenadas aproximadas** (`approx: true`): todos los alojamientos, Ubako y Hoto en Hakone, y las 5 sugerencias gastronómicas (`p-x-*`).
 - [ ] **Separación del grupo el 1/12**: vuelo de Facundo a Inglaterra (desde dónde y a qué hora), para que el día 20 lo muestre.
 - [ ] **Horarios pendientes**: vuelo Kansai → Pekín (1/12, falta `departAt`: sin él, la mañana de ese día se lee en hora de Pekín) y Pekín → Pudong (4/12, hoy estimado a las 15:00).

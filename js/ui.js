@@ -66,7 +66,7 @@ export function actRow(a, { current = false, next = false } = {}) {
       <div class="act-body">
         <div class="act-title"><span class="act-ic" style="--c:${c.color}">${icon(c.icon)}</span> ${esc(a.title)}</div>
         <div class="act-tags">${current ? '<span class="badge now">Ahora</span>' : next ? '<span class="badge next">Sigue</span>' : ''}
-          ${a.priority !== 'recomendado' ? prioBadge(a.priority) : ''}${a.source === 'app' ? '<span class="badge">nueva</span>' : ''}${resvBadge(a.reservation)}${a.status === 'reservado' ? statusBadge('reservado') : ''}</div>
+          ${a.priority !== 'recomendado' ? prioBadge(a.priority) : ''}${a.source === 'app' ? '<span class="badge">nueva</span>' : ''}${a.status === 'reservado' ? statusBadge('reservado') : resvBadge(a.reservation)}</div>
       </div>
       <span class="chev" aria-hidden="true">▾</span>
     </div>

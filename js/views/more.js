@@ -80,7 +80,6 @@ export function lodging(_, ctx) {
 
 export function ajustes() {
   const rates = { ...D.trip.currencies.rates, ...settings.get('rates', {}) };
-  const simulating = !!settings.get('simOffset', 0);
   const custom = settings.get('brand', null), tripBrand = D.trip.brand || DEFAULT_BRAND;
   return `<header class="pagehead"><h1>${ic('gear')} Ajustes</h1></header>
   <section class="card"><h3>${ic('palette')} Color de la app</h3>
@@ -96,10 +95,6 @@ export function ajustes() {
     <p class="hint">${esc(D.trip.currencies.note || '')}</p>
     <form data-submit="save-rates" class="form"><div class="two">${D.trip.currencies.list.filter((c) => c !== D.trip.currencies.base).map((c) => `<label class="field">${c}<input name="${c}" type="number" step="any" min="0" inputmode="decimal" value="${rates[c]}"></label>`).join('')}</div>
       <div class="row-actions"><button class="btn primary" type="submit">Guardar</button></div></form></section>
-  <section class="card"><h3>${ic('flask')} Simular un día</h3>
-    <p class="hint">Mirá toda la app como si fuera otro día y otra hora del viaje (cuenta regresiva, día de salida, llegada, después de volver), en la hora local de donde vas a estar. Es solo de este celular y no toca los datos.</p>
-    <div class="row-actions"><button class="btn primary" data-act="sim-open">${ic('flask')} ${simulating ? 'Cambiar el día simulado' : 'Simular un día'}</button>
-      ${simulating ? '<button class="btn" data-act="sim-exit">Volver a la fecha real</button>' : ''}</div></section>
   <section class="card"><h3>${ic('map')} Mapas offline por ciudad</h3>
     <p class="hint">Descarga las teselas alrededor de los lugares de cada ciudad (zooms 12–15) para usar el mapa sin internet. Hacelo con wifi antes de viajar.</p>
     <ul class="people">${D.trip.cities.filter((c) => D.places.some((p) => p.cityId === c.id)).map((c) => {

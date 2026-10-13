@@ -7,7 +7,7 @@ import { statusBadge, extLink } from '../ui.js';
 import { ticketBox, paintAttachments, freeUrls } from '../ticket.js';
 
 export const TYPES = {
-  visa: ['passport', 'Visas y trámites'], seguro: ['shield-halved', 'Seguro'], otro: ['file-lines', 'Otros'],
+  visa: ['passport', 'Visas y trámites'], salud: ['syringe', 'Salud'], seguro: ['shield-halved', 'Seguro'], otro: ['file-lines', 'Otros'],
 };
 
 function card(d) {
@@ -33,7 +33,7 @@ export function render({ type }, ctx) {
   const body = t ? docs.map(card).join('')
     : Object.keys(TYPES).map((k) => { const g = docs.filter((d) => d.type === k); return g.length ? `<h2 class="grp">${ic(TYPES[k][0])} ${esc(TYPES[k][1])}</h2>${g.map(card).join('')}` : ''; }).join('');
   return `<header class="pagehead"><h1>${ic('file-lines')} Documentos</h1>
-    <p class="muted">Visas, trámites de entrada, seguro y todo lo que no es un pasaje, una entrada ni un hotel. Cargá el código, escaneá el QR o adjuntá el PDF: se ve sin internet.</p>
+    <p class="muted">Visas, trámites de entrada, certificados de salud, seguro y todo lo que no es un pasaje, una entrada ni un hotel. Cargá el código, escaneá el QR o adjuntá el PDF: se ve sin internet.</p>
     <div class="row-actions"><a class="btn small" href="#/transporte">${ic('ticket')} Pasajes</a><a class="btn small" href="#/alojamientos">${ic('hotel')} Alojamientos</a>
       <a class="btn small" href="#/viajeros">${ic('passport')} Pasaportes</a><a class="btn small" href="#/recursos">${ic('book')} Recursos</a>
       <a class="btn small" href="#/compartido">${ic('inbox')} Cargar desde una confirmación</a></div></header>

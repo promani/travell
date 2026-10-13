@@ -14,18 +14,18 @@
     "notes": "Adjuntá el PDF/captura de la autorización de tránsito. Verificá el requisito vigente para tu pasaporte."
   },
   {
-    "id": "doc05",
-    "type": "visa",
-    "title": "Entrada a China",
-    "subtitle": "Sin visa: estadías de menos de 10 días",
+    "id": "doc15",
+    "type": "salud",
+    "title": "Certificado internacional de fiebre amarilla",
+    "subtitle": "China lo pide a quienes llegan desde Argentina",
     "day": "d03",
     "codeLabel": null,
     "code": "",
     "file": null,
     "url": null,
-    "status": null,
-    "pin": false,
-    "notes": "Sin visa: hasta el 31/12/2026 se entra a China sin visa por estadías de menos de 10 días, y el plazo se reinicia con cada entrada. Dos entradas: 14/11 por Shanghai (sale 18/11) y 1/12 por Pekín (sale 5/12). Tené a mano el pasaje de salida y la reserva del hotel; la tarjeta de llegada se completa en el aeropuerto."
+    "status": "pendiente",
+    "pin": true,
+    "notes": "Uno por viajero (Pehuén, Sole y Facundo). La vacuna tiene que darse al menos 10 días antes de llegar a China (antes del 4/11). Llevá la libreta amarilla original y adjuntá una foto acá. Se puede pedir en las dos entradas: 14/11 en Shanghai y 1/12 en Pekín."
   },
   {
     "id": "doc06",
