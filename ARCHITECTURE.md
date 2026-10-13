@@ -254,7 +254,7 @@ sequenceDiagram
 ### Comprobantes (`ticket.js`, `qr.js`)
 
 - Un **comprobante** cuelga de algo ya modelado, con la clave `<tipo>:<id>`: `transport:t01` (pasaje), `activity:A052` (entrada), `lodging:l03` (hotel), `doc:doc04` (documento no modelado) o `passport:<viajero>`.
-- El código de reserva, los QR (`qrs: [{ id, text, format, label }]`) y el link van en la colección `tickets`: base en `data/tickets.json` (lo que carga Claude por el MCP) más lo que se edita en la app (overlay sincronizado). Igual con `expenses` y `passports`. Los adjuntos van en IndexedDB `files` con `docId` = la clave, y se suben a R2.
+- El código de reserva vive en el propio registro (`transport.code`, `documents.code`, `lodging.confirmation`). Los QR (`qrs: [{ id, text, format, label }]`), el link y un código escrito en la app van en la colección `tickets` (clave `<tipo>:<id>`): base en `data/tickets.json` más lo que se edita en la app (overlay sincronizado); un código ahí tapa al del registro. Igual con `expenses` y `passports`. Los adjuntos van en IndexedDB `files` con `docId` = la clave, y se suben a R2.
 - `qr.js` lee códigos con `BarcodeDetector` si el navegador lo tiene, y si no con jsQR (`vendor/jsqr`); dibuja los QR con qrcode-generator (`vendor/qrcode`). Las dos se cargan solo al usarlas y quedan en el caché offline.
 - `documents.json` solo tiene lo no modelado. `migrateDocuments()` mueve una vez los códigos (`docCodes`) y adjuntos de los documentos viejos a su comprobante, hotel o pasaporte.
 - Alojamientos: `bookingUrl` es el link a la reserva (Booking, Trip.com…); `link` sigue siendo el sitio del hotel.

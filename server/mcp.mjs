@@ -40,7 +40,7 @@ export function tripContext(files) {
       transport: sample(list('transport.json')), lodging: sample(list('lodging.json')), documents: sample(list('documents.json')),
       activities: days.find((d) => d.activities?.length) ? { ...sample(days.find((d) => d.activities?.length).activities), dayId: '<id del día>' } : null,
       places: sample(places), resources: sample(list('resources.json')), notes: sample(list('notes.json')), tasks: sample(list('tasks.json')),
-      tickets: { id: 'transport:t01', code: 'QX7P2L', link: 'https://…', qrs: [{ id: 'qr-1', text: '<contenido del QR>', format: 'qr_code', label: 'Pehuén' }] },
+      tickets: { id: 'transport:t01', link: 'https://…', qrs: [{ id: 'qr-1', text: '<contenido del QR>', format: 'qr_code', label: 'Pehuén' }] },
       expenses: { id: 'ex-cena-bund', desc: 'Cena en el Bund', amount: 480, currency: 'CNY', paidBy: '<id de viajero>', split: { mode: 'equal', among: ['<ids de viajeros>'] }, category: 'comida', dayId: 'd04' },
       passports: { id: '<id de viajero>', fullName: 'APELLIDO NOMBRE', number: 'AAA123456', nationality: 'Argentina', birth: 'AAAA-MM-DD', issued: 'AAAA-MM-DD', expires: 'AAAA-MM-DD' },
     },
@@ -53,7 +53,8 @@ const CHANGE_RULES = `Formato de cada cambio (es lo único que puede modificar e
 - "patch" agrega o cambia campos de un registro que ya existe (preferilo). "put" crea uno nuevo con todos sus campos. "del" lo borra.
 - Respetá la forma de los registros de ejemplo (mismos nombres de campo). Fechas AAAA-MM-DD; horas HH:MM en la hora local del lugar.
 - Las actividades llevan "dayId" con el id del día. Un id nuevo: corto, en minúsculas, con prefijo de la colección (ej. "l-hanting-bund", "t-mu746").
-- tickets = el comprobante de algo que ya existe: código de reserva, link a la reserva y QRs (el texto que contiene el QR; la app lo dibuja). Su id es "<${Object.keys(TICKET_KINDS).join('|')}>:<id>" (ej. "transport:t01", "activity:A052", "doc:doc04"). El código de un hotel va en lodging.confirmation y su link en lodging.bookingUrl, no en tickets. Un hotel todavía sin elegir puede llevar lodging.options: [{ "name", "note", "url" }] con los candidatos; al reservar, se completan name, status "reservado" y la reserva.
+- El código de reserva va en el propio registro: transport.code (el PNR de un vuelo), documents.code, lodging.confirmation (y el link del hotel en lodging.bookingUrl).
+- tickets = lo que acompaña a algo que ya existe y no tiene campo propio: los QRs (el texto que contiene el QR; la app lo dibuja), el link a la reserva y el código de una actividad. Su id es "<${Object.keys(TICKET_KINDS).join('|')}>:<id>" (ej. "transport:t01", "activity:A052", "doc:doc04"). Un hotel todavía sin elegir puede llevar lodging.options: [{ "name", "note", "url" }] con los candidatos; al reservar, se completan name, status "reservado" y la reserva.
 - expenses: gastos compartidos. amount en la moneda de currency, paidBy y split con ids de viajeros, category: comida | transporte | alojamiento | entradas | compras | otros.
 - passports: id = id del viajero.
 - Los archivos (PDF, capturas) no se suben por acá: guardá lo que dicen (código, horarios, link). La persona los adjunta desde la app si los quiere ver sin internet.
@@ -61,7 +62,7 @@ const CHANGE_RULES = `Formato de cada cambio (es lo único que puede modificar e
 - No inventes datos: si algo no está en lo que te pasaron, no lo pongas.`;
 
 const INSTRUCTIONS = `Datos del viaje de Travell (China y Japón 2026). La app de los viajeros lee estos datos: lo que apliques acá les llega a todos los celulares en unos minutos. La app no tiene IA propia: esta es la única forma de cargarle cosas con IA.
-- Lo típico: te pasan una reserva o confirmación (PDF, captura, mail, link). Leela con tus propias herramientas (y buscá en internet lo que falte, ej. la dirección del hotel), y cargala acá: el transporte, hotel o actividad, y su código en tickets.
+- Lo típico: te pasan una reserva o confirmación (PDF, captura, mail, link). Leela con tus propias herramientas (y buscá en internet lo que falte, ej. la dirección del hotel), y cargala acá: el transporte, hotel o actividad con su código, y los QRs en tickets.
 - Empezá por trip_overview (ids de todo) y get_day / get_records para ver registros completos antes de cambiarlos.
 - Para cambiar algo: armá los cambios, mostralos con preview_changes y aplicalos con apply_changes solo cuando la persona lo confirme.
 - Los cambios quedan encima de los JSON del repo; list_changes muestra lo que difiere del repo y revert_record vuelve un registro a como está en el repo.
