@@ -55,7 +55,6 @@ Ya hay ABM de lugares, alojamientos, actividades, tareas y viajeros. Falta:
 
 ### Documentos
 - [ ] Pantalla de **historial de cambios** de administración, con "volver al repo" por registro y un export para pasarlos al repo.
-- [ ] Reenviar el mail a una dirección del grupo (Cloudflare Email Routing → Worker): choca con el cifrado de punta a punta del relay.
 - [ ] Generar **QR o código de barras** a partir del código cargado.
 - [ ] Vencimientos de documentos (pasaporte, seguro) con aviso.
 
@@ -88,7 +87,6 @@ Ya hay ABM de lugares, alojamientos, actividades, tareas y viajeros. Falta:
 - [ ] **Clima por viaje**: hoy el backend lo calcula solo para el `trip.json` que encuentra al arrancar.
 - [ ] **Archivos estáticos del viaje** (mapas de metro, adjuntos de recursos) en R2, bajo `<tripId>/`, no en el repo.
 - [ ] **Offline**: el service worker precarga `data/*.json` por nombre; con datos dinámicos tiene que guardar `/v1/trips/:id` (y la app su copia) para seguir andando sin conexión.
-- [ ] Decidir si los datos del viaje en Redis van **en claro** (el backend puede leerlos: clima, leer confirmaciones con IA) o **cifrados** con la clave del grupo, como el relay.
 
 ### Funciones con internet (opcionales)
 - [ ] Sincronizar **fotos** entre celulares (hoy la sincronización no incluye archivos).

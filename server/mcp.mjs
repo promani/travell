@@ -2,10 +2,11 @@
 // Streamable HTTP transport, stateless: POST /mcp with JSON-RPC, answered with plain JSON. Dependency-free.
 // Same auth as the admin API (Authorization: Bearer $ADMIN_API_KEY); relay.mjs checks it before calling here.
 //
+// This is the only way an AI touches the trip: the app has no AI of its own. The person hands Claude a booking (PDF,
+// screenshot, mail, link) in the Claude app; Claude reads it with its own tools and turns it into records here.
 // Claude reads the trip, previews a batch of changes and applies it through trip.apply(): the same validation and the
 // same Redis store as /v1/admin/changes, so the phones pick the changes up like any other admin change.
-import { COLS, current, resolveBatch } from './tripdata.mjs';
-import { tripContext, CHANGE_RULES } from './ai.mjs';
+import { COLS, TICKET_KINDS, current, resolveBatch } from './tripdata.mjs';
 
 const VERSIONS = ['2025-11-25', '2025-06-18', '2025-03-26', '2024-11-05'];
 const BY = 'claude (mcp)';
@@ -14,7 +15,53 @@ const fail = (msg) => ({ content: [{ type: 'text', text: msg }], isError: true }
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const colNames = Object.keys(COLS);
 
-const INSTRUCTIONS = `Datos del viaje de Travell (China y Japón 2026). La app de los viajeros lee estos datos: lo que apliques acá les llega a todos los celulares en unos minutos.
+// ------------------------------------------------------------------ what Claude gets to know about the trip
+const pick = (o, keys) => Object.fromEntries(keys.filter((k) => o[k] != null && o[k] !== '').map((k) => [k, o[k]]));
+const short = (s, n = 140) => (typeof s === 'string' && s.length > n ? s.slice(0, n) + '…' : s);
+
+/** A compact view of the trip: what exists (ids!) and one sample record per collection (the shape). */
+export function tripContext(files) {
+  const trip = files['trip.json'], days = files['itinerary.json']?.days || [];
+  const places = (trip.placeFiles || ['places.json']).flatMap((f) => files[f] || []);
+  const list = (f) => files[f] || [];
+  const sample = (arr) => (arr[0] ? Object.fromEntries(Object.entries(arr[0]).map(([k, v]) => [k, short(v, 80)])) : null);
+  return {
+    trip: { ...pick(trip, ['id', 'title', 'description', 'start', 'end', 'locale']), home: trip.home, cities: (trip.cities || []).map((c) => pick(c, ['id', 'name', 'tz'])), currencies: trip.currencies },
+    travelers: list('travelers.json').map((t) => pick(t, ['id', 'name'])),
+    days: days.map((d) => ({ ...pick(d, ['id', 'n', 'date', 'cityId', 'title']), activities: (d.activities || []).map((a) => pick(a, ['id', 'start', 'end', 'title', 'placeId', 'reservation', 'status'])) })),
+    transport: list('transport.json').map((t) => pick(t, ['id', 'date', 'day', 'route', 'kind', 'service', 'depart', 'arrive', 'status', 'code'])),
+    lodging: list('lodging.json').map((l) => pick(l, ['id', 'cityId', 'name', 'area', 'checkIn', 'checkOut', 'status', 'confirmation'])),
+    documents: list('documents.json').map((d) => pick(d, ['id', 'type', 'title', 'status'])),
+    tickets: list('tickets.json').map((t) => ({ ...pick(t, ['id', 'code', 'link']), qrs: t.qrs?.length || undefined })),
+    passports: list('passports.json').map((p) => pick(p, ['id', 'expires'])),
+    expenses: list('expenses.json').length,
+    places: places.map((p) => pick(p, ['id', 'name', 'cityId', 'category'])),
+    samples: {
+      transport: sample(list('transport.json')), lodging: sample(list('lodging.json')), documents: sample(list('documents.json')),
+      activities: days.find((d) => d.activities?.length) ? { ...sample(days.find((d) => d.activities?.length).activities), dayId: '<id del día>' } : null,
+      places: sample(places), resources: sample(list('resources.json')), notes: sample(list('notes.json')), tasks: sample(list('tasks.json')),
+      tickets: { id: 'transport:t01', code: 'QX7P2L', link: 'https://…', qrs: [{ id: 'qr-1', text: '<contenido del QR>', format: 'qr_code', label: 'Pehuén' }] },
+      expenses: { id: 'ex-cena-bund', desc: 'Cena en el Bund', amount: 480, currency: 'CNY', paidBy: '<id de viajero>', split: { mode: 'equal', among: ['<ids de viajeros>'] }, category: 'comida', dayId: 'd04' },
+      passports: { id: '<id de viajero>', fullName: 'APELLIDO NOMBRE', number: 'AAA123456', nationality: 'Argentina', birth: 'AAAA-MM-DD', issued: 'AAAA-MM-DD', expires: 'AAAA-MM-DD' },
+    },
+  };
+}
+
+const CHANGE_RULES = `Formato de cada cambio (es lo único que puede modificar el viaje):
+{ "op": "put" | "patch" | "del", "col": "<colección>", "id": "<id>", "data": { ... }, "label": "<frase corta en castellano rioplatense>" }
+- Colecciones: ${Object.keys(COLS).join(', ')}.
+- "patch" agrega o cambia campos de un registro que ya existe (preferilo). "put" crea uno nuevo con todos sus campos. "del" lo borra.
+- Respetá la forma de los registros de ejemplo (mismos nombres de campo). Fechas AAAA-MM-DD; horas HH:MM en la hora local del lugar.
+- Las actividades llevan "dayId" con el id del día. Un id nuevo: corto, en minúsculas, con prefijo de la colección (ej. "l-hanting-bund", "t-mu746").
+- tickets = el comprobante de algo que ya existe: código de reserva, link a la reserva y QRs (el texto que contiene el QR; la app lo dibuja). Su id es "<${Object.keys(TICKET_KINDS).join('|')}>:<id>" (ej. "transport:t01", "activity:A052", "doc:doc04"). El código de un hotel va en lodging.confirmation y su link en lodging.bookingUrl, no en tickets.
+- expenses: gastos compartidos. amount en la moneda de currency, paidBy y split con ids de viajeros, category: comida | transporte | alojamiento | entradas | compras | otros.
+- passports: id = id del viajero.
+- Los archivos (PDF, capturas) no se suben por acá: guardá lo que dicen (código, horarios, link). La persona los adjunta desde la app si los quiere ver sin internet.
+- "label" describe el cambio para que la persona lo confirme, ej. "Marcar el vuelo MU746 como reservado".
+- No inventes datos: si algo no está en lo que te pasaron, no lo pongas.`;
+
+const INSTRUCTIONS = `Datos del viaje de Travell (China y Japón 2026). La app de los viajeros lee estos datos: lo que apliques acá les llega a todos los celulares en unos minutos. La app no tiene IA propia: esta es la única forma de cargarle cosas con IA.
+- Lo típico: te pasan una reserva o confirmación (PDF, captura, mail, link). Leela con tus propias herramientas (y buscá en internet lo que falte, ej. la dirección del hotel), y cargala acá: el transporte, hotel o actividad, y su código en tickets.
 - Empezá por trip_overview (ids de todo) y get_day / get_records para ver registros completos antes de cambiarlos.
 - Para cambiar algo: armá los cambios, mostralos con preview_changes y aplicalos con apply_changes solo cuando la persona lo confirme.
 - Los cambios quedan encima de los JSON del repo; list_changes muestra lo que difiere del repo y revert_record vuelve un registro a como está en el repo.
@@ -36,10 +83,10 @@ const changes = { type: 'array', items: change, minItems: 1, maxItems: 100 };
 
 const TOOLS = [
   { name: 'trip_overview', title: 'Resumen del viaje',
-    description: 'El viaje completo en forma compacta: datos generales, días con sus actividades, transportes, alojamientos, documentos y lugares, con sus ids, más un registro de ejemplo por colección (la forma de los campos).',
+    description: 'El viaje en forma compacta: datos generales, viajeros, días, transportes, alojamientos, documentos, reservas (tickets) y pasaportes, con sus ids, más un registro de ejemplo por colección (la forma de los campos).',
     inputSchema: { type: 'object', properties: {} }, annotations: { readOnlyHint: true } },
   { name: 'get_day', title: 'Ver un día',
-    description: 'Un día completo: sus campos, actividades, notas, transportes de esa fecha y el alojamiento de esa noche.',
+    description: 'Un día completo: sus campos, actividades, notas, transportes de esa fecha, el alojamiento de esa noche y los gastos del día.',
     inputSchema: { type: 'object', properties: { day: { type: 'string', description: 'id ("d05"), número ("5") o fecha ("2026-11-16")' } }, required: ['day'] },
     annotations: { readOnlyHint: true } },
   { name: 'get_records', title: 'Ver registros',
@@ -105,6 +152,7 @@ async function call(trip, name, args = {}) {
         notes: (files['notes.json'] || []).filter((n) => (n.days || []).includes(day.id)),
         transport: (files['transport.json'] || []).filter((t) => t.day === day.id || t.date === day.date),
         lodging: (files['lodging.json'] || []).filter((l) => l.id === day.lodgingId || (l.checkIn <= day.date && day.date < l.checkOut)),
+        expenses: (files['expenses.json'] || []).filter((e) => e.dayId === day.id),
       });
     }
     case 'get_records':

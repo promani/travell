@@ -15,7 +15,6 @@ export function menu(_, ctx) {
   const items = [
     ['#/tareas', 'square-check', 'Tareas y sugerencias', 'Pendientes asignables a cada viajero y lo que falta'],
     ['#/fotos', 'camera', 'Fotos', 'Fotos por día, guardadas en el celular'],
-    ['#/compartido', 'inbox', 'Compartido', 'Confirmaciones y PDFs compartidos a la app, para guardar donde van'],
     ['#/viajeros', 'users', 'Viajeros', 'Pasaportes, quién sos, ubicación del grupo, sincronización'],
     ['#/docs', 'file-lines', 'Documentos', 'Visas, trámites de entrada, seguro'],
     ['#/recursos', 'book', 'Recursos', 'Enlaces, mapas del metro, guías y apps por ciudad'],
@@ -110,7 +109,7 @@ export function ajustes() {
 
   ${(() => { const ov = overriddenBase(); return ov.length ? `<section class="card"><h3>${ic('rotate-left')} Cambios sobre el JSON</h3>
     <p class="hint">Registros del itinerario original que editaste o borraste en la app. Restaurar vuelve a la versión del JSON (en todos los celulares sincronizados).</p>
-    <ul class="people">${ov.map((o) => `<li><div><b>${esc(o.title)}</b><small>${esc({ places: 'Lugar', lodging: 'Alojamiento', tasks: 'Tarea', travelers: 'Viajero', activities: 'Actividad', resources: 'Recurso', notes: 'Nota' }[o.col])} · ${o.deleted ? 'borrado' : 'editado'}</small></div>
+    <ul class="people">${ov.map((o) => `<li><div><b>${esc(o.title)}</b><small>${esc({ places: 'Lugar', lodging: 'Alojamiento', tasks: 'Tarea', travelers: 'Viajero', activities: 'Actividad', resources: 'Recurso', notes: 'Nota', tickets: 'Reserva', expenses: 'Gasto', passports: 'Pasaporte' }[o.col])} · ${o.deleted ? 'borrado' : 'editado'}</small></div>
       <button class="btn small" data-act="restore-one" data-col="${o.col}" data-id="${esc(o.id)}">Restaurar</button></li>`).join('')}</ul></section>` : ''; })()}
 
 
@@ -195,7 +194,7 @@ register({
   'sw-refresh': async () => {
     const regs = await navigator.serviceWorker?.getRegistrations?.() || [];
     for (const r of regs) await r.update();
-    for (const k of await caches.keys()) if (!k.includes('tiles') && k !== 'travell-inbox') await caches.delete(k);   // keep maps and what was shared
+    for (const k of await caches.keys()) if (!k.includes('tiles')) await caches.delete(k);   // keep the offline maps
     toast('Actualizando…'); setTimeout(() => location.reload(), 600);
   },
   wipe: async () => {

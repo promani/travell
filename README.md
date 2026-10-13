@@ -28,17 +28,19 @@ Localmente van en `.env.local` (ignorado por git); en el servidor, en el ambient
 |---|---|
 | `R2_ENDPOINT`, `R2_KEY`, `R2_SECRET`, `R2_BUCKET` | Cloudflare R2: ahí se suben **siempre** las fotos y los adjuntos |
 | `REDIS_URL`, `REDIS_KEY_PREFIX` | Redis: el clima y los cambios de administración al viaje. Prefijo por defecto `travell:` |
-| `ADMIN_API_KEY` | Clave de administrador: la piden todos los cambios al viaje (`/v1/admin/*`), la IA (`/v1/ai/*`) y el MCP (`/mcp`). Sin ella, están apagados |
-| `KIMI_API_KEY`, `KIMI_MODEL`, `KIMI_BASE_URL` | IA (Kimi / Moonshot, API compatible con OpenAI). Base por defecto `https://api.moonshot.ai/v1` |
+| `ADMIN_API_KEY` | Clave de administrador: la piden todos los cambios al viaje (`/v1/admin/*`) y el MCP (`/mcp`). Sin ella, están apagados |
 | `TRIP_CHANGES` | `file` guarda los cambios de administración en un archivo aunque haya `REDIS_URL` (para desarrollo local, donde Redis no es accesible) |
 | `PORT`, `RELAY_DATA`, `SERVE_STATIC`, `WEATHER` | Puerto, carpeta de datos del relay, servir la app, apagar el clima (`0`) |
 
 ## Editar el viaje desde Claude (MCP)
-El servidor expone un MCP en `/mcp`, protegido con la misma `ADMIN_API_KEY`. Con él, una sesión de Claude lee el viaje, previsualiza cambios y los aplica (llegan a todos los celulares sin deploy). En Claude Code:
+La app no tiene IA propia: la IA entra solo por el MCP del servidor (`/mcp`, protegido con `ADMIN_API_KEY`). Con él, Claude lee el viaje, previsualiza cambios y los aplica (llegan a todos los celulares sin deploy). Puede hacer lo mismo que la app con los datos del viaje, incluidos códigos de reserva y QR, gastos y pasaportes.
+
+- **App de Claude** (escritorio, web, celular): Configuración → Conectores → Agregar conector personalizado, con la URL `https://travell.unab.dpdns.org/mcp/<ADMIN_API_KEY>` (o `…/mcp` con el header `Authorization: Bearer <ADMIN_API_KEY>`, si la cuenta permite headers).
+- **Claude Code**:
 ```bash
 claude mcp add --transport http travell https://travell.unab.dpdns.org/mcp --header "Authorization: Bearer $ADMIN_API_KEY"
 ```
-Después se le puede pedir, por ejemplo, "cambiá el itinerario del día 5 por esto". Los cambios quedan en Redis, encima de `data/*.json`; `list_changes` muestra lo que difiere del repo.
+Después se le pasa una reserva (PDF, captura, mail, link) o se le pide "cambiá el itinerario del día 5 por esto": Claude la lee con sus herramientas, arma los cambios, los muestra y los aplica cuando se confirma. Los cambios quedan en Redis, encima de `data/*.json`; `list_changes` muestra lo que difiere del repo. El flujo completo está en `CLAUDE.md`.
 
 ## Deploy con Docker (app + sincronización en un contenedor)
 ```bash

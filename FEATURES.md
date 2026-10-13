@@ -197,13 +197,12 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
 - Tocar una frase la muestra en grande para mostrársela a alguien; 🔊 la lee con la voz del celular. Incluye los números de emergencia de cada país. También aparecen en el buscador.
 - Se agregan, editan y borran desde la app; en cada día aparecen los de su ciudad.
 
-## 20. Compartir a la app: confirmaciones ✅
+## 20. Cargar reservas con Claude (MCP) ✅
 
-- **Android** (con la app instalada): Travell aparece en el menú *Compartir* de Gmail, el visor de PDF, la galería, etc. Recibe texto, link y archivos (PDF, capturas, `.eml`). El service worker los guarda en una bandeja (`travell-inbox`) y abre **Más → Compartido** (`#/compartido`).
-- **iPhone o compu** (Safari no soporta recibir lo compartido): en la misma pantalla se pega el texto del mail, un link o se eligen archivos. También desde Documentos → "Cargar desde una confirmación".
-- Por cada cosa recibida la app **sugiere** el código de reserva (por ejemplo después de "código de reserva", "localizador", "PNR") y a qué pasaje, hotel, entrada o documento corresponde (vuelo, nombre del hotel). Todo se revisa antes de guardar.
-- Al guardar: el código y el link van a la reserva elegida (en hoteles, a `confirmation` y al link de la reserva), los archivos quedan adjuntos (offline y subidos a la nube). También puede ir a un **recurso nuevo**.
-- La lectura es por reglas simples (`js/guess.js`). La app no guarda la clave de administrador: la lectura con IA (`/v1/ai/extract`) y los cambios al viaje (`/v1/admin/changes`) se usan solo desde afuera de la app, con `ADMIN_API_KEY`.
+- La app **no tiene IA propia** ni bandeja de "Compartido". Las reservas se cargan desde la **app de Claude** con el conector MCP de Travell (`/mcp`, ver `CLAUDE.md`).
+- Se le pasa a Claude la confirmación como llegó (PDF, captura, mail, link). Claude la lee, busca en internet lo que falte y crea o actualiza el pasaje, hotel o actividad, con su código de reserva, link y QR. También puede cargar gastos, pasaportes, tareas, notas y lugares: todo lo que se puede hacer en la app con los datos del viaje.
+- Antes de guardar muestra los cambios (`preview_changes`); al confirmar, les llegan a todos los celulares en unos minutos.
+- Los PDFs y capturas no se suben por el MCP: si se quieren ver sin internet, se adjuntan desde la app en la reserva.
 
 ## 21. Multiviaje 🟡
 

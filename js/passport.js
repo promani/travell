@@ -1,10 +1,10 @@
 // Passports: one record per traveler (collection "passports", id = traveler id), and the validity check against the trip dates.
-import { cols } from './store.js';
+import { I } from './store.js';
 import { parseDate, isoDate } from './util.js';
 
 export const MIN_MONTHS_AFTER_TRIP = 6;   // many countries ask for 6 months of validity after the trip
 
-export const passportOf = (travelerId) => cols.live('passports').find((p) => p.id === travelerId) || null;
+export const passportOf = (travelerId) => I.passport[travelerId] || null;
 
 const addMonths = (iso, n) => { const d = parseDate(iso); d.setMonth(d.getMonth() + n); return isoDate(d); };
 

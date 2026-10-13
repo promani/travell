@@ -80,7 +80,6 @@ js/
   store.js            Carga de JSON + índices, localStorage, IndexedDB, reloj simulable, bus de eventos
   tripstate.js        Fase del viaje (antes/durante/después), día actual, actividad actual y siguiente, horarios de salida, zona horaria de cada día y hora
   ics.js              Exportación del viaje a calendario (.ics)
-  guess.js            Sugerencias a partir de una confirmación compartida: código de reserva y a qué reserva pertenece
   ui.js               Fragmentos compartidos (badges, filas de actividad, tarjetas de día) y registro de acciones
   sync.js             Sincronización cifrada con el relay, compartir ubicación, link de ubicación
   upload.js           Sube fotos y adjuntos a R2 a través del relay (cola con reintentos)
@@ -96,17 +95,14 @@ js/
   util.js             Fechas y zonas horarias, formato, escape HTML, toasts, modales
   views/              Una pantalla por archivo: home, day, mapview, photos, expenses, docs, more,
                       tasks (tareas y sugerencias), people (viajeros, ubicación, sync), places (ABM de lugares),
-                      forms (formularios de ABM y selector de ubicación), search (buscador global),
-                      inbox (lo compartido a la app: bandeja en Cache Storage que llena sw.js desde el share_target)
-server/relay.mjs      Backend mínimo (Node, sin dependencias): relay de sincronización; con SERVE_STATIC también sirve la app, GET /v1/weather y
-                      redirige POST /share a #/compartido si todavía no hay service worker
+                      forms (formularios de ABM y selector de ubicación), search (buscador global)
+server/relay.mjs      Backend mínimo (Node, sin dependencias): relay de sincronización; con SERVE_STATIC también sirve la app y GET /v1/weather
 server/r2.mjs         Cliente mínimo de Cloudflare R2 (API S3, firma SigV4) para subir, leer y borrar archivos
 server/weather.mjs    Clima diario desde Open-Meteo (pronóstico o clima típico), guardado en Redis o en un archivo
 server/redis.mjs      Cliente Redis mínimo (RESP, sin dependencias)
 server/tripdata.mjs   Cambios de administración sobre data/*.json: validación, merge, guardado en Redis (o archivo)
-server/ai.mjs         IA (Kimi): cliente, contexto del viaje y lectura de confirmaciones; solo propone cambios
-server/mcp.mjs        Servidor MCP (POST /mcp) para una sesión de Claude: leer el viaje, previsualizar y aplicar cambios
-js/admin.js           Clave de administrador, llamadas a /v1/admin y /v1/ai, recarga del viaje cuando cambia en el servidor
+server/mcp.mjs        Servidor MCP (POST /mcp) para Claude, la única IA que toca el viaje: leer, previsualizar y aplicar cambios
+js/admin.js           Recarga del viaje cuando cambia en el servidor (GET /v1/trip/rev)
 tests/                Tests con node:test (npm test)
 Dockerfile            Imagen para Dokploy u otra plataforma: app + relay en el puerto 3000
 vendor/leaflet/       Leaflet 1.9.4 vendorizado (sin CDN, para que funcione offline y en China)
@@ -258,7 +254,7 @@ sequenceDiagram
 ### Comprobantes (`ticket.js`, `qr.js`)
 
 - Un **comprobante** cuelga de algo ya modelado, con la clave `<tipo>:<id>`: `transport:t01` (pasaje), `activity:A052` (entrada), `lodging:l03` (hotel), `doc:doc04` (documento no modelado) o `passport:<viajero>`.
-- El código de reserva, los QR (`qrs: [{ id, text, format, label }]`) y el link van en la colección `tickets`, que se sincroniza. Los adjuntos van en IndexedDB `files` con `docId` = la clave, y se suben a R2.
+- El código de reserva, los QR (`qrs: [{ id, text, format, label }]`) y el link van en la colección `tickets`: base en `data/tickets.json` (lo que carga Claude por el MCP) más lo que se edita en la app (overlay sincronizado). Igual con `expenses` y `passports`. Los adjuntos van en IndexedDB `files` con `docId` = la clave, y se suben a R2.
 - `qr.js` lee códigos con `BarcodeDetector` si el navegador lo tiene, y si no con jsQR (`vendor/jsqr`); dibuja los QR con qrcode-generator (`vendor/qrcode`). Las dos se cargan solo al usarlas y quedan en el caché offline.
 - `documents.json` solo tiene lo no modelado. `migrateDocuments()` mueve una vez los códigos (`docCodes`) y adjuntos de los documentos viejos a su comprobante, hotel o pasaporte.
 - Alojamientos: `bookingUrl` es el link a la reserva (Booking, Trip.com…); `link` sigue siendo el sitio del hotel.
@@ -274,30 +270,29 @@ sequenceDiagram
 
 Guarda el clima (`<REDIS_KEY_PREFIX>weather:<tripId>`) y los cambios de administración al viaje (`<REDIS_KEY_PREFIX>trip:<tripId>:changes`, ver abajo).
 
-### Cambios de administración e IA
+### Cambios de administración y MCP
 
 Tres capas de datos, de abajo hacia arriba:
 
 1. **El repo** (`data/*.json`): la base. Se edita acá, con commits.
-2. **Cambios de administración** (servidor, en Redis): lo que se cambia por la API de administración, desde afuera de la app (scripts, herramientas) con `ADMIN_API_KEY`, incluido lo que propone la IA y se confirma. El servidor los aplica al servir `/data/<archivo>.json`, así la app los lee como si fueran el archivo. Si Redis falla, sirve el archivo del repo tal cual.
-3. **Overlay del grupo** (cifrado, en el relay): lo que cada viajero edita en la app (tareas, gastos, códigos…). Va encima de todo.
+2. **Cambios de administración** (servidor, en Redis): lo que se cambia desde afuera de la app con `ADMIN_API_KEY`: la API de administración y el MCP (Claude). El servidor los aplica al servir `/data/<archivo>.json`, así la app los lee como si fueran el archivo. Si Redis falla, sirve el archivo del repo tal cual.
+3. **Overlay del grupo** (cifrado, en el relay): lo que cada viajero edita en la app (tareas, gastos, códigos…). Va encima de todo. Lo que carga Claude va en la capa 2, en claro en el servidor (decisión explícita, para que el MCP pueda hacer todo lo que hace la app).
 
 ```mermaid
 flowchart LR
-  CLI[Herramienta con ADMIN_API_KEY] -- "1. POST /v1/ai/extract" --> AI[server/ai.mjs]
-  AI -- prompt + contexto del viaje --> KIMI[Kimi]
-  AI -- "propuesta (dry-run validado)" --> CLI
-  CLI -- "2. Aplicar: POST /v1/admin/changes" --> ADM[server/tripdata.mjs<br/>valida y guarda]
+  P[Persona: PDF, captura, mail, link] --> C[App de Claude<br/>lee, analiza, busca]
+  C -- "MCP: preview_changes / apply_changes" --> MCP[server/mcp.mjs]
+  MCP --> ADM[server/tripdata.mjs<br/>valida y guarda]
+  CLI[Script con ADMIN_API_KEY] -- "POST /v1/admin/changes" --> ADM
   ADM --> REDIS[(Redis)]
   ADM -- "GET /data/*.json = repo + cambios" --> ALL[Todos los celulares]
 ```
 
-- **Una sola puerta**: todo cambio al viaje pasa por `/v1/admin/changes` (con `Authorization: Bearer $ADMIN_API_KEY`). Un cambio es `{ op: put | patch | del, col, id, data, label }`; el lote se valida entero (colección conocida, ids, fechas, horas, que exista el día de una actividad, check-out después del check-in…) y se aplica todo o nada. Colecciones: `trip`, `days` (campos del día, no sus actividades), `activities` (con `dayId`), `places`, `transport`, `lodging`, `documents`, `travelers`, `tasks`, `notes`, `requirements`, `resources`.
-- **La IA no escribe**: devuelve una propuesta en ese mismo formato, con una frase por cambio. El servidor la prueba contra la validación (descarta lo inválido y avisa por qué) y recién al confirmarla se manda a `/v1/admin/changes`. Las claves de Kimi y de administración son variables de entorno del servidor y nunca llegan al navegador: la app no tiene funciones de administración.
+- **Una sola validación**: todo cambio al viaje pasa por `trip.apply()`, desde `/v1/admin/changes` o desde el MCP (con `ADMIN_API_KEY`). Un cambio es `{ op: put | patch | del, col, id, data, label }`; el lote se valida entero (colección conocida, ids, fechas, horas, que exista el día de una actividad, check-out después del check-in…) y se aplica todo o nada. Colecciones: `trip`, `days` (campos del día, no sus actividades), `activities` (con `dayId`), `places`, `transport`, `lodging`, `documents`, `travelers`, `tasks`, `notes`, `requirements`, `resources`, `tickets` (id `<tipo>:<id>` de algo que existe), `expenses` (montos, viajeros y división válidos) y `passports` (id = viajero).
+- **La app no tiene IA ni funciones de administración**: la clave es una variable de entorno del servidor y nunca llega al navegador.
 - **Recarga**: cada cambio sube una revisión (`GET /v1/trip/rev`). La app la consulta cada 2 minutos y al volver a primer plano, y si cambió recarga los datos.
 - **Historial**: se guardan los últimos 200 lotes (quién, cuándo, nota, frases). `GET /v1/admin/changes` lista lo que difiere del repo, para pasarlo al repo cuando convenga; `DELETE /v1/admin/changes/<col>/<id>` vuelve un registro a lo que dice el repo.
-- **Confirmaciones (Compartido)**: `extract()` arma el contexto (qué existe, con ids, y un registro de ejemplo por colección para que respete la forma), lee PDFs e imágenes con el *file-extract* de Moonshot y pide un JSON con `kind`, `summary`, `target` (dónde se guarda el código y el archivo) y `changes`.
-- **Claude por MCP** (`server/mcp.mjs`): en vez de un agente propio, una sesión normal de Claude se conecta a `POST /mcp` (MCP *Streamable HTTP*, sin estado, respuestas JSON) con el mismo `Authorization: Bearer $ADMIN_API_KEY`. Herramientas: `trip_overview` (lo de `tripContext()`), `get_day`, `get_records`, `preview_changes` (valida y muestra antes → después, sin guardar), `apply_changes` (= `trip.apply()`, misma validación y mismo Redis que `/v1/admin/changes`; queda en el historial como `claude (mcp)`), `list_changes` y `revert_record`. Las reglas del formato van en las `instructions` del servidor. Para "cambiá el día 5 por esto": Claude lee el día, arma el lote, lo previsualiza, la persona confirma y se aplica.
+- **Claude por MCP** (`server/mcp.mjs`): en vez de un agente propio, la app de Claude (o Claude Code) se conecta a `POST /mcp` (MCP *Streamable HTTP*, sin estado, respuestas JSON) con `Authorization: Bearer $ADMIN_API_KEY`, o a `POST /mcp/<ADMIN_API_KEY>` cuando el cliente no puede mandar headers (conector personalizado de la app de Claude). La clave del path no se escribe en los logs. Claude lee la reserva con sus propias herramientas (PDF, imagen, búsqueda) antes de usar el MCP. Herramientas: `trip_overview` (lo de `tripContext()`), `get_day`, `get_records`, `preview_changes` (valida y muestra antes → después, sin guardar), `apply_changes` (= `trip.apply()`, misma validación y mismo Redis que `/v1/admin/changes`; queda en el historial como `claude (mcp)`), `list_changes` y `revert_record`. Las reglas del formato van en las `instructions` del servidor. Para "cambiá el día 5 por esto": Claude lee el día, arma el lote, lo previsualiza, la persona confirma y se aplica.
 
 - **Requisitos**: el relay tiene que estar en HTTPS si la app está en HTTPS (contenido mixto), y conviene alojarlo donde sea accesible desde China. Ejecución: `PORT=8787 RELAY_DATA=./relay-data node server/relay.mjs`.
 

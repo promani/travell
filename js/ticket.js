@@ -2,15 +2,16 @@
 // (entry ticket), a lodging (booking confirmation) or a document that is not modeled anywhere else (visa, insurance).
 // It holds a booking code, QR codes read with the camera, a link to the booking and attached files.
 //   key = "<kind>:<id>"  (transport:t01, activity:A052, lodging:l03, doc:doc04, passport:<traveler>)
-// Code / QRs / link live in the synced "tickets" collection; attached files live in IndexedDB ("files", docId = key)
+// Code / QRs / link live in the "tickets" collection (data/tickets.json + app edits); attached files live in IndexedDB ("files", docId = key)
 // and are uploaded to R2 by upload.js.
 import { D, I, cols, idb, kv, me } from './store.js';
 import { esc, ic, uid, toast, openModal, closeModal, download, extLink } from './util.js';
 import { scanCode, qrSvg } from './qr.js';
 import { uploadSoon, removeRemote } from './upload.js';
 
-export const ticketOf = (key) => { const r = cols.map('tickets')[key]; return r && !r.deleted ? r : null; };
-const save = (key, patch) => cols.put('tickets', { ...(ticketOf(key) || { id: key }), ...patch });
+export const ticketOf = (key) => I.ticket[key] || null;
+// only the fields set here go to the overlay: the rest keeps following data/tickets.json
+const save = (key, patch) => { const r = cols.map('tickets')[key]; cols.put('tickets', { ...(r && !r.deleted && !r.reset ? r : { id: key }), ...patch }); };
 const FORMAT = { qr_code: 'QR', aztec: 'Aztec', pdf417: 'PDF417', data_matrix: 'Data Matrix' };
 
 /** Booking code of something: what was typed in the app, or what the JSON says. */
@@ -171,7 +172,7 @@ export async function migrateDocuments() {
     if (!code || !to) continue;
     const [kind, id] = to.split(':');
     if (kind === 'lodging') { if (!I.lodging[id]?.confirmation) cols.put('lodging', { id, confirmation: code }); }
-    else if (kind === 'passport') { if (!cols.map('passports')[id]?.number) cols.put('passports', { id, number: code.toUpperCase() }); }
+    else if (kind === 'passport') { if (!I.passport[id]?.number) cols.put('passports', { id, number: code.toUpperCase() }); }
     else if (!ticketOf(to)?.code) save(to, { code });
   }
   try {

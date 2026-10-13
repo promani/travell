@@ -206,17 +206,27 @@ test('calendar export: valid .ics, times in UTC, lines folded', async () => {
   assert.equal(new Set(ics.match(/^UID:.*$/gm)).size, events, 'unique UIDs');
 });
 
-test('shared confirmations: booking code and destination are guessed from the text', async () => {
-  const { guessCode, guessTarget } = await import('../js/guess.js');
-  assert.equal(guessCode('Tu código de reserva: qx7p2l\nVuelo MU746'), 'QX7P2L');
-  assert.equal(guessCode('Booking confirmation 4821937655'), '', 'only digits: not a PNR');
-  assert.equal(guessCode('Hola, gracias por tu compra'), '');
-  const groups = [['Pasajes', D.transport.map((t) => [`transport:${t.id}`, t.route, `${t.route} ${t.service || ''}`])],
-    ['Alojamientos', D.lodging.map((l) => [`lodging:${l.id}`, l.name, `${l.name} ${l.area || ''}`])]];
-  const t01 = I.transport.t01;
-  assert.equal(guessTarget({ title: 'Your e-ticket', text: `${t01.service} ${t01.route}`, url: '', files: [] }, groups), 'transport:t01');
-  assert.equal(guessTarget({ title: 'Reserva confirmada', text: `Gracias por reservar en ${D.lodging[0].name}`, url: '', files: [] }, groups), `lodging:${D.lodging[0].id}`);
-  assert.equal(guessTarget({ title: 'Hola', text: 'nada que ver', url: '', files: [] }, groups), '');
+test('tickets, expenses and passports: the trip data (what Claude loads through the MCP) plus what is loaded in the app', async () => {
+  const { BASE, rebuild } = store;
+  const { ticketOf, ticketCode } = await import('../js/ticket.js');
+  const { passportOf } = await import('../js/passport.js');
+  const t = D.travelers[0].id;
+  BASE.tickets = [{ id: 'transport:t01', code: 'QX7P2L', link: 'https://a.example' }];
+  BASE.passports = [{ id: t, number: 'AAA123456', expires: '2031-01-01' }];
+  BASE.expenses = [{ id: 'ex-mcp', desc: 'Cena', amount: 480, currency: 'CNY', paidBy: t, split: { mode: 'equal', among: [t] }, dayId: 'd04' }];
+  try {
+    cols.reset('passports', t);                                     // an earlier test deleted it in the app
+    assert.equal(ticketCode('transport:t01'), 'QX7P2L');
+    assert.equal(passportOf(t).number, 'AAA123456');
+    assert.ok(D.expenses.some((e) => e.id === 'ex-mcp'));
+    cols.put('tickets', { id: 'transport:t01', link: 'https://b.example' });
+    assert.deepEqual([ticketOf('transport:t01').code, ticketOf('transport:t01').link], ['QX7P2L', 'https://b.example'], 'an edit in the app keeps the rest of the record');
+    cols.del('expenses', 'ex-mcp');
+    assert.ok(!D.expenses.some((e) => e.id === 'ex-mcp'));
+  } finally {
+    cols.reset('tickets', 'transport:t01'); cols.reset('expenses', 'ex-mcp'); cols.reset('passports', t);
+    BASE.tickets = []; BASE.passports = []; BASE.expenses = []; rebuild();
+  }
 });
 
 test('notes: every note has a kind and real days; tips live in notes, not in day cards', async () => {

@@ -33,7 +33,7 @@ function card(t) {
 
 /** One card per traveler, for the travelers screen (which paints the attachments). */
 export const passportCards = () => `<div id="pasaportes">${D.travelers.map(card).join('')}</div>
-  <p class="hint">Los datos se guardan en este celular y, si sincronizás con el grupo, viajan cifrados. Las fotos y escaneos se suben a la nube (R2) sin cifrar.</p>`;
+  <p class="hint">Los datos se guardan en este celular y, si sincronizás con el grupo, viajan cifrados. Los que carga Claude por el MCP quedan en los datos del viaje del servidor. Las fotos y escaneos se suben a la nube (R2) sin cifrar.</p>`;
 
 register({
   'pass-edit': (el) => {

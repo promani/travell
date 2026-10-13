@@ -1,4 +1,4 @@
-// Split expenses: stored locally, multi-currency, equal or exact splits, who-pays-whom, export/import to sync between phones.
+// Split expenses: data/expenses.json (Claude, through the MCP) + what is loaded in the app, multi-currency, equal or exact splits, who-pays-whom, export/import to sync between phones.
 import { D, I, cols, settings } from '../store.js';
 import { exportShared, importShared } from '../share.js';
 import { esc, ic, uid, toast, openModal, fmtMoney, fmtShort, closeModal } from '../util.js';
@@ -9,8 +9,7 @@ import { owedMap as owedMapOf, balances as balancesOf, settlements, converter } 
 const CATS = { comida: ['bowl-food', 'Comida'], transporte: ['train', 'Transporte'], alojamiento: ['hotel', 'Alojamiento'], entradas: ['ticket', 'Entradas'], compras: ['bag-shopping', 'Compras'], otros: ['receipt', 'Otros'] };
 let filterDay = null;
 
-const all = () => cols.list('expenses');
-const live = () => cols.live('expenses');
+const live = () => D.expenses;
 const rates = () => ({ ...D.trip.currencies.rates, ...settings.get('rates', {}) });
 export const baseCur = () => D.trip.currencies.base;
 export const settleCur = () => settings.get('settleCur', baseCur());
@@ -44,7 +43,7 @@ function expRow(e) {
 
 export function render(params, ctx) {
   if (params.day) filterDay = params.day;
-  const list = live().sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  const list = [...live()].sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
   const shown = list.filter((e) => !filterDay || e.dayId === filterDay);
   const cur = settleCur(), net = balances(list, cur), sets = settlements(net);
   const total = list.reduce((s, e) => s + conv(e.amount, e.currency, cur), 0);
@@ -99,7 +98,7 @@ function form(e = {}) {
 
 register({
   'exp-add': () => openModal(form()),
-  'exp-edit': (el) => openModal(form(all().find((e) => e.id === el.dataset.id))),
+  'exp-edit': (el) => openModal(form(live().find((e) => e.id === el.dataset.id))),
   'exp-del': (el, _, app) => {
     if (!confirm('¿Borrar este gasto?')) return;
     cols.del('expenses', el.dataset.id); app.rerender();
@@ -125,8 +124,8 @@ register({
     const id = f.get('id') || uid('ex');
     const rec = { id, desc: f.get('desc').trim(), amount, currency: f.get('currency'), paidBy: f.get('paidBy'), split,
       category: f.get('category'), dayId: f.get('dayId') || null, updatedAt: Date.now() };
-    const prev = cols.map('expenses')[id];
-    cols.put('expenses', { ...(prev || { createdAt: Date.now() }), ...rec });
+    const prev = live().find((e) => e.id === id);
+    cols.put('expenses', { ...(prev ? { createdAt: prev.createdAt } : { createdAt: Date.now() }), ...rec });
     settings.set('lastCur', rec.currency); settings.set('lastPayer', rec.paidBy);
     closeModal(form); app.rerender();
   },

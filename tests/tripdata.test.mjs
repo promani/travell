@@ -62,7 +62,7 @@ test('tripData stores changes, bumps the revision and reverts to the repo', asyn
 
 test('admin API needs the key and the app reads the merged files', async () => {
   const PORT = 19000 + Math.floor(Math.random() * 1000), b = `http://127.0.0.1:${PORT}`;
-  const proc = spawn(process.execPath, ['server/relay.mjs'], { cwd: ROOT, env: { ...process.env, PORT: String(PORT), RELAY_DATA: fs.mkdtempSync(path.join(os.tmpdir(), 'relay-')), SERVE_STATIC: ROOT, WEATHER: '0', REDIS_URL: '', ADMIN_API_KEY: 'k-test', KIMI_API_KEY: '' }, stdio: 'ignore' });
+  const proc = spawn(process.execPath, ['server/relay.mjs'], { cwd: ROOT, env: { ...process.env, PORT: String(PORT), RELAY_DATA: fs.mkdtempSync(path.join(os.tmpdir(), 'relay-')), SERVE_STATIC: ROOT, WEATHER: '0', REDIS_URL: '', ADMIN_API_KEY: 'k-test' }, stdio: 'ignore' });
   try {
     for (let i = 0; i < 50; i++) { try { if ((await fetch(`${b}/health`)).ok) break; } catch { /* starting */ } await new Promise((r) => setTimeout(r, 100)); }
     const body = JSON.stringify({ changes: [{ op: 'patch', col: 'lodging', id: base['lodging.json'][0].id, data: { name: 'Desde admin' } }] });
@@ -72,13 +72,13 @@ test('admin API needs the key and the app reads the merged files', async () => {
     assert.equal(ok.status, 200);
     assert.equal((await (await fetch(`${b}/data/lodging.json`)).json())[0].name, 'Desde admin');
     assert.equal((await (await fetch(`${b}/v1/trip/rev`)).json()).rev, 1);
-    assert.equal((await fetch(`${b}/v1/ai/extract`, { method: 'POST', body: '{}', headers: { authorization: 'Bearer k-test' } })).status, 503, 'no AI without KIMI_API_KEY');
+    assert.equal((await fetch(`${b}/v1/ai/extract`, { method: 'POST', body: '{}', headers: { authorization: 'Bearer k-test' } })).status, 404, 'no AI in the app');
   } finally { proc.kill(); }
 });
 
 test('MCP server: same key, reads the trip, previews and applies changes', async () => {
   const PORT = 20000 + Math.floor(Math.random() * 1000), b = `http://127.0.0.1:${PORT}`;
-  const proc = spawn(process.execPath, ['server/relay.mjs'], { cwd: ROOT, env: { ...process.env, PORT: String(PORT), RELAY_DATA: fs.mkdtempSync(path.join(os.tmpdir(), 'relay-')), SERVE_STATIC: ROOT, WEATHER: '0', REDIS_URL: '', ADMIN_API_KEY: 'k-test', KIMI_API_KEY: '' }, stdio: 'ignore' });
+  const proc = spawn(process.execPath, ['server/relay.mjs'], { cwd: ROOT, env: { ...process.env, PORT: String(PORT), RELAY_DATA: fs.mkdtempSync(path.join(os.tmpdir(), 'relay-')), SERVE_STATIC: ROOT, WEATHER: '0', REDIS_URL: '', ADMIN_API_KEY: 'k-test' }, stdio: 'ignore' });
   let n = 0;
   const rpc = (method, params, key = 'k-test') => fetch(`${b}/mcp`, { method: 'POST', headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json', accept: 'application/json, text/event-stream' }, body: JSON.stringify({ jsonrpc: '2.0', id: ++n, method, params }) });
   const tool = async (name, args) => (await (await rpc('tools/call', { name, arguments: args })).json()).result;
@@ -107,5 +107,22 @@ test('MCP server: same key, reads the trip, previews and applies changes', async
     assert.equal(JSON.parse((await tool('list_changes', {})).content[0].text).log[0].by, 'claude (mcp)');
     assert.ok(!(await tool('revert_record', { collection: 'lodging', id: lodging.id })).isError);
     assert.equal((await (await fetch(`${b}/data/lodging.json`)).json())[0].name, lodging.name);
+    // the key in the URL, for the custom connector of the Claude app
+    const viaPath = (key) => fetch(`${b}/mcp/${key}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 99, method: 'tools/list' }) });
+    assert.equal((await viaPath('nope')).status, 401);
+    assert.equal((await (await viaPath('k-test')).json()).result.tools.length, names.length);
+    // a booking: the flight's code goes to tickets, the expense to expenses
+    const t = base['travelers.json'][0].id;
+    const booking = [
+      { op: 'put', col: 'tickets', id: 'transport:t01', data: { code: 'QX7P2L', qrs: [{ id: 'qr-1', text: 'M1ROMANI/PEHUEN', format: 'qr_code' }] } },
+      { op: 'put', col: 'expenses', id: 'ex-vuelo', data: { desc: 'Vuelo', amount: 900, currency: 'USD', paidBy: t, split: { mode: 'equal', among: [t] } } },
+      { op: 'put', col: 'passports', id: t, data: { number: 'AAA123456', expires: '2031-05-01' } },
+    ];
+    assert.ok(!(await tool('apply_changes', { changes: booking })).isError);
+    assert.equal((await (await fetch(`${b}/data/tickets.json`)).json())[0].code, 'QX7P2L');
+    assert.equal((await (await fetch(`${b}/data/expenses.json`)).json())[0].amount, 900);
+    for (const bad of [{ op: 'put', col: 'tickets', id: 'transport:nope', data: { code: 'X' } }, { op: 'put', col: 'tickets', id: 'hotel:l01', data: { code: 'X' } },
+      { op: 'put', col: 'expenses', id: 'ex-2', data: { desc: 'x', amount: 1, currency: 'USD', paidBy: 'nadie', split: { mode: 'equal', among: [t] } } },
+      { op: 'put', col: 'passports', id: 'nadie', data: { number: 'X' } }]) assert.ok((await tool('preview_changes', { changes: [bad] })).isError, JSON.stringify(bad));
   } finally { proc.kill(); }
 });

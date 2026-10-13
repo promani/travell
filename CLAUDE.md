@@ -10,6 +10,21 @@
 - Mover los datos a Redis/R2 está en el backlog (P3, "Varios viajes") para cuando haya más de un viaje; **no hacerlo antes**.
 - Lo que falta cargar del viaje está en `BACKLOG.md` → P1 → "Datos del viaje".
 
+## IA: solo desde la app de Claude, por el MCP
+- **La app no tiene IA propia** (ni pantalla de "Compartido", ni lectura de confirmaciones, ni claves de IA). No agregarla.
+- La única forma en que una IA toca el viaje es el **MCP** del servidor (`server/mcp.mjs`, `POST /mcp`). Lo que se aplica ahí queda en Redis encima de `data/*.json` y les llega a todos los celulares sin deploy.
+- El MCP tiene que poder hacer **todo lo que se puede hacer en la app** con los datos del viaje: días, actividades, lugares, transportes, hoteles, documentos, viajeros, tareas, notas, recursos, reservas (`tickets`: código, link y QR), gastos (`expenses`) y pasaportes (`passports`). Si se agrega una acción o una colección nueva a la app, se agrega también al MCP (`COLS` y validación en `server/tripdata.mjs`, reglas y ejemplos en `server/mcp.mjs`).
+- Lo que queda fuera del MCP: fotos y adjuntos (PDF, capturas; se cargan desde la app), la ubicación del GPS y las marcas personales de cada celular.
+
+### Flujo: cargar una reserva
+1. En la app de Claude (escritorio, web o celular) se agrega el conector una vez: **Configuración → Conectores → Agregar conector personalizado**, con la URL `https://travell.unab.dpdns.org/mcp/<ADMIN_API_KEY>`. Si la cuenta permite headers en el conector, mejor la URL `https://travell.unab.dpdns.org/mcp` con el header `Authorization: Bearer <ADMIN_API_KEY>`. En Claude Code: `claude mcp add --transport http travell https://travell.unab.dpdns.org/mcp --header "Authorization: Bearer $ADMIN_API_KEY"`.
+2. Se le pasa a Claude la reserva tal como llegó: el PDF, una captura, el mail pegado o un link.
+3. **Claude decide cómo leerla**: lee el PDF, analiza la imagen o busca en internet lo que falte (dirección del hotel, horario del vuelo, terminal). Eso es trabajo de la app de Claude, no del servidor.
+4. Con el MCP: `trip_overview` para ver qué existe, `get_day` / `get_records` para ver los registros completos, arma los cambios (crear o actualizar el transporte, hotel o actividad, y su código y QR en `tickets`; un gasto si corresponde) y los muestra con `preview_changes`.
+5. La persona confirma y Claude llama a `apply_changes`. En unos minutos aparece en todos los celulares.
+
+Los cambios hechos por el MCP no se commitean solos: `list_changes` muestra lo que difiere del repo, para pasarlo a `data/*.json` cuando convenga.
+
 ## Imágenes generadas con IA (solo se asignan, nunca se generan desde acá)
 Las imágenes las genera automáticamente el servicio `imgg` la primera vez que la app pide la URL. **No hay que generarlas ni pedirlas a mano (ni con curl):** solo se asigna `name` + `prompt` en los datos y la app arma la URL.
 

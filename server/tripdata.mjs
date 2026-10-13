@@ -3,8 +3,8 @@
 // /data/<file>.json, so the app reads the result as if it were the file. The repo stays as the base; the changes sit
 // on top of it until someone folds them into the repo (GET /v1/admin/changes lists them).
 //
-// The admin API is the only writer, and every AI feature writes through it: the AI proposes a list of changes,
-// the person confirms, the app posts them here. One validation, one place to secure (ADMIN_API_KEY).
+// Two writers, one validation: the admin API and the MCP server (server/mcp.mjs), the only way an AI touches the trip.
+// Both go through trip.apply() behind ADMIN_API_KEY.
 //
 // A change: { op: 'put' | 'patch' | 'del', col, id, data?, label? }
 //   put   = create or replace the whole record      patch = merge fields into the current record
@@ -28,7 +28,12 @@ export const COLS = {
   notes: { kind: 'array', file: 'notes.json', name: 'title' },
   requirements: { kind: 'array', file: 'requirements.json', name: 'title' },
   resources: { kind: 'array', file: 'resources.json', name: 'title' },
+  tickets: { kind: 'array', file: 'tickets.json' },                // booking code / link / QRs of something; id = "<kind>:<id>"
+  expenses: { kind: 'array', file: 'expenses.json', name: 'desc' },
+  passports: { kind: 'array', file: 'passports.json', name: 'number' },   // id = traveler id
 };
+/** What a ticket can belong to (its id is "<kind>:<id of that record>"). */
+export const TICKET_KINDS = { transport: 'transport', activity: 'activities', lodging: 'lodging', doc: 'documents', passport: 'travelers' };
 COLS.places.name = 'name'; COLS.activities.name = 'title';
 const ID = /^[A-Za-z0-9][A-Za-z0-9_.:-]{0,79}$/;
 const DATE = /^\d{4}-\d{2}-\d{2}$/, TIME = /^\d{2}:\d{2}$/;
@@ -155,6 +160,25 @@ export function resolveChange(files, ch) {
   for (const k of ['date', 'checkIn', 'checkOut']) if (data[k] != null && data[k] !== '' && !DATE.test(data[k])) return { error: `${col}/${rid}: ${k} tiene que ser AAAA-MM-DD` };
   if (col === 'lodging' && data.checkIn && data.checkOut && data.checkOut <= data.checkIn) return { error: `alojamiento ${rid}: el check-out tiene que ser después del check-in` };
   if (col === 'places') for (const k of ['lat', 'lon']) if (data[k] != null && !Number.isFinite(data[k])) return { error: `lugar ${rid}: ${k} tiene que ser un número` };
+  if (col === 'tickets') {
+    const [kind, ref] = [rid.slice(0, rid.indexOf(':')), rid.slice(rid.indexOf(':') + 1)];
+    if (!TICKET_KINDS[kind] || !ref) return { error: `ticket ${rid}: el id tiene que ser <${Object.keys(TICKET_KINDS).join('|')}>:<id>` };
+    if (!current(files, TICKET_KINDS[kind], ref)) return { error: `ticket ${rid}: ${TICKET_KINDS[kind]}/${ref} no existe` };
+    if (data.qrs != null && !(Array.isArray(data.qrs) && data.qrs.every((q) => isObj(q) && typeof q.text === 'string' && q.text))) return { error: `ticket ${rid}: qrs es una lista de { id, text, format, label }` };
+  }
+  if (col === 'expenses') {
+    const who = new Set((files['travelers.json'] || []).map((t) => t.id));
+    if (!(Number.isFinite(data.amount) && data.amount >= 0)) return { error: `gasto ${rid}: amount tiene que ser un número` };
+    if (typeof data.currency !== 'string' || !data.currency) return { error: `gasto ${rid}: falta currency` };
+    if (!who.has(data.paidBy)) return { error: `gasto ${rid}: paidBy tiene que ser el id de un viajero` };
+    const sp = data.split;
+    const ok = isObj(sp) && (sp.mode === 'equal' ? Array.isArray(sp.among) && sp.among.length && sp.among.every((t) => who.has(t))
+      : sp.mode === 'exact' && isObj(sp.shares) && Object.keys(sp.shares).length && Object.entries(sp.shares).every(([t, v]) => who.has(t) && Number.isFinite(v)));
+    if (!ok) return { error: `gasto ${rid}: split es { mode: "equal", among: [ids] } o { mode: "exact", shares: { id: monto } }` };
+    if (data.dayId && !(files['itinerary.json']?.days || []).some((d) => d.id === data.dayId)) return { error: `gasto ${rid}: el día ${data.dayId} no existe` };
+  }
+  if (col === 'passports' && !(files['travelers.json'] || []).some((t) => t.id === rid)) return { error: `pasaporte ${rid}: el id tiene que ser el de un viajero` };
+  for (const k of ['birth', 'issued', 'expires']) if (col === 'passports' && data[k] != null && data[k] !== '' && !DATE.test(data[k])) return { error: `pasaporte ${rid}: ${k} tiene que ser AAAA-MM-DD` };
   return { record: { op: 'put', col, id: rid, data, label } };
 }
 

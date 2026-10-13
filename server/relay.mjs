@@ -14,19 +14,19 @@
 //   GET  /data/<file>.json                                    -> the repo file with the admin changes applied (see tripdata.mjs)
 //   GET  /v1/trip/rev                                         -> { rev } of the admin changes, so the app knows when to reload
 //   Admin (Authorization: Bearer $ADMIN_API_KEY; disabled without it):
-//   GET  /v1/admin/check                                      -> { ok, store, ai }
+//   GET  /v1/admin/check                                      -> { ok, store }
 //   GET  /v1/admin/changes                                    -> { rev, records, log }   what differs from the repo
 //   POST /v1/admin/changes  { changes: [...], note, by }      -> { rev, applied } | 400 { error, index }
 //   DELETE /v1/admin/changes/:col/:id                         -> back to what the repo says
-//   POST /v1/ai/extract  { title, text, url, files: [{ name, type, data (base64) }] } -> a proposal, nothing is written
-//   POST /mcp  (JSON-RPC)                                     -> MCP server for a Claude session: read, preview and apply changes (see mcp.mjs)
+//   POST /mcp  (JSON-RPC)                                     -> MCP server for Claude: read, preview and apply changes (see mcp.mjs)
+//   POST /mcp/<ADMIN_API_KEY>                                 -> the same, for clients that can't send headers (custom connector in the Claude app)
 //
 // With SERVE_STATIC=<dir> it also serves the PWA from that folder (one container for app + relay).
 // REDIS_URL=redis://[:password@]host:6379[/db] keeps the weather in Redis (otherwise in a file in RELAY_DATA).
 // WEATHER=0 turns the daily weather download off. REDIS_KEY_PREFIX (default "travell:") prefixes every Redis key.
 // R2_ENDPOINT, R2_KEY, R2_SECRET, R2_BUCKET: Cloudflare R2, where photos and attachments are uploaded (unencrypted).
 // File names carry 128 random bits, so a name works as a capability: whoever knows it can read or delete that file.
-// ADMIN_API_KEY protects every write to the trip data and every AI call. KIMI_API_KEY / KIMI_MODEL: see ai.mjs.
+// ADMIN_API_KEY protects every write to the trip data: the admin API and the MCP server (the only way an AI touches the trip).
 // TRIP_CHANGES=file keeps the admin changes in a file in RELAY_DATA even when REDIS_URL is set (local development).
 // Locally `npm start` loads them from .env.local.
 import http from 'node:http';
@@ -37,7 +37,6 @@ import { Readable } from 'node:stream';
 import { startWeather, weatherStore } from './weather.mjs';
 import { r2FromEnv } from './r2.mjs';
 import { tripData, changeStore, managedFiles } from './tripdata.mjs';
-import { kimiFromEnv, extract } from './ai.mjs';
 import { mcp } from './mcp.mjs';
 import crypto from 'node:crypto';
 
@@ -88,8 +87,7 @@ try {
 const bucket = r2FromEnv();
 console.log(bucket ? 'files: uploading to R2' : 'files: R2 not configured (R2_ENDPOINT, R2_KEY, R2_SECRET, R2_BUCKET)');
 const ADMIN_KEY = process.env.ADMIN_API_KEY || '';
-const ai = kimiFromEnv();
-console.log(`admin: ${ADMIN_KEY ? 'enabled' : 'disabled (ADMIN_API_KEY)'} · ai: ${ai ? ai.model : 'disabled (KIMI_API_KEY)'}`);
+console.log(`admin + mcp: ${ADMIN_KEY ? 'enabled' : 'disabled (ADMIN_API_KEY)'}`);
 const groups = new Map();            // gid -> { seq, recs: Map(key -> rec), dirty }
 
 function load(gid) {
@@ -130,7 +128,7 @@ const server = http.createServer((req, res) => {
   if (url.pathname === '/health') return send(res, 200, { ok: true, groups: groups.size, files: !!bucket });
   const f = FILE_PATH.exec(url.pathname);
   if (f) return files(req, res, f.slice(1, 4).join('/'));
-  if (url.pathname.startsWith('/v1/admin/') || url.pathname.startsWith('/v1/ai/') || url.pathname === '/mcp') return admin(req, res, url);
+  if (url.pathname.startsWith('/v1/admin/') || url.pathname === '/mcp' || url.pathname.startsWith('/mcp/')) return admin(req, res, url);
   if (url.pathname === '/v1/trip/rev' && req.method === 'GET') return trip ? trip.rev().then((rev) => send(res, 200, { rev }), () => send(res, 503, { error: 'store' })) : send(res, 503, { error: 'no trip' });
   const df = /^\/data\/([\w.-]+\.json)$/.exec(url.pathname);
   if (df && STATIC && trip && managed.has(df[1]) && (req.method === 'GET' || req.method === 'HEAD')) return dataFile(req, res, df[1]);
@@ -140,8 +138,6 @@ const server = http.createServer((req, res) => {
   }
   const m = /^\/v1\/([^/]+)\/records$/.exec(url.pathname);
   if (!m && STATIC && (req.method === 'GET' || req.method === 'HEAD') && serveStatic(req, res, url.pathname)) return;
-  // share target with no service worker yet (the app's sw.js normally answers this POST): open the inbox screen
-  if (STATIC && req.method === 'POST' && url.pathname === '/share') { req.resume(); res.writeHead(303, { location: '/index.html#/compartido' }); return res.end(); }
   if (!m || !GID.test(m[1])) return send(res, 404, { error: 'not found' });
   const g = load(m[1]);
 
@@ -201,12 +197,14 @@ const keyOk = (h) => {
   return got.length === want.length && crypto.timingSafeEqual(got, want);
 };
 
-/** Admin API and AI: the only way to change the trip data. Everything needs ADMIN_API_KEY. */
+/** Admin API and MCP: the only ways to change the trip data. Both need ADMIN_API_KEY. */
 async function admin(req, res, url) {
   if (!ADMIN_KEY) return send(res, 503, { error: 'admin disabled: ADMIN_API_KEY is not set' });
-  if (!keyOk(req.headers.authorization)) return send(res, 401, { error: 'clave de administrador incorrecta' });
+  // the key goes in the Authorization header, or in the path of the MCP URL (/mcp/<key>); never logged
+  const inPath = /^\/mcp\/([^/]+)$/.exec(url.pathname);
+  if (!keyOk(inPath ? decodeURIComponent(inPath[1]) : req.headers.authorization)) return send(res, 401, { error: 'clave de administrador incorrecta' });
   if (!trip) return send(res, 503, { error: 'no trip data' });
-  const p = url.pathname, m = req.method;
+  const p = inPath ? '/mcp' : url.pathname, m = req.method;
   try {
     if (p === '/mcp') {
       if (m !== 'POST') { res.writeHead(405, { allow: 'POST' }); return res.end(); }   // stateless: no SSE stream, no sessions
@@ -216,7 +214,7 @@ async function admin(req, res, url) {
       if (!out) { res.writeHead(202); return res.end(); }
       return send(res, 200, out);
     }
-    if (p === '/v1/admin/check' && m === 'GET') return send(res, 200, { ok: true, store: trip.kind, ai: ai ? ai.model : null });
+    if (p === '/v1/admin/check' && m === 'GET') return send(res, 200, { ok: true, store: trip.kind });
     if (p === '/v1/admin/changes' && m === 'GET') return send(res, 200, await trip.changes());
     if (p === '/v1/admin/changes' && m === 'POST') {
       const body = await readBody(req, res, MAX_BODY);
@@ -226,13 +224,6 @@ async function admin(req, res, url) {
     }
     const rv = /^\/v1\/admin\/changes\/([a-z]+)\/([^/]+)$/.exec(p);
     if (rv && m === 'DELETE') { const out = await trip.revert(rv[1], decodeURIComponent(rv[2])); return send(res, out.error ? 404 : 200, out); }
-    if (p === '/v1/ai/extract' && m === 'POST') {
-      if (!ai) return send(res, 503, { error: 'IA no configurada (KIMI_API_KEY)' });
-      const body = await readBody(req, res, 25 * 1024 * 1024);
-      if (!body) return;
-      const files = (Array.isArray(body.files) ? body.files : []).slice(0, 6).map((f) => ({ name: String(f.name || 'archivo'), type: String(f.type || ''), data: Buffer.from(String(f.data || ''), 'base64') }));
-      return send(res, 200, await extract(ai, await trip.files(), { title: String(body.title || ''), text: String(body.text || ''), url: String(body.url || ''), files }));
-    }
     return send(res, 404, { error: 'not found' });
   } catch (e) {
     console.log(`admin: ${m} ${p}: ${e.message}`);
