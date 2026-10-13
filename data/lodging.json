@@ -19,7 +19,19 @@
     "confirmation": null,
     "lat": 31.2325,
     "lon": 121.4755,
-    "approx": true
+    "approx": true,
+    "options": [
+      {
+        "name": "Boting Hotel Lujiazui",
+        "note": "Pudong, 640 Zhangyang Rd, a 600 m del metro Century Avenue (línea 2: directo a Nanjing Road y al Maglev)",
+        "url": "https://www.trip.com/w/rKaiAsrmjW2"
+      },
+      {
+        "name": "HanTing North Bund (Ningguo Road)",
+        "note": "Yangpu, 1665 Changyang Rd, a 100 m del metro Ningguo Road (línea 12)",
+        "url": "https://www.trip.com/w/scXTjvomjW2"
+      }
+    ]
   },
   {
     "id": "l02",
@@ -33,7 +45,7 @@
     "checkInTime": null,
     "checkOutTime": null,
     "nights": 4,
-    "status": "pendiente",
+    "status": "reservado",
     "notes": "Casa entera para 3: 2 dormitorios, 2 camas, 1 baño. Anfitrión Pari (Superhost). Metro Waseda (Tozai) o Ushigome-Yanagicho (Oedo). Sin recepción: avisar la llegada ~21:30 al anfitrión. La dirección exacta llega con la reserva.",
     "link": null,
     "address": null,
@@ -90,9 +102,9 @@
   },
   {
     "id": "l04",
-    "cityId": "osaka",
-    "name": "Hotel a reservar",
-    "area": "Namba (sugerido)",
+    "cityId": "nara",
+    "name": "Novotel Nara",
+    "area": "Omiya-cho (Kintetsu Shin-Omiya, ~8 min a pie)",
     "checkInDay": "d14",
     "checkIn": "2026-11-25",
     "checkOutDay": "d15",
@@ -101,13 +113,13 @@
     "checkOutTime": null,
     "nights": 1,
     "status": "pendiente",
-    "notes": "Recibe la valija enviada desde Tokio.",
+    "notes": "Recibe la valija del takkyubin el 25/11. Tiene shuttle gratis (confirmar horarios). Tel. +81 742-32-3020.",
     "link": null,
-    "address": null,
-    "addressLocal": null,
+    "address": "7-1-45 Omiya-cho, Nara 630-8115",
+    "addressLocal": "奈良県奈良市大宮町7-1-45",
     "confirmation": null,
-    "lat": 34.666,
-    "lon": 135.501,
+    "lat": 34.6838,
+    "lon": 135.816,
     "approx": true
   },
   {

@@ -49,22 +49,6 @@
     "source": "json"
   },
   {
-    "id": "k04",
-    "title": "Airbnb Tokio 18–22/11 (Waseda)",
-    "when": "Ya",
-    "dueAt": null,
-    "urgent": true,
-    "day": "d07",
-    "status": "pendiente",
-    "notes": "Avisar la llegada ~21:30 al anfitrión.",
-    "assignee": null,
-    "priority": "alta",
-    "covers": [
-      "lodging:l02"
-    ],
-    "source": "json"
-  },
-  {
     "id": "k27",
     "title": "Hotel Tokio 22/11 (1 noche, Shinjuku)",
     "when": "Ya",
@@ -88,7 +72,7 @@
     "urgent": true,
     "day": "d03",
     "status": "pendiente",
-    "notes": null,
+    "notes": "Las opciones están en el alojamiento.",
     "assignee": null,
     "priority": "alta",
     "covers": [
@@ -98,11 +82,11 @@
   },
   {
     "id": "k06",
-    "title": "Hotel Osaka 25–26/11 (Namba)",
+    "title": "Hotel Novotel Nara 25/11",
     "when": "Ya",
     "dueAt": null,
     "urgent": true,
-    "day": "d15",
+    "day": "d14",
     "status": "pendiente",
     "notes": null,
     "assignee": null,
@@ -367,7 +351,7 @@
   },
   {
     "id": "k23",
-    "title": "Takkyubin: valija Tokio → Osaka",
+    "title": "Takkyubin: valija Tokio → Novotel Nara",
     "when": "22/11 a la mañana",
     "dueAt": "2026-11-21T20:30:00-03:00",
     "urgent": false,
