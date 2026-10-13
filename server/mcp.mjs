@@ -7,9 +7,9 @@
 import { COLS, current, resolveBatch } from './tripdata.mjs';
 import { tripContext, CHANGE_RULES } from './ai.mjs';
 
-const VERSIONS = ['2025-06-18', '2025-03-26', '2024-11-05'];
+const VERSIONS = ['2025-11-25', '2025-06-18', '2025-03-26', '2024-11-05'];
 const BY = 'claude (mcp)';
-const json = (x) => ({ content: [{ type: 'text', text: JSON.stringify(x, null, 2) }] });
+const json = (x) => ({ content: [{ type: 'text', text: JSON.stringify(x) }] });   // compact: tool results count against the context
 const fail = (msg) => ({ content: [{ type: 'text', text: msg }], isError: true });
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const colNames = Object.keys(COLS);
@@ -43,7 +43,7 @@ const TOOLS = [
     inputSchema: { type: 'object', properties: { day: { type: 'string', description: 'id ("d05"), número ("5") o fecha ("2026-11-16")' } }, required: ['day'] },
     annotations: { readOnlyHint: true } },
   { name: 'get_records', title: 'Ver registros',
-    description: `Registros completos de una colección (${colNames.join(', ')}), todos o los ids pedidos.`,
+    description: `Registros completos de una colección (${colNames.join(', ')}), todos o los ids pedidos. En days sin ids no vienen las actividades (usá get_day o activities).`,
     inputSchema: { type: 'object', properties: { collection: { type: 'string', enum: colNames }, ids: { type: 'array', items: { type: 'string' } } }, required: ['collection'] },
     annotations: { readOnlyHint: true } },
   { name: 'preview_changes', title: 'Previsualizar cambios',
@@ -71,7 +71,7 @@ function records(files, col, ids) {
   const c = COLS[col];
   if (c.kind === 'object') return files[c.file];
   let all;
-  if (c.kind === 'days') all = files['itinerary.json']?.days || [];
+  if (c.kind === 'days') all = (files['itinerary.json']?.days || []).map((d) => (ids?.length ? d : { ...d, activities: undefined }));
   else if (c.kind === 'activities') all = (files['itinerary.json']?.days || []).flatMap((d) => (d.activities || []).map((a) => ({ ...a, dayId: d.id })));
   else if (c.kind === 'places') all = (files['trip.json']?.placeFiles || ['places.json']).flatMap((f) => files[f] || []);
   else all = files[c.file] || [];
