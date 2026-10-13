@@ -103,6 +103,9 @@ server/relay.mjs      Backend mínimo (Node, sin dependencias): relay de sincron
 server/r2.mjs         Cliente mínimo de Cloudflare R2 (API S3, firma SigV4) para subir, leer y borrar archivos
 server/weather.mjs    Clima diario desde Open-Meteo (pronóstico o clima típico), guardado en Redis o en un archivo
 server/redis.mjs      Cliente Redis mínimo (RESP, sin dependencias)
+server/tripdata.mjs   Cambios de administración sobre data/*.json: validación, merge, guardado en Redis (o archivo)
+server/ai.mjs         IA (Kimi): cliente, contexto del viaje y lectura de confirmaciones; solo propone cambios
+js/admin.js           Clave de administrador, llamadas a /v1/admin y /v1/ai, recarga del viaje cuando cambia en el servidor
 tests/                Tests con node:test (npm test)
 Dockerfile            Imagen para Dokploy u otra plataforma: app + relay en el puerto 3000
 vendor/leaflet/       Leaflet 1.9.4 vendorizado (sin CDN, para que funcione offline y en China)
@@ -268,7 +271,32 @@ sequenceDiagram
 
 ### Redis
 
-Hoy guarda el clima (`<REDIS_KEY_PREFIX>weather:<tripId>`). Los datos del viaje (`data/*.json`) y el overlay en `localStorage` alcanzan para un viaje; cuando haya varios viajes, los datos pasan a Redis, con el mismo prefijo.
+Guarda el clima (`<REDIS_KEY_PREFIX>weather:<tripId>`) y los cambios de administración al viaje (`<REDIS_KEY_PREFIX>trip:<tripId>:changes`, ver abajo).
+
+### Cambios de administración e IA
+
+Tres capas de datos, de abajo hacia arriba:
+
+1. **El repo** (`data/*.json`): la base. Se edita acá, con commits.
+2. **Cambios de administración** (servidor, en Redis): lo que se cambia desde la app con la clave de administrador o lo que propone la IA y se confirma. El servidor los aplica al servir `/data/<archivo>.json`, así la app los lee como si fueran el archivo. Si Redis falla, sirve el archivo del repo tal cual.
+3. **Overlay del grupo** (cifrado, en el relay): lo que cada viajero edita en la app (tareas, gastos, códigos…). Va encima de todo.
+
+```mermaid
+flowchart LR
+  APP[App con clave admin] -- "1. POST /v1/ai/extract" --> AI[server/ai.mjs]
+  AI -- prompt + contexto del viaje --> KIMI[Kimi]
+  AI -- "propuesta (dry-run validado)" --> APP
+  APP -- "2. Aplicar: POST /v1/admin/changes" --> ADM[server/tripdata.mjs<br/>valida y guarda]
+  ADM --> REDIS[(Redis)]
+  ADM -- "GET /data/*.json = repo + cambios" --> ALL[Todos los celulares]
+```
+
+- **Una sola puerta**: todo cambio al viaje pasa por `/v1/admin/changes` (con `Authorization: Bearer $ADMIN_API_KEY`). Un cambio es `{ op: put | patch | del, col, id, data, label }`; el lote se valida entero (colección conocida, ids, fechas, horas, que exista el día de una actividad, check-out después del check-in…) y se aplica todo o nada. Colecciones: `trip`, `days` (campos del día, no sus actividades), `activities` (con `dayId`), `places`, `transport`, `lodging`, `documents`, `travelers`, `tasks`, `notes`, `requirements`, `resources`.
+- **La IA no escribe**: devuelve una propuesta en ese mismo formato, con una frase por cambio. El servidor la prueba contra la validación (descarta lo inválido y avisa por qué), la app la muestra, y recién al tocar **Aplicar** se manda a `/v1/admin/changes`. Las claves de Kimi y de administración nunca llegan al navegador, salvo la de administración que se carga a mano en el celular del dueño (Ajustes → Administración).
+- **Recarga**: cada cambio sube una revisión (`GET /v1/trip/rev`). La app la consulta cada 2 minutos y al volver a primer plano, y si cambió recarga los datos.
+- **Historial**: se guardan los últimos 200 lotes (quién, cuándo, nota, frases). `GET /v1/admin/changes` lista lo que difiere del repo, para pasarlo al repo cuando convenga; `DELETE /v1/admin/changes/<col>/<id>` vuelve un registro a lo que dice el repo.
+- **Confirmaciones (Compartido)**: `extract()` arma el contexto (qué existe, con ids, y un registro de ejemplo por colección para que respete la forma), lee PDFs e imágenes con el *file-extract* de Moonshot y pide un JSON con `kind`, `summary`, `target` (dónde se guarda el código y el archivo) y `changes`.
+- **Agente (próximo)**: "cambiá el día 5 por esto" usa las mismas piezas: `tripContext()` + `chat()` + la validación + el paso de confirmación. Solo agrega la conversación (historial de mensajes) y, si hace falta más contexto, una herramienta para pedir el detalle de un día o una colección.
 
 - **Requisitos**: el relay tiene que estar en HTTPS si la app está en HTTPS (contenido mixto), y conviene alojarlo donde sea accesible desde China. Ejecución: `PORT=8787 RELAY_DATA=./relay-data node server/relay.mjs`.
 

@@ -11,12 +11,22 @@
 //   GET  /v1/files/:trip/(photos|files)/:name                 -> streams it back from R2
 //   DELETE /v1/files/:trip/(photos|files)/:name
 //   GET  /health
+//   GET  /data/<file>.json                                    -> the repo file with the admin changes applied (see tripdata.mjs)
+//   GET  /v1/trip/rev                                         -> { rev } of the admin changes, so the app knows when to reload
+//   Admin (Authorization: Bearer $ADMIN_API_KEY; disabled without it):
+//   GET  /v1/admin/check                                      -> { ok, store, ai }
+//   GET  /v1/admin/changes                                    -> { rev, records, log }   what differs from the repo
+//   POST /v1/admin/changes  { changes: [...], note, by }      -> { rev, applied } | 400 { error, index }
+//   DELETE /v1/admin/changes/:col/:id                         -> back to what the repo says
+//   POST /v1/ai/extract  { title, text, url, files: [{ name, type, data (base64) }] } -> a proposal, nothing is written
 //
 // With SERVE_STATIC=<dir> it also serves the PWA from that folder (one container for app + relay).
 // REDIS_URL=redis://[:password@]host:6379[/db] keeps the weather in Redis (otherwise in a file in RELAY_DATA).
 // WEATHER=0 turns the daily weather download off. REDIS_KEY_PREFIX (default "travell:") prefixes every Redis key.
 // R2_ENDPOINT, R2_KEY, R2_SECRET, R2_BUCKET: Cloudflare R2, where photos and attachments are uploaded (unencrypted).
 // File names carry 128 random bits, so a name works as a capability: whoever knows it can read or delete that file.
+// ADMIN_API_KEY protects every write to the trip data and every AI call. KIMI_API_KEY / KIMI_MODEL: see ai.mjs.
+// TRIP_CHANGES=file keeps the admin changes in a file in RELAY_DATA even when REDIS_URL is set (local development).
 // Locally `npm start` loads them from .env.local.
 import http from 'node:http';
 import fs from 'node:fs';
@@ -25,6 +35,9 @@ import { fileURLToPath } from 'node:url';
 import { Readable } from 'node:stream';
 import { startWeather, weatherStore } from './weather.mjs';
 import { r2FromEnv } from './r2.mjs';
+import { tripData, changeStore, managedFiles } from './tripdata.mjs';
+import { kimiFromEnv, extract } from './ai.mjs';
+import crypto from 'node:crypto';
 
 const PORT = +(process.env.PORT || 8787);
 const DIR = process.env.RELAY_DATA || './relay-data';
@@ -61,13 +74,20 @@ function serveStatic(req, res, pathname) {
 fs.mkdirSync(DIR, { recursive: true });
 
 const DATA_DIR = path.join(STATIC || path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'), 'data');
-let weather = null;
+let weather = null, trip = null, managed = new Set();
 try {
-  const tripId = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'trip.json'), 'utf8')).id;
+  const tripJson = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'trip.json'), 'utf8')), tripId = tripJson.id;
+  const redisUrl = process.env.TRIP_CHANGES === 'file' ? '' : process.env.REDIS_URL;
+  trip = tripData({ dataDir: DATA_DIR, store: changeStore({ tripId, redisUrl, prefix: process.env.REDIS_KEY_PREFIX, dir: DIR }) });
+  managed = new Set(managedFiles(tripJson));
+  console.log(`trip changes: ${trip.kind}`);
   weather = startWeather({ dataDir: DATA_DIR, store: weatherStore({ tripId, redisUrl: process.env.REDIS_URL, prefix: process.env.REDIS_KEY_PREFIX, dir: DIR }), auto: process.env.WEATHER !== '0' });
 } catch (e) { console.log(`weather: disabled (${e.message})`); }
 const bucket = r2FromEnv();
 console.log(bucket ? 'files: uploading to R2' : 'files: R2 not configured (R2_ENDPOINT, R2_KEY, R2_SECRET, R2_BUCKET)');
+const ADMIN_KEY = process.env.ADMIN_API_KEY || '';
+const ai = kimiFromEnv();
+console.log(`admin: ${ADMIN_KEY ? 'enabled' : 'disabled (ADMIN_API_KEY)'} · ai: ${ai ? ai.model : 'disabled (KIMI_API_KEY)'}`);
 const groups = new Map();            // gid -> { seq, recs: Map(key -> rec), dirty }
 
 function load(gid) {
@@ -97,7 +117,7 @@ process.on('SIGTERM', () => { persist(); process.exit(0); });
 const send = (res, status, obj) => {
   res.writeHead(status, {
     'content-type': 'application/json', 'access-control-allow-origin': '*',
-    'access-control-allow-methods': 'GET,POST,PUT,DELETE,OPTIONS', 'access-control-allow-headers': 'content-type', 'cache-control': 'no-store',
+    'access-control-allow-methods': 'GET,POST,PUT,DELETE,OPTIONS', 'access-control-allow-headers': 'content-type, authorization', 'cache-control': 'no-store',
   });
   res.end(obj === undefined ? '' : JSON.stringify(obj));
 };
@@ -108,6 +128,10 @@ const server = http.createServer((req, res) => {
   if (url.pathname === '/health') return send(res, 200, { ok: true, groups: groups.size, files: !!bucket });
   const f = FILE_PATH.exec(url.pathname);
   if (f) return files(req, res, f.slice(1, 4).join('/'));
+  if (url.pathname.startsWith('/v1/admin/') || url.pathname.startsWith('/v1/ai/')) return admin(req, res, url);
+  if (url.pathname === '/v1/trip/rev' && req.method === 'GET') return trip ? trip.rev().then((rev) => send(res, 200, { rev }), () => send(res, 503, { error: 'store' })) : send(res, 503, { error: 'no trip' });
+  const df = /^\/data\/([\w.-]+\.json)$/.exec(url.pathname);
+  if (df && STATIC && trip && managed.has(df[1]) && (req.method === 'GET' || req.method === 'HEAD')) return dataFile(req, res, df[1]);
   if (url.pathname === '/v1/weather' && req.method === 'GET') {
     const doc = weather?.get();
     return doc ? send(res, 200, doc) : send(res, 503, { error: 'weather not ready' });
@@ -147,6 +171,65 @@ const server = http.createServer((req, res) => {
     send(res, 200, { seq: g.seq });
   });
 });
+/** A trip file as the app should see it: the repo version plus the admin changes. */
+function dataFile(req, res, name) {
+  trip.files().then((files) => {
+    if (!files[name]) { res.writeHead(404, { 'content-type': 'text/plain' }); return res.end('not found'); }
+    res.writeHead(200, { 'content-type': TYPES['.json'], 'cache-control': 'no-cache', 'x-content-type-options': 'nosniff' });
+    res.end(req.method === 'HEAD' ? undefined : JSON.stringify(files[name]));
+  }).catch((e) => {
+    // the changes store is down: fall back to the plain repo file rather than breaking the app
+    console.log(`trip: ${e.message}, serving ${name} from the repo`);
+    if (!serveStatic(req, res, `/data/${name}`)) send(res, 404, { error: 'not found' });
+  });
+}
+
+function readBody(req, res, max) {
+  return new Promise((resolve) => {
+    let size = 0; const chunks = [];
+    req.on('data', (c) => { size += c.length; if (size > max) { send(res, 413, { error: 'too large' }); req.destroy(); resolve(null); } else chunks.push(c); });
+    req.on('end', () => {
+      if (res.writableEnded) return resolve(null);
+      try { resolve(JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}')); } catch { send(res, 400, { error: 'json' }); resolve(null); }
+    });
+  });
+}
+const keyOk = (h) => {
+  const got = Buffer.from(String(h || '').replace(/^Bearer\s+/i, '')), want = Buffer.from(ADMIN_KEY);
+  return got.length === want.length && crypto.timingSafeEqual(got, want);
+};
+
+/** Admin API and AI: the only way to change the trip data. Everything needs ADMIN_API_KEY. */
+async function admin(req, res, url) {
+  if (!ADMIN_KEY) return send(res, 503, { error: 'admin disabled: ADMIN_API_KEY is not set' });
+  if (!keyOk(req.headers.authorization)) return send(res, 401, { error: 'clave de administrador incorrecta' });
+  if (!trip) return send(res, 503, { error: 'no trip data' });
+  const p = url.pathname, m = req.method;
+  try {
+    if (p === '/v1/admin/check' && m === 'GET') return send(res, 200, { ok: true, store: trip.kind, ai: ai ? ai.model : null });
+    if (p === '/v1/admin/changes' && m === 'GET') return send(res, 200, await trip.changes());
+    if (p === '/v1/admin/changes' && m === 'POST') {
+      const body = await readBody(req, res, MAX_BODY);
+      if (!body) return;
+      const out = await trip.apply(body.changes, { by: String(body.by || 'admin').slice(0, 60), note: body.note || '' });
+      return send(res, out.error ? 400 : 200, out);
+    }
+    const rv = /^\/v1\/admin\/changes\/([a-z]+)\/([^/]+)$/.exec(p);
+    if (rv && m === 'DELETE') { const out = await trip.revert(rv[1], decodeURIComponent(rv[2])); return send(res, out.error ? 404 : 200, out); }
+    if (p === '/v1/ai/extract' && m === 'POST') {
+      if (!ai) return send(res, 503, { error: 'IA no configurada (KIMI_API_KEY)' });
+      const body = await readBody(req, res, 25 * 1024 * 1024);
+      if (!body) return;
+      const files = (Array.isArray(body.files) ? body.files : []).slice(0, 6).map((f) => ({ name: String(f.name || 'archivo'), type: String(f.type || ''), data: Buffer.from(String(f.data || ''), 'base64') }));
+      return send(res, 200, await extract(ai, await trip.files(), { title: String(body.title || ''), text: String(body.text || ''), url: String(body.url || ''), files }));
+    }
+    return send(res, 404, { error: 'not found' });
+  } catch (e) {
+    console.log(`admin: ${m} ${p}: ${e.message}`);
+    if (!res.headersSent) send(res, 502, { error: e.message });
+  }
+}
+
 /** Photos and attachments: the relay only forwards them to R2 (or streams them back). */
 function files(req, res, key) {
   if (!bucket) return send(res, 503, { error: 'files storage not configured' });

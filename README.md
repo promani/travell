@@ -27,7 +27,10 @@ Localmente van en `.env.local` (ignorado por git); en el servidor, en el ambient
 | Variable | Para qué |
 |---|---|
 | `R2_ENDPOINT`, `R2_KEY`, `R2_SECRET`, `R2_BUCKET` | Cloudflare R2: ahí se suben **siempre** las fotos y los adjuntos |
-| `REDIS_URL`, `REDIS_KEY_PREFIX` | Redis (hoy: el clima). Prefijo por defecto `travell:` |
+| `REDIS_URL`, `REDIS_KEY_PREFIX` | Redis: el clima y los cambios de administración al viaje. Prefijo por defecto `travell:` |
+| `ADMIN_API_KEY` | Clave de administrador: la piden todos los cambios al viaje (`/v1/admin/*`) y la IA (`/v1/ai/*`). Sin ella, están apagados |
+| `KIMI_API_KEY`, `KIMI_MODEL`, `KIMI_BASE_URL` | IA (Kimi / Moonshot, API compatible con OpenAI). Base por defecto `https://api.moonshot.ai/v1` |
+| `TRIP_CHANGES` | `file` guarda los cambios de administración en un archivo aunque haya `REDIS_URL` (para desarrollo local, donde Redis no es accesible) |
 | `PORT`, `RELAY_DATA`, `SERVE_STATIC`, `WEATHER` | Puerto, carpeta de datos del relay, servir la app, apagar el clima (`0`) |
 
 ## Deploy con Docker (app + sincronización en un contenedor)

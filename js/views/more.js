@@ -9,6 +9,7 @@ import { tripPhase } from '../tripstate.js';
 import { ticketBox, hasTicket, transportTicket, paintAttachments, freeUrls } from '../ticket.js';
 import { setupCard } from './people.js';
 import { buildIcs } from '../ics.js';
+import { adminKey, adminFetch } from '../admin.js';
 
 export function menu(_, ctx) {
   ctx.after(() => setupCard(document.getElementById('setup')));
@@ -118,6 +119,12 @@ export function ajustes() {
     <ul class="people">${ov.map((o) => `<li><div><b>${esc(o.title)}</b><small>${esc({ places: 'Lugar', lodging: 'Alojamiento', tasks: 'Tarea', travelers: 'Viajero', activities: 'Actividad' }[o.col])} · ${o.deleted ? 'borrado' : 'editado'}</small></div>
       <button class="btn small" data-act="restore-one" data-col="${o.col}" data-id="${esc(o.id)}">Restaurar</button></li>`).join('')}</ul></section>` : ''; })()}
 
+  <section class="card"><h3>${ic('key')} Administración</h3>
+    <p class="hint">Con la clave de administrador (<code>ADMIN_API_KEY</code> del servidor) este celular puede leer confirmaciones con IA en Compartido y cambiar el viaje para todos. Queda guardada solo acá.</p>
+    <form class="form" data-submit="admin-save"><label class="field">Clave de administrador<input name="key" type="password" autocomplete="off" value="${esc(adminKey())}" placeholder="Pegá la clave"></label>
+      <div class="row-actions"><button class="btn primary" type="submit">Guardar y probar</button>${adminKey() ? '<button class="btn" type="button" data-act="admin-forget">Olvidar</button>' : ''}</div></form>
+    <p id="admin-status" class="info-line"></p></section>
+
   <section class="card"><h3>${ic('floppy-disk')} Datos del dispositivo</h3><p id="storage-info" class="info-line">…</p><p id="cloud-info" class="info-line"></p>
     <p class="hint">Viaje: <b>${esc(D.trip.title)}</b> · datos en <code>${esc(DATA_BASE)}/</code>. Editá los JSON para cambiar el itinerario; lo que cargues en la app (fotos, gastos, códigos) queda en este dispositivo.</p>
     <div class="row-actions"><button class="btn" data-act="sw-refresh">Actualizar app y datos</button><button class="btn danger" data-act="wipe">Borrar datos locales</button></div></section>
@@ -186,6 +193,17 @@ register({
   },
   'restore-one': (el, _, app) => { cols.reset(el.dataset.col, el.dataset.id); toast('Restaurado'); app.rerender(); },
   'ics-export': () => { download(`${D.trip.id}.ics`, new Blob([buildIcs()], { type: 'text/calendar;charset=utf-8' })); toast('Calendario exportado'); },
+  'admin-save': async (form) => {
+    settings.set('adminKey', (new FormData(form).get('key') || '').toString().trim());
+    const st = document.getElementById('admin-status');
+    if (!adminKey()) { if (st) st.textContent = ''; return; }
+    if (st) st.textContent = 'Probando…';
+    try {
+      const r = await adminFetch('/v1/admin/check');
+      if (st) st.innerHTML = `${ic('circle-check')} Clave correcta · IA: ${r.ai ? esc(r.ai) : 'no configurada'} · cambios guardados en ${esc(r.store)}`;
+    } catch (e) { if (st) st.innerHTML = `${ic('triangle-exclamation')} ${esc(e.message)}`; }
+  },
+  'admin-forget': (_, __, app) => { settings.set('adminKey', ''); toast('Clave olvidada'); app.rerender(); },
   'set-brand': (el, _, app) => { settings.set('brand', el.value === (D.trip.brand || DEFAULT_BRAND) ? null : el.value); app.rerender(); },
   'reset-brand': (_, __, app) => { settings.set('brand', null); app.rerender(); },
   'set-provider': (el) => { settings.set('mapProvider', el.value); toast('Listo'); },

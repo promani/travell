@@ -20,6 +20,7 @@ import { ticketActions, migrateDocuments } from './ticket.js';
 import * as resources from './views/resources.js';
 import * as inbox from './views/inbox.js';
 import { paintSimBar } from './views/sim.js';
+import { checkTripRev, onTripReload } from './admin.js';
 import './views/forms.js';
 import { startSync } from './sync.js';
 import { startUploads } from './upload.js';
@@ -182,6 +183,11 @@ setInterval(() => {
   route();
   startSync();
   startUploads();
+  // trip data changed on the server (admin API / AI): reload it; redraw unless a form is open
+  checkTripRev();
+  setInterval(checkTripRev, 2 * 60 * 1000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) checkTripRev(); });
+  onTripReload(() => { if (!document.querySelector('dialog[open]') && !document.activeElement?.matches('input, textarea, select')) route({ keepScroll: true }); });
   bus.on('settings', (k) => { if (k === 'simOffset') route({ keepScroll: true }); if (k === 'brand') applyBrand(); });   // simulated date / app colour changed
   // data changed on another phone: redraw, unless the user is in the middle of a form
   bus.on('remote-change', () => { if (!document.querySelector('dialog[open]') && !document.activeElement?.matches('input, textarea, select')) route({ keepScroll: true }); });
