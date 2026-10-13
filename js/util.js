@@ -37,6 +37,12 @@ export function imgUrl(img, svc) {
   const enc = (s) => encodeURIComponent(s).replace(/['()!*]/g, (c) => '%' + c.charCodeAt(0).toString(16).toUpperCase());
   return `${svc.base}/${enc(img.name)}.png?prompt=${enc(img.prompt)}&ratio=${img.ratio || svc.ratio || '16:9'}`;
 }
+/** The image service's form to redo a picture: same name, prompt and ratio, overwriting the stored one. */
+export function imgFormUrl(img, svc) {
+  if (!img?.name || !img.prompt || !svc?.base) return '';
+  const q = new URLSearchParams({ prompt: img.prompt, filename: img.name, ratio: img.ratio || svc.ratio || '16:9', overwrite: '1' });
+  return `${svc.base}/form?${q}`;
+}
 
 const pad = (n) => String(n).padStart(2, '0');
 

@@ -237,7 +237,8 @@ progress { width: 100%; accent-color: var(--pri); }
 .dayhead-nav { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); } .dayhead-nav > div { flex: 1; text-align: center; }
 .dayhead > p { text-align: center; }
 .day-banner:not(.img-ok) { display: none; }
-.day-banner { aspect-ratio: 16 / 9; max-height: 220px; width: 100%; border-radius: var(--r); margin: 0 0 var(--s3); background: var(--pri) var(--hero-img) center / cover; box-shadow: var(--shadow); }
+.day-banner { aspect-ratio: 16 / 9; max-height: 220px; width: 100%; border-radius: var(--r); margin: 0 0 var(--s3); background: var(--pri) var(--hero-img) center / cover; box-shadow: var(--shadow); position: relative; }
+.banner-edit { position: absolute; top: var(--s2); right: var(--s2); border: 0; opacity: .85; }
 
 /* ------------------------------------------------------------------ activities */
 .act { position: relative; display: grid; grid-template-columns: auto 1fr; gap: 0 var(--s3); padding: var(--s3) 0; align-items: start; }

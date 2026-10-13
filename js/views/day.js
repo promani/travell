@@ -1,6 +1,6 @@
 import { D, I, done, settings, now } from '../store.js';
 import { hasTicket, transportTicket, ticketCode, paintAttachments, freeUrls } from '../ticket.js';
-import { esc, ic, fmtShort, fmtWeekdayShort, cap } from '../util.js';
+import { esc, ic, imgFormUrl, fmtShort, fmtWeekdayShort, cap } from '../util.js';
 import { tripPhase, activityNow, lodgingOfDay, dayClockNote } from '../tripstate.js';
 import { heroImg, actRow, renderCards, notesCard, dayLabel, statusBadge, extLink, transportIcon, register, cat, bookingSite, lodgingOptions } from '../ui.js';
 import { thumbsFor } from './photos.js';
@@ -55,7 +55,7 @@ export function render({ id }, ctx) {
   const g = heroImg(day.image);
   return `${strip(day.id, todayId)}
   <header class="dayhead${g.cls ? ' has-img' : ''}">
-    ${g.cls ? `<div class="day-banner"${g.style} role="img" aria-label="${esc(day.image.prompt)}"></div>` : ''}
+    ${g.cls ? `<div class="day-banner"${g.style} title="${esc(day.image.prompt)}"><a class="icon-btn sm banner-edit" href="${esc(imgFormUrl(day.image, D.trip.imageService))}" target="_blank" rel="noopener" aria-label="Rehacer la imagen">${ic('pen')}</a></div>` : ''}
     <div class="dayhead-nav">${prev ? `<a class="icon-btn" href="#/dia/${prev.id}" aria-label="Día anterior">‹</a>` : '<span></span>'}
       <div><small>Día ${day.n} de ${D.days.length}${isToday ? ' · <b>hoy</b>' : ''}</small><h1>${esc(day.title)}</h1><small>${esc(dayLabel(day))}${day.cityId ? ' · ' + esc(I.city[day.cityId].name) : ''}</small></div>
       ${next ? `<a class="icon-btn" href="#/dia/${next.id}" aria-label="Día siguiente">›</a>` : '<span></span>'}</div>
