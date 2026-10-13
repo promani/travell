@@ -37,6 +37,24 @@
     ]
   },
   {
+    "id": "p-disney",
+    "name": "Shanghai Disneyland",
+    "nameLocal": "上海迪士尼乐园",
+    "cityId": "shanghai",
+    "category": "aventura",
+    "lat": 31.1434,
+    "lon": 121.6577,
+    "approx": true,
+    "area": "Pudong (Disney Resort)",
+    "description": "Parque de Disney con TRON, Piratas del Caribe y Zootopia. Entradas con pasaporte, por día y precio variable.",
+    "cost": "~¥600–800 (aprox.)",
+    "link": "https://www.shanghaidisneyresort.com/en/",
+    "source": "itinerario",
+    "days": [
+      "d04"
+    ]
+  },
+  {
     "id": "p-bund",
     "name": "El Bund",
     "nameLocal": "外滩",
@@ -69,7 +87,7 @@
     "link": null,
     "source": "itinerario",
     "days": [
-      "d04"
+      "d05"
     ]
   },
   {
@@ -87,7 +105,7 @@
     "link": null,
     "source": "itinerario",
     "days": [
-      "d04"
+      "d05"
     ]
   },
   {
@@ -105,7 +123,7 @@
     "link": null,
     "source": "itinerario",
     "days": [
-      "d04"
+      "d07"
     ]
   },
   {
@@ -158,9 +176,7 @@
     "cost": "Museo gratis con reserva; templo ~¥50 (aprox.)",
     "link": null,
     "source": "itinerario",
-    "days": [
-      "d05"
-    ]
+    "days": []
   },
   {
     "id": "p-yongkang",

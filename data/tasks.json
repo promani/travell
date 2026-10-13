@@ -1,5 +1,21 @@
 [
   {
+    "id": "k24",
+    "title": "Entradas de Shanghai Disneyland (15/11)",
+    "when": "Antes del 1/11",
+    "dueAt": "2026-11-01T00:00:00-03:00",
+    "urgent": false,
+    "day": "d04",
+    "status": "pendiente",
+    "notes": "Con el pasaporte de cada uno, en la app de Shanghai Disney Resort o Trip.com. Domingo: precio más alto y se agotan.",
+    "assignee": null,
+    "priority": "alta",
+    "covers": [
+      "activity:A131"
+    ],
+    "source": "json"
+  },
+  {
     "id": "k02",
     "title": "Vuelo Kansai → Pekín (1/12)",
     "when": "Ya",

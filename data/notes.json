@@ -157,22 +157,22 @@
   {
     "id": "n-d04-1",
     "kind": "tip",
-    "title": "Tips para Shanghai",
-    "detail": "Los lugares turísticos y museos piden el pasaporte para sacar la entrada: llevalo siempre. En el metro hay control de mochilas. Las luces del Bund se apagan ~22:00 (antes, ~21:30 algunos días): no dejes la vista nocturna para el final. Si llueve: Museo de Shanghai (Plaza del Pueblo) o el Shanghai Tower, que igual vale con nubes bajas.",
+    "title": "Shanghai Disney",
+    "detail": "Entradas con fecha y a nombre de cada uno: se compran con el pasaporte en la app o la web de Shanghai Disney Resort (o Trip.com) y se entra mostrando el pasaporte. Bajá la app antes: muestra los tiempos de espera y vende el Premier Access. Domingo = mucha gente. Las luces del Bund se apagan ~22:00: no te quedes hasta el cierre del parque.",
     "days": [
       "d04"
     ],
-    "icon": "lightbulb"
+    "icon": "ticket"
   },
   {
     "id": "n-d05-1",
     "kind": "tip",
-    "title": "Si llueve",
-    "detail": "Cambiá la caminata por la Concesión Francesa por el Museo de Shanghai y Xintiandi (techado en parte). Otra opción: los callejones de Tianzifang tienen muchos locales cubiertos y casas de té.",
+    "title": "Tips para Shanghai",
+    "detail": "Los lugares turísticos y museos piden el pasaporte: llevalo siempre. En el metro hay control de mochilas. En Yu Garden y Nanjing Road se regatea en los puestos, no en las tiendas. Si llueve: el Museo de Shanghai (Plaza del Pueblo, gratis con reserva) y los shoppings de Xintiandi, y la Concesión Francesa para la noche de bares.",
     "days": [
       "d05"
     ],
-    "icon": "umbrella"
+    "icon": "lightbulb"
   },
   {
     "id": "n-d06-1",
