@@ -160,7 +160,7 @@ test('simulating a day moves the whole app to that day (and back)', async () => 
   const check = (iso, phase, dayId) => { setSimulatedNow(localInstant(...iso.split('T'))); const st = tripPhase(); assert.equal(st.phase, phase, iso); if (dayId) assert.equal(st.day.id, dayId, iso); };
   check('2026-11-02T09:00', 'pre'); check('2026-11-15T09:00', 'during', 'd04'); check('2026-12-02T20:00', 'during', 'd21'); check('2026-12-08T09:00', 'post');
   const { simLabel } = await import('../js/views/sim.js').catch(() => ({}));
-  if (simLabel) { setSimulatedNow(localInstant('2026-11-15', '09:00')); assert.match(simLabel(), /^Día 4 · .* 09:\d\d$/); }
+  if (simLabel) { setSimulatedNow(localInstant('2026-11-15', '09:00')); assert.match(simLabel(), /^Día 4 · .* · mañana$/); }
   setSimulatedNow(null);
   assert.ok(Math.abs(now() - Date.now()) < 1000);
 });
