@@ -50,17 +50,33 @@
   },
   {
     "id": "k04",
-    "title": "Hotel Tokio 18–23/11 (Shinjuku)",
+    "title": "Airbnb Tokio 18–22/11 (Waseda)",
     "when": "Ya",
     "dueAt": null,
     "urgent": true,
     "day": "d07",
     "status": "pendiente",
-    "notes": "Avisar llegada ~21:30.",
+    "notes": "Avisar la llegada ~21:30 al anfitrión.",
     "assignee": null,
     "priority": "alta",
     "covers": [
       "lodging:l02"
+    ],
+    "source": "json"
+  },
+  {
+    "id": "k27",
+    "title": "Hotel Tokio 22/11 (1 noche, Shinjuku)",
+    "when": "Ya",
+    "dueAt": null,
+    "urgent": true,
+    "day": "d11",
+    "status": "pendiente",
+    "notes": "Cerca de la estación de Shinjuku, para el Romancecar del 23/11.",
+    "assignee": null,
+    "priority": "alta",
+    "covers": [
+      "lodging:l10"
     ],
     "source": "json"
   },
@@ -357,7 +373,7 @@
     "urgent": false,
     "day": "d11",
     "status": "pendiente",
-    "notes": "Entrega el 25/11.",
+    "notes": "Desde un konbini cerca del Airbnb; entrega el 25/11.",
     "assignee": null,
     "priority": "normal",
     "covers": [],

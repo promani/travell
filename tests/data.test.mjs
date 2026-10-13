@@ -13,7 +13,7 @@ await loadData();
 test('loads the trip and the extra places file', () => {
   assert.equal(D.days.length, 24);
   assert.ok(I.place['p-bund'] && I.place['p-e-skytree'], 'places.json + places-extra.json');
-  assert.equal(D.days.reduce((n, d) => n + d.activities.length, 0), 133);
+  assert.equal(D.days.reduce((n, d) => n + d.activities.length, 0), 134);
 });
 
 test('every night that is not on a plane has a lodging', () => {
