@@ -203,8 +203,7 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
 - **iPhone o compu** (Safari no soporta recibir lo compartido): en la misma pantalla se pega el texto del mail, un link o se eligen archivos. También desde Documentos → "Cargar desde una confirmación".
 - Por cada cosa recibida la app **sugiere** el código de reserva (por ejemplo después de "código de reserva", "localizador", "PNR") y a qué pasaje, hotel, entrada o documento corresponde (vuelo, nombre del hotel). Todo se revisa antes de guardar.
 - Al guardar: el código y el link van a la reserva elegida (en hoteles, a `confirmation` y al link de la reserva), los archivos quedan adjuntos (offline y subidos a la nube). También puede ir a un **recurso nuevo**.
-- **Leer con IA** (solo en un celular con la clave de administrador): la IA (Kimi) lee el texto, el PDF o la captura, dice qué es y propone dónde va. Si la reserva ya existe la actualiza (ej. "Hotel a reservar" pasa a ser el hotel real, reservado, con dirección y horarios); si no, la crea. Muestra la lista de cambios y nada cambia hasta tocar **Aplicar**. Los cambios al viaje los ven todos; el código y el archivo se guardan como en el guardado a mano.
-- Sin la clave, la lectura es por reglas simples (`js/guess.js`).
+- La lectura es por reglas simples (`js/guess.js`). La app no guarda la clave de administrador: la lectura con IA (`/v1/ai/extract`) y los cambios al viaje (`/v1/admin/changes`) se usan solo desde afuera de la app, con `ADMIN_API_KEY`.
 
 ## 21. Multiviaje 🟡
 

@@ -395,13 +395,9 @@ body.onboarding main { padding-bottom: var(--s6); }
 @media (hover: hover) { .onboard-pick:hover { border-color: var(--pri); } }
 .onboard > .btn { width: 100%; } .onboard > .hint { text-align: center; margin-top: var(--s4); }
 
-/* ------------------------------------------------------------------ Compartido: steps, AI proposal */
+/* ------------------------------------------------------------------ Compartido: steps */
 .steps { margin: var(--s2) 0 0; padding-left: 1.2rem; font-size: var(--fs-sm); color: var(--muted); } .steps li { margin: var(--s1) 0; } .steps b { color: var(--text); }
-.ai-box { margin: var(--s3) 0; padding: var(--s3) var(--s4); border-radius: var(--r-md); background: color-mix(in srgb, var(--pri) 8%, var(--card)); border: 1px solid color-mix(in srgb, var(--pri) 30%, transparent); }
-.ai-head { display: flex; gap: var(--s2); align-items: baseline; margin: 0 0 var(--s2); } .ai-head b { font-weight: 600; } .ai-head .fa-solid { color: var(--pri); }
-.ai-changes { list-style: none; margin: var(--s1) 0 var(--s2); padding: 0; font-size: var(--fs-sm); } .ai-changes li { display: flex; gap: var(--s2); align-items: baseline; padding: var(--s1) 0; } .ai-changes .fa-solid { color: var(--pri); width: 1rem; text-align: center; }
 .warn-line { color: var(--warn-ink); }
-details.manual { margin-top: var(--s2); } details.manual > summary { cursor: pointer; font-weight: 600; font-size: var(--fs-sm); color: var(--pri); min-height: var(--ctl-sm); display: flex; align-items: center; }
 .fa-spinner { animation: spin 1s linear infinite; } @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ------------------------------------------------------------------ notes: tips, reminders and alerts per day */
