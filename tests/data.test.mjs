@@ -38,7 +38,7 @@ test('a new activity is placed by start time and links its place', () => {
   cols.put('places', { id: 'p-t', name: 'Test', category: 'gastronomia', cityId: 'shanghai', lat: 31.23, lon: 121.47 });
   cols.put('activities', { id: 'a-t', dayId: 'd04', title: 'Mediodía', start: '12:30', category: 'gastronomia', placeId: 'p-t' });
   const titles = I.day.d04.activities.map((a) => a.id);
-  assert.ok(titles.indexOf('a-t') > titles.indexOf('A131') && titles.indexOf('a-t') < titles.indexOf('A132'));
+  assert.ok(titles.indexOf('a-t') > titles.indexOf('A008') && titles.indexOf('a-t') < titles.indexOf('A012'));
   assert.deepEqual(I.place['p-t'].days, ['d04']);
 });
 

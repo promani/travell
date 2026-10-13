@@ -1,13 +1,13 @@
 [
   {
     "id": "k24",
-    "title": "Entradas de Shanghai Disneyland (15/11)",
+    "title": "Entradas de Shanghai Disneyland (lunes 16/11)",
     "when": "Antes del 1/11",
     "dueAt": "2026-11-01T00:00:00-03:00",
     "urgent": false,
-    "day": "d04",
+    "day": "d05",
     "status": "pendiente",
-    "notes": "Con el pasaporte de cada uno, en la app de Shanghai Disney Resort o Trip.com. Domingo: precio más alto y se agotan.",
+    "notes": "Con el pasaporte de cada uno, en la app de Shanghai Disney Resort o Trip.com. Es lunes: más barato que el fin de semana.",
     "assignee": null,
     "priority": "alta",
     "covers": [
