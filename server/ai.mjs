@@ -72,7 +72,7 @@ export function tripContext(files) {
   };
 }
 
-const CHANGE_RULES = `Formato de cada cambio (es lo único que puede modificar el viaje):
+export const CHANGE_RULES = `Formato de cada cambio (es lo único que puede modificar el viaje):
 { "op": "put" | "patch" | "del", "col": "<colección>", "id": "<id>", "data": { ... }, "label": "<frase corta en castellano rioplatense>" }
 - Colecciones: ${Object.keys(COLS).join(', ')}.
 - "patch" agrega o cambia campos de un registro que ya existe (preferilo). "put" crea uno nuevo con todos sus campos. "del" lo borra.

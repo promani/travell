@@ -105,6 +105,7 @@ server/weather.mjs    Clima diario desde Open-Meteo (pronóstico o clima típico
 server/redis.mjs      Cliente Redis mínimo (RESP, sin dependencias)
 server/tripdata.mjs   Cambios de administración sobre data/*.json: validación, merge, guardado en Redis (o archivo)
 server/ai.mjs         IA (Kimi): cliente, contexto del viaje y lectura de confirmaciones; solo propone cambios
+server/mcp.mjs        Servidor MCP (POST /mcp) para una sesión de Claude: leer el viaje, previsualizar y aplicar cambios
 js/admin.js           Clave de administrador, llamadas a /v1/admin y /v1/ai, recarga del viaje cuando cambia en el servidor
 tests/                Tests con node:test (npm test)
 Dockerfile            Imagen para Dokploy u otra plataforma: app + relay en el puerto 3000
@@ -296,7 +297,7 @@ flowchart LR
 - **Recarga**: cada cambio sube una revisión (`GET /v1/trip/rev`). La app la consulta cada 2 minutos y al volver a primer plano, y si cambió recarga los datos.
 - **Historial**: se guardan los últimos 200 lotes (quién, cuándo, nota, frases). `GET /v1/admin/changes` lista lo que difiere del repo, para pasarlo al repo cuando convenga; `DELETE /v1/admin/changes/<col>/<id>` vuelve un registro a lo que dice el repo.
 - **Confirmaciones (Compartido)**: `extract()` arma el contexto (qué existe, con ids, y un registro de ejemplo por colección para que respete la forma), lee PDFs e imágenes con el *file-extract* de Moonshot y pide un JSON con `kind`, `summary`, `target` (dónde se guarda el código y el archivo) y `changes`.
-- **Agente (próximo)**: "cambiá el día 5 por esto" usa las mismas piezas: `tripContext()` + `chat()` + la validación + el paso de confirmación. Solo agrega la conversación (historial de mensajes) y, si hace falta más contexto, una herramienta para pedir el detalle de un día o una colección.
+- **Claude por MCP** (`server/mcp.mjs`): en vez de un agente propio, una sesión normal de Claude se conecta a `POST /mcp` (MCP *Streamable HTTP*, sin estado, respuestas JSON) con el mismo `Authorization: Bearer $ADMIN_API_KEY`. Herramientas: `trip_overview` (lo de `tripContext()`), `get_day`, `get_records`, `preview_changes` (valida y muestra antes → después, sin guardar), `apply_changes` (= `trip.apply()`, misma validación y mismo Redis que `/v1/admin/changes`; queda en el historial como `claude (mcp)`), `list_changes` y `revert_record`. Las reglas del formato van en las `instructions` del servidor. Para "cambiá el día 5 por esto": Claude lee el día, arma el lote, lo previsualiza, la persona confirma y se aplica.
 
 - **Requisitos**: el relay tiene que estar en HTTPS si la app está en HTTPS (contenido mixto), y conviene alojarlo donde sea accesible desde China. Ejecución: `PORT=8787 RELAY_DATA=./relay-data node server/relay.mjs`.
 

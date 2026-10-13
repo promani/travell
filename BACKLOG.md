@@ -54,7 +54,6 @@ Ya hay ABM de lugares, alojamientos, actividades, tareas y viajeros. Falta:
 - [ ] Más **reglas de sugerencias**: vuelos sin hora confirmada, días sin actividades, actividades fuera del horario de apertura, conexiones ajustadas entre transportes.
 
 ### Documentos
-- [ ] **Agente de IA** siempre disponible ("cambiá el itinerario del día 5 por esto"): conversación que propone cambios con el mismo formato y validación que "Leer con IA" (ver ARCHITECTURE → Cambios de administración e IA).
 - [ ] Pantalla de **historial de cambios** de administración, con "volver al repo" por registro y un export para pasarlos al repo.
 - [ ] Reenviar el mail a una dirección del grupo (Cloudflare Email Routing → Worker): choca con el cifrado de punta a punta del relay.
 - [ ] Generar **QR o código de barras** a partir del código cargado.

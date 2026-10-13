@@ -75,3 +75,37 @@ test('admin API needs the key and the app reads the merged files', async () => {
     assert.equal((await fetch(`${b}/v1/ai/extract`, { method: 'POST', body: '{}', headers: { authorization: 'Bearer k-test' } })).status, 503, 'no AI without KIMI_API_KEY');
   } finally { proc.kill(); }
 });
+
+test('MCP server: same key, reads the trip, previews and applies changes', async () => {
+  const PORT = 20000 + Math.floor(Math.random() * 1000), b = `http://127.0.0.1:${PORT}`;
+  const proc = spawn(process.execPath, ['server/relay.mjs'], { cwd: ROOT, env: { ...process.env, PORT: String(PORT), RELAY_DATA: fs.mkdtempSync(path.join(os.tmpdir(), 'relay-')), SERVE_STATIC: ROOT, WEATHER: '0', REDIS_URL: '', ADMIN_API_KEY: 'k-test', KIMI_API_KEY: '' }, stdio: 'ignore' });
+  let n = 0;
+  const rpc = (method, params, key = 'k-test') => fetch(`${b}/mcp`, { method: 'POST', headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json', accept: 'application/json, text/event-stream' }, body: JSON.stringify({ jsonrpc: '2.0', id: ++n, method, params }) });
+  const tool = async (name, args) => (await (await rpc('tools/call', { name, arguments: args })).json()).result;
+  const lodging = base['lodging.json'][0];
+  try {
+    for (let i = 0; i < 50; i++) { try { if ((await fetch(`${b}/health`)).ok) break; } catch { /* starting */ } await new Promise((r) => setTimeout(r, 100)); }
+    assert.equal((await rpc('tools/list', {}, 'nope')).status, 401);
+    const init = (await (await rpc('initialize', { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 't', version: '1' } })).json()).result;
+    assert.equal(init.protocolVersion, '2025-06-18');
+    assert.ok(init.capabilities.tools && init.instructions.includes('patch'));
+    const note = await fetch(`${b}/mcp`, { method: 'POST', headers: { authorization: 'Bearer k-test' }, body: JSON.stringify({ jsonrpc: '2.0', method: 'notifications/initialized' }) });
+    assert.equal(note.status, 202);
+    const names = (await (await rpc('tools/list', {})).json()).result.tools.map((t) => t.name);
+    assert.deepEqual(names, ['trip_overview', 'get_day', 'get_records', 'preview_changes', 'apply_changes', 'list_changes', 'revert_record']);
+    assert.ok(JSON.parse((await tool('trip_overview', {})).content[0].text).days.length > 10);
+    const day = JSON.parse((await tool('get_day', { day: '4' })).content[0].text);
+    assert.equal(day.id, 'd04');
+    assert.ok(Array.isArray(day.activities) && Array.isArray(day.notes) && day.lodging.length);
+    const ch = [{ op: 'patch', col: 'lodging', id: lodging.id, data: { name: 'Desde MCP' }, label: 'Renombrar' }];
+    const prev = JSON.parse((await tool('preview_changes', { changes: ch })).content[0].text);
+    assert.deepEqual(prev.changes[0].fields.name, { before: lodging.name, after: 'Desde MCP' });
+    assert.equal((await (await fetch(`${b}/v1/trip/rev`)).json()).rev, 0, 'preview writes nothing');
+    assert.ok((await tool('apply_changes', { changes: [{ op: 'patch', col: 'days', id: 'd04', data: { n: 9 } }] })).isError);
+    assert.ok(!(await tool('apply_changes', { changes: ch, note: 'test' })).isError);
+    assert.equal((await (await fetch(`${b}/data/lodging.json`)).json())[0].name, 'Desde MCP');
+    assert.equal(JSON.parse((await tool('list_changes', {})).content[0].text).log[0].by, 'claude (mcp)');
+    assert.ok(!(await tool('revert_record', { collection: 'lodging', id: lodging.id })).isError);
+    assert.equal((await (await fetch(`${b}/data/lodging.json`)).json())[0].name, lodging.name);
+  } finally { proc.kill(); }
+});

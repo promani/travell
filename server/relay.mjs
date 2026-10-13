@@ -19,6 +19,7 @@
 //   POST /v1/admin/changes  { changes: [...], note, by }      -> { rev, applied } | 400 { error, index }
 //   DELETE /v1/admin/changes/:col/:id                         -> back to what the repo says
 //   POST /v1/ai/extract  { title, text, url, files: [{ name, type, data (base64) }] } -> a proposal, nothing is written
+//   POST /mcp  (JSON-RPC)                                     -> MCP server for a Claude session: read, preview and apply changes (see mcp.mjs)
 //
 // With SERVE_STATIC=<dir> it also serves the PWA from that folder (one container for app + relay).
 // REDIS_URL=redis://[:password@]host:6379[/db] keeps the weather in Redis (otherwise in a file in RELAY_DATA).
@@ -37,6 +38,7 @@ import { startWeather, weatherStore } from './weather.mjs';
 import { r2FromEnv } from './r2.mjs';
 import { tripData, changeStore, managedFiles } from './tripdata.mjs';
 import { kimiFromEnv, extract } from './ai.mjs';
+import { mcp } from './mcp.mjs';
 import crypto from 'node:crypto';
 
 const PORT = +(process.env.PORT || 8787);
@@ -128,7 +130,7 @@ const server = http.createServer((req, res) => {
   if (url.pathname === '/health') return send(res, 200, { ok: true, groups: groups.size, files: !!bucket });
   const f = FILE_PATH.exec(url.pathname);
   if (f) return files(req, res, f.slice(1, 4).join('/'));
-  if (url.pathname.startsWith('/v1/admin/') || url.pathname.startsWith('/v1/ai/')) return admin(req, res, url);
+  if (url.pathname.startsWith('/v1/admin/') || url.pathname.startsWith('/v1/ai/') || url.pathname === '/mcp') return admin(req, res, url);
   if (url.pathname === '/v1/trip/rev' && req.method === 'GET') return trip ? trip.rev().then((rev) => send(res, 200, { rev }), () => send(res, 503, { error: 'store' })) : send(res, 503, { error: 'no trip' });
   const df = /^\/data\/([\w.-]+\.json)$/.exec(url.pathname);
   if (df && STATIC && trip && managed.has(df[1]) && (req.method === 'GET' || req.method === 'HEAD')) return dataFile(req, res, df[1]);
@@ -206,6 +208,14 @@ async function admin(req, res, url) {
   if (!trip) return send(res, 503, { error: 'no trip data' });
   const p = url.pathname, m = req.method;
   try {
+    if (p === '/mcp') {
+      if (m !== 'POST') { res.writeHead(405, { allow: 'POST' }); return res.end(); }   // stateless: no SSE stream, no sessions
+      const body = await readBody(req, res, MAX_BODY);
+      if (!body) return;
+      const out = await mcp(trip, body);
+      if (!out) { res.writeHead(202); return res.end(); }
+      return send(res, 200, out);
+    }
     if (p === '/v1/admin/check' && m === 'GET') return send(res, 200, { ok: true, store: trip.kind, ai: ai ? ai.model : null });
     if (p === '/v1/admin/changes' && m === 'GET') return send(res, 200, await trip.changes());
     if (p === '/v1/admin/changes' && m === 'POST') {
