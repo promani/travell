@@ -147,9 +147,11 @@ export async function storageInfo(ctx) {
   const el = document.getElementById('storage-info');
   if (!el) return;
   try {
-    const { usage, quota } = await navigator.storage.estimate();
+    // No "MB usados": the browser counts each cached map tile or day picture (cross-origin, opaque) as ~7 MB,
+    // so navigator.storage.estimate() reports far more than what is really stored.
     const persisted = await navigator.storage.persisted?.();
-    el.textContent = `Usado: ${(usage / 1048576).toFixed(1)} MB de ${(quota / 1048576).toFixed(0)} MB · ${persisted ? 'almacenamiento persistente' : 'almacenamiento no persistente'}`;
+    el.textContent = persisted ? 'Almacenamiento persistente: el navegador no borra los datos de la app.'
+      : 'Almacenamiento no persistente: si el celular se queda sin espacio, el navegador puede borrar mapas e imágenes guardados.';
   } catch { el.textContent = 'No disponible.'; }
 }
 
