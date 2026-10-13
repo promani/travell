@@ -74,14 +74,7 @@
       },
       "sleepsAt": "Avión",
       "lodgingId": null,
-      "cards": [
-        {
-          "type": "info",
-          "icon": "bed",
-          "title": "Para el vuelo largo",
-          "body": "Son ~29 h con la escala técnica en Auckland: en general se queda en la zona de tránsito, pero tené la NZeTA a mano por si la piden. Poné el reloj en hora de China apenas despegues y dormí según ese horario; tomá mucha agua y evitá el alcohol. Llevá abrigo liviano, antifaz, tapones y el cargador en el equipaje de mano. Al cruzar la línea de cambio de fecha se \"pierde\" el 13/11."
-        }
-      ],
+      "cards": [],
       "activities": [
         {
           "id": "A002",
@@ -233,12 +226,6 @@
               "url": "https://www.didiglobal.com/"
             }
           ]
-        },
-        {
-          "type": "info",
-          "icon": "mobile-screen",
-          "title": "Primeras horas en China",
-          "body": "Antes de salir del aeropuerto: probá que la eSIM tenga datos, que Alipay pague (un agua en un kiosco sirve) y abrí Amap o Baidu Maps (Google Maps no anda). Para pedir DiDi, mostrá la dirección del hotel en chino desde el hotel en esta app. No hace falta dar propina en China."
         }
       ],
       "activities": [
@@ -311,14 +298,7 @@
       },
       "sleepsAt": "Shanghai",
       "lodgingId": "l01",
-      "cards": [
-        {
-          "type": "info",
-          "icon": "lightbulb",
-          "title": "Tips para Shanghai",
-          "body": "Los lugares turísticos y museos piden el pasaporte para sacar la entrada: llevalo siempre. En el metro hay control de mochilas. Las luces del Bund se apagan ~22:00 (antes, ~21:30 algunos días): no dejes la vista nocturna para el final. Si llueve: Museo de Shanghai (Plaza del Pueblo) o el Shanghai Tower, que igual vale con nubes bajas."
-        }
-      ],
+      "cards": [],
       "activities": [
         {
           "id": "A006",
@@ -443,14 +423,7 @@
       },
       "sleepsAt": "Shanghai",
       "lodgingId": "l01",
-      "cards": [
-        {
-          "type": "info",
-          "icon": "umbrella",
-          "title": "Si llueve",
-          "body": "Cambiá la caminata por la Concesión Francesa por el Museo de Shanghai y Xintiandi (techado en parte). Otra opción: los callejones de Tianzifang tienen muchos locales cubiertos y casas de té."
-        }
-      ],
+      "cards": [],
       "activities": [
         {
           "id": "A011",
@@ -557,14 +530,7 @@
       },
       "sleepsAt": "Shanghai",
       "lodgingId": "l01",
-      "cards": [
-        {
-          "type": "info",
-          "icon": "ticket",
-          "title": "Para el día en Suzhou",
-          "body": "Los trenes se suben con el pasaporte (no hace falta imprimir nada). Llegá a Hongqiao 30 min antes: hay control de seguridad y de documentos. Las entradas del Jardín del Administrador Humilde y del Museo se reservan con pasaporte y se presentan en la puerta. Si llueve, los jardines se disfrutan igual (y con menos gente); llevá paraguas."
-        }
-      ],
+      "cards": [],
       "activities": [
         {
           "id": "A015",
@@ -801,12 +767,6 @@
               "url": "https://www.vjw-lp.digital.go.jp/en/"
             }
           ]
-        },
-        {
-          "type": "info",
-          "icon": "yen-sign",
-          "title": "Antes de dejar China",
-          "body": "Gastá o cambiá los yuanes que te sobren (vas a volver el 1/12, así que podés guardar algo). En Japón: tené el QR de Visit Japan Web listo antes de aterrizar y sacá yenes en un 7-Eleven o un ATM de Japan Post del aeropuerto."
         }
       ],
       "activities": [
@@ -933,14 +893,7 @@
       },
       "sleepsAt": "Tokio",
       "lodgingId": "l02",
-      "cards": [
-        {
-          "type": "info",
-          "icon": "circle-info",
-          "title": "Primer día en Japón",
-          "body": "No se deja propina. En la calle casi no hay tachos: la basura se lleva hasta el hotel o un konbini. En las escaleras mecánicas de Tokio se para a la izquierda. Los konbini (7-Eleven, Lawson, FamilyMart) son el salvavidas: comida, ATM, baño. En templos y santuarios: no fotografiar dentro de los salones, y en el temizu se lavan manos y boca antes de entrar."
-        }
-      ],
+      "cards": [],
       "activities": [
         {
           "id": "A027",
@@ -1101,20 +1054,7 @@
       },
       "sleepsAt": "Tokio",
       "lodgingId": "l02",
-      "cards": [
-        {
-          "type": "info",
-          "icon": "cloud-sun",
-          "title": "Plan B si el Fuji está nublado",
-          "body": "Mirá la webcam o el pronóstico la noche anterior. Si viene cubierto, intercambiá este día con el 21 o el 22 (los trenes reservados se pueden cambiar antes de la salida). Si igual vas y está nublado: el festival de arces y Oshino Hakkai (estanques de agua del Fuji, 20 min en bus) valen sin la montaña.",
-          "links": [
-            {
-              "title": "Webcams del Monte Fuji",
-              "url": "https://www.fujigoko.tv/"
-            }
-          ]
-        }
-      ],
+      "cards": [],
       "activities": [
         {
           "id": "A035",
@@ -1257,14 +1197,7 @@
       },
       "sleepsAt": "Tokio",
       "lodgingId": "l02",
-      "cards": [
-        {
-          "type": "info",
-          "icon": "gamepad",
-          "title": "Para fans del animé",
-          "body": "De noche, en lugar de Shimokitazawa, Nakano Broadway (10 min desde Shinjuku por la línea Chuo): cuatro pisos de manga, figuras y juguetes usados. Muchos locales cierran ~20:00, así que ir antes de cenar."
-        }
-      ],
+      "cards": [],
       "activities": [
         {
           "id": "A042",
@@ -1407,14 +1340,7 @@
       },
       "sleepsAt": "Tokio",
       "lodgingId": "l02",
-      "cards": [
-        {
-          "type": "info",
-          "icon": "suitcase",
-          "title": "Esta noche: valija a Osaka",
-          "body": "Antes de salir a la noche dejá la valija grande lista. Para Hakone llevá un bolso chico con 2 noches de ropa, el yukata lo da el hotel. El envío (takkyubin) se paga en la recepción: ~¥2.000–3.000 por valija (aprox.)."
-        }
-      ],
+      "cards": [],
       "activities": [
         {
           "id": "A049",
@@ -1557,14 +1483,7 @@
       },
       "sleepsAt": "Hakone — Hotel Green Plaza",
       "lodgingId": "l03",
-      "cards": [
-        {
-          "type": "info",
-          "icon": "ticket",
-          "title": "Hakone Free Pass",
-          "body": "Cubre el bus, el teleférico, el barco del lago Ashi y el tren de montaña durante 2 o 3 días; el Romancecar se paga aparte (suplemento). Se compra en la app EMot o en Odakyu (Shinjuku). Feriado: llegá con tiempo al andén."
-        }
-      ],
+      "cards": [],
       "activities": [
         {
           "id": "A055",
@@ -1707,14 +1626,7 @@
       },
       "sleepsAt": "Hakone — Hotel Green Plaza",
       "lodgingId": "l03",
-      "cards": [
-        {
-          "type": "info",
-          "icon": "triangle-exclamation",
-          "title": "Plan B si cierra el teleférico",
-          "body": "Si el Owakudani cierra por gases volcánicos o viento, hay bus de Ubako a Togendai y el barco sigue igual. Si llueve fuerte: el Museo al Aire Libre de Hakone (esculturas y pabellón Picasso) y el Museo de Arte Pola, con descuento mostrando el Free Pass, y más tiempo de onsen."
-        }
-      ],
+      "cards": [],
       "activities": [
         {
           "id": "A062",
@@ -1857,14 +1769,7 @@
       },
       "sleepsAt": "Osaka (hotel a reservar; sugerido Namba)",
       "lodgingId": "l04",
-      "cards": [
-        {
-          "type": "info",
-          "icon": "bowl-food",
-          "title": "Qué probar en Osaka",
-          "body": "Osaka es la capital del kuidaore (\"comer hasta caer\"): takoyaki, okonomiyaki, kushikatsu y kitsune udon. Si la valija del takkyubin no llegó, el número de seguimiento está en el recibo que te dieron en Tokio."
-        }
-      ],
+      "cards": [],
       "activities": [
         {
           "id": "A069",
@@ -1989,14 +1894,7 @@
       },
       "sleepsAt": "Kobe — Portopia Hotel",
       "lodgingId": "l05",
-      "cards": [
-        {
-          "type": "info",
-          "icon": "heart",
-          "title": "Noche especial",
-          "body": "Para festejar el casamiento: avisá al reservar el teppanyaki que es luna de miel; muchos restaurantes agregan un detalle. Después, el puerto iluminado desde Meriken Park o Harborland."
-        }
-      ],
+      "cards": [],
       "activities": [
         {
           "id": "A074",
@@ -2103,14 +2001,7 @@
       },
       "sleepsAt": "Kobe — Portopia Hotel",
       "lodgingId": "l05",
-      "cards": [
-        {
-          "type": "info",
-          "icon": "leaf",
-          "title": "Kioto en temporada de hojas rojas",
-          "body": "Fines de noviembre es lo más lleno del año: Fushimi Inari y Kiyomizu-dera antes de las 9 o después de las 17. En Kioto el bus va lleno: para moverte entre zonas usá metro, Keihan o caminá. Alternativa con menos gente: Tofuku-ji (arces sobre el puente Tsutenkyo), a una estación de Fushimi Inari."
-        }
-      ],
+      "cards": [],
       "activities": [
         {
           "id": "A079",
@@ -2253,14 +2144,7 @@
       },
       "sleepsAt": "Kobe — Portopia Hotel",
       "lodgingId": "l05",
-      "cards": [
-        {
-          "type": "info",
-          "icon": "circle-info",
-          "title": "Ciervos de Nara",
-          "body": "Las galletas (shika-senbei) se compran en los puestos del parque; los ciervos hacen una reverencia y la devuelven. Pueden morder o empujar si ven comida: no tengas bolsas a la vista y no les des otra cosa."
-        }
-      ],
+      "cards": [],
       "activities": [
         {
           "id": "A122",
@@ -2385,14 +2269,7 @@
       },
       "sleepsAt": "Kobe — Portopia Hotel",
       "lodgingId": "l05",
-      "cards": [
-        {
-          "type": "info",
-          "icon": "hot-tub-person",
-          "title": "Arima Onsen",
-          "body": "Kin-no-yu (agua dorada, rojiza por el hierro) y Gin-no-yu (agua clara) son baños públicos: llevá toalla chica o comprala ahí. Hay un pase para los dos más barato que por separado. Probá las tansan senbei (galletas hechas con agua gasificada del pueblo)."
-        }
-      ],
+      "cards": [],
       "activities": [
         {
           "id": "A089",
@@ -2517,14 +2394,7 @@
       },
       "sleepsAt": "Kobe — Portopia Hotel (noche a extender)",
       "lodgingId": "l06",
-      "cards": [
-        {
-          "type": "info",
-          "icon": "clock",
-          "title": "Orden del día",
-          "body": "Arashiyama a las 7:30 es otro lugar: después de las 10 se llena. Del bambú al Kinkaku-ji, bus 11 o taxi (~25 min, conviene entre 3). Último día en Japón: aprovechá para gastar los yenes en Nishiki y comprar dulces de regalo (yatsuhashi)."
-        }
-      ],
+      "cards": [],
       "activities": [
         {
           "id": "A093",
@@ -2699,12 +2569,6 @@
               "url": "https://en.wikipedia.org/wiki/Beijing_Subway"
             }
           ]
-        },
-        {
-          "type": "info",
-          "icon": "people-arrows",
-          "title": "Hoy se separa el grupo",
-          "body": "Facundo vuelve a Inglaterra; Pehuén y Sole siguen a Pekín. Antes de despedirse: liquidar los gastos compartidos en la app (Gastos → saldos)."
         }
       ],
       "activities": [
@@ -2795,14 +2659,7 @@
       },
       "sleepsAt": "Pekín",
       "lodgingId": "l07",
-      "cards": [
-        {
-          "type": "info",
-          "icon": "temperature-low",
-          "title": "Frío en la Muralla",
-          "body": "En diciembre amanece bajo cero y arriba sopla viento: capas, gorro, guantes y calzado con suela que agarre. El tobogán no funciona con lluvia, nieve o viento fuerte; en ese caso se baja en teleférico. Llevá agua y algo para comer: arriba hay poco."
-        }
-      ],
+      "cards": [],
       "activities": [
         {
           "id": "A101",
@@ -2891,14 +2748,7 @@
       },
       "sleepsAt": "Pekín",
       "lodgingId": "l07",
-      "cards": [
-        {
-          "type": "info",
-          "icon": "id-card",
-          "title": "Controles en Pekín",
-          "body": "Para Tiananmen y la Ciudad Prohibida hace falta el pasaporte original (el mismo con el que se reservó); no se aceptan copias. Llevá poco: hay control de seguridad y no se pueden entrar encendedores. La Ciudad Prohibida se recorre de sur a norte y sale frente a Jingshan."
-        }
-      ],
+      "cards": [],
       "activities": [
         {
           "id": "A105",
@@ -3037,12 +2887,6 @@
             "pasaje"
           ],
           "checklist": []
-        },
-        {
-          "type": "info",
-          "icon": "yen-sign",
-          "title": "Antes de salir de China",
-          "body": "Al salir de China hay migraciones y control de seguridad: llegá ~3 h antes. Gastá los yuanes que queden (en el aeropuerto todo acepta Alipay). En el vuelo nacional a Pudong, las baterías externas van en el equipaje de mano y tienen que tener la marca CCC (3C) visible: si no, las retienen."
         }
       ],
       "activities": [
@@ -3169,14 +3013,7 @@
       },
       "sleepsAt": "Avión",
       "lodgingId": null,
-      "cards": [
-        {
-          "type": "info",
-          "icon": "house",
-          "title": "Llegando a casa",
-          "body": "Desde Ezeiza: remís o taxi oficial dentro del aeropuerto. Para el jet lag, tratá de no dormir siesta larga el día que llegás. En la app: subí las fotos que falten y cerrá los gastos del viaje."
-        }
-      ],
+      "cards": [],
       "activities": [
         {
           "id": "A115",

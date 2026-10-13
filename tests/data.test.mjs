@@ -218,3 +218,13 @@ test('shared confirmations: booking code and destination are guessed from the te
   assert.equal(guessTarget({ title: 'Reserva confirmada', text: `Gracias por reservar en ${D.lodging[0].name}`, url: '', files: [] }, groups), `lodging:${D.lodging[0].id}`);
   assert.equal(guessTarget({ title: 'Hola', text: 'nada que ver', url: '', files: [] }, groups), '');
 });
+
+test('notes: every note has a kind and real days; tips live in notes, not in day cards', async () => {
+  const { D, I, cols } = store;
+  assert.ok(D.notes.length > 0 && D.notes.every((n) => ['alerta', 'recordatorio', 'tip'].includes(n.kind)));
+  assert.ok(D.notes.every((n) => n.days.every((d) => I.day[d])), 'notes point to existing days (no days = a general note)');
+  assert.ok(!D.days.some((d) => (d.cards || []).some((c) => c.type === 'info')), 'info cards were moved to notes.json');
+  cols.put('notes', { id: 'n-test', kind: 'recordatorio', title: 'Probar', time: '09:30', days: ['d04'] });
+  assert.equal(I.note['n-test'].kind, 'recordatorio');
+  cols.del('notes', 'n-test');
+});

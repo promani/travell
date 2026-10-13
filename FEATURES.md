@@ -14,7 +14,7 @@ La pantalla de inicio cambia según el momento del viaje.
 |---|---|
 | **Antes del viaje** | "Faltan **N** días para tu viaje", fechas y día de salida. Accesos a **Pasajes y QR** y **Visas y documentos**. Documentos clave fijados. Próximos pendientes con su vencimiento. |
 | **Día de salida** | "**Hoy es el día del viaje**" con hora de salir de casa, hora de estar en el aeropuerto (despegue menos la anticipación configurada), hora de despegue y vuelo. Cuenta regresiva en vivo y checklist "Antes de salir". |
-| **Durante el viaje** | "Día N de M · ciudad", título, resumen y dónde se duerme. Tarjetas del día (llegada, salida). La actividad **actual** y la **siguiente**. Alertas del día. |
+| **Durante el viaje** | "Día N de M · ciudad", título, resumen y dónde se duerme. Tarjetas del día (llegada, salida). La actividad **actual** y la **siguiente**. Notas de hoy (alertas, recordatorios, tips). |
 | **Después del viaje** | "¡Volviste!" con accesos a fotos y gastos. |
 
 En todos los casos hay:
@@ -38,7 +38,7 @@ En todos los casos hay:
   - **Logística**: transportes del día, check-in y check-out.
   - Aviso **"No hay hospedaje cargado para esta noche"** con botón para cargarlo.
   - Documentos del día, links de interés de la ciudad, fotos del día y total gastado del día.
-- **Alertas** por día (cierres, feriados, clima, requisitos), con nivel de aviso o información.
+- **Notas por día**: tips, recordatorios (con hora opcional) y alertas, en una tarjeta "Notas del día" (alertas primero, después recordatorios por hora, después tips). Se crean, editan y borran desde la app (+ Nota), pueden ir en varios días y las ve todo el grupo con la sincronización. Las del itinerario original están en `notes.json`.
 
 ## 3. Tarjetas de llegada y salida ✅
 
@@ -165,7 +165,7 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
 
 ## 15. Buscador ✅
 
-- 🔎 en el encabezado. Busca en todo el viaje: días, actividades, lugares (también por nombre en idioma local), tareas, documentos (también por código), alojamientos, transporte, alertas, sugerencias y preparativos.
+- 🔎 en el encabezado. Busca en todo el viaje: días, actividades, lugares (también por nombre en idioma local), tareas, documentos (también por código), alojamientos, transporte, notas, sugerencias y preparativos.
 - Ignora tildes y mayúsculas. Varias palabras se combinan (por ejemplo "kioto templo"). Los resultados se agrupan por tipo y llevan a la pantalla correspondiente.
 
 ## 16. Ajustes y herramientas ✅

@@ -170,7 +170,7 @@ erDiagram
 | `travelers.json` | no | Personas que dividen gastos |
 | `tasks.json` | no | Tareas con `dueAt` (ISO), `urgent`, `day`, `assignee`, `priority`, `status` y `covers` (qué sugerencias ya cubren, por ejemplo `lodging:l04`) |
 | `requirements.json` | no | Preparativos sugeridos: `title`, `detail`, `category`, `countries` (vacío = siempre), `dueDaysBefore`, `covers`, `link` |
-| `notes.json` | no | Alertas por día (`days[]`) o generales |
+| `notes.json` | no | Notas por día (`days[]`; sin días = general): `kind` `tip` \| `recordatorio` \| `alerta`, `title`, `detail`, `time` opcional, `icon` y `links` opcionales. Editables en la app (overlay sincronizado) |
 | `phrases.json` | no | Cheat sheet por idioma: `languages` (con `scriptName`), `groups[].phrases[]` y `kanji[].items[]`, cada entrada con `[escritura, romanización, nota?]` por idioma |
 
 **Tarjetas de día** (`cards[]`), genéricas y configurables desde el JSON:

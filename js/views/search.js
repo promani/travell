@@ -1,5 +1,5 @@
 // Global search over the whole trip: activities, places, tasks, documents, lodging, alerts, transport, resources, phrases.
-import { D, I } from '../store.js';
+import { D, I, NOTE_KINDS } from '../store.js';
 import { ticketCode } from '../ticket.js';
 import { esc, ic, icon, fmtShort } from '../util.js';
 import { cat } from '../ui.js';
@@ -25,7 +25,7 @@ function search(q) {
   for (const l of D.lodging) if (hit(l.name, l.area, l.address, l.notes, l.confirmation, l.bookingUrl)) out.push({ g: 'Alojamientos', icon: 'hotel', title: l.name, sub: `${fmtShort(l.checkIn)} → ${fmtShort(l.checkOut)}`, href: '#/alojamientos' });
   for (const t of D.transport) if (hit(t.route, t.service, t.medium, ticketCode(`transport:${t.id}`, t.code))) out.push({ g: 'Transporte', icon: 'train', title: t.route, sub: [day(t.day), t.service].filter(Boolean).join(' · '), href: `#/dia/${t.day}` });
   for (const s of suggestions({ includeClosed: true })) if (hit(s.title, s.detail)) out.push({ g: 'Sugerencias y preparativos', icon: s.icon, title: s.title, sub: s.state ? `${s.kind} · ${s.state}` : s.detail, href: '#/tareas#sugerencias' });
-  for (const n of D.notes) if (hit(n.title, n.detail)) out.push({ g: 'Alertas', icon: 'triangle-exclamation', title: n.title, sub: n.detail, href: n.days?.[0] ? `#/dia/${n.days[0]}` : '#/itinerario' });
+  for (const n of D.notes) if (hit(n.title, n.detail)) out.push({ g: 'Notas', icon: n.icon || NOTE_KINDS[n.kind][0], title: n.title, sub: n.detail, href: n.days[0] ? `#/dia/${n.days[0]}` : '#/itinerario' });
   for (const r of D.resources) if (hit(r.title, r.notes, I.city[r.cityId]?.name)) out.push({ g: 'Recursos', icon: (KINDS[r.kind] || KINDS.otro)[0], title: r.title, sub: [I.city[r.cityId]?.name || 'Todo el viaje', (KINDS[r.kind] || KINDS.otro)[1]].join(' · '), href: `#/recursos${r.cityId ? '?city=' + r.cityId : ''}` });
   for (const gr of D.phrases.groups) for (const ph of gr.phrases) for (const l of D.phrases.languages) {
     if (ph[l.id] && hit(ph.es, ph[l.id][1])) out.push({ g: 'Cheat sheet', icon: 'language', title: `${ph.es} — ${ph[l.id][0]}`, sub: `${l.name} · ${ph[l.id][1]}`, href: `#/cheatsheet?lang=${l.id}` });

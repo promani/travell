@@ -1,6 +1,6 @@
-// ABM (alta / baja / modificación) forms: places, lodging, activities, tasks, travelers.
+// ABM (alta / baja / modificación) forms: places, lodging, activities, tasks, travelers, notes.
 // Saved as overlay records (store.cols) on top of the JSON; location from the map, GPS or typed coordinates.
-import { D, I, cols, me, settings } from '../store.js';
+import { D, I, cols, me, settings, NOTE_KINDS } from '../store.js';
 import { esc, ic, uid, toast, openModal, closeModal, fmtShort, haversine } from '../util.js';
 import { register } from '../ui.js';
 import { TripMap } from '../map.js';
@@ -74,7 +74,7 @@ function open(html, loc) {
   let destroy = null;
   const dlg = openModal(html, { cls: 'wide form-modal', onClose: () => destroy?.() });
   if (loc) destroy = mountPicker(dlg, loc);
-  dlg.querySelector('input:not([type=hidden]), textarea')?.focus({ preventScroll: true });
+  dlg.querySelector('input:not([type=hidden]):not([type=radio]):not([type=checkbox]), textarea')?.focus({ preventScroll: true });
   return dlg;
 }
 function readLoc(f, required) {
@@ -157,6 +157,21 @@ export function openTaskForm(t = {}) {
     ${buttons('task-del', t.id, t, 'tasks')}</form>`);
 }
 
+// ------------------------------------------------------------------ notes (tips, reminders, alerts) on one or more days
+export function openNoteForm(n = {}, dayId = null) {
+  const days = new Set(n.days?.length ? n.days : [dayId || tripPhase().day?.id || D.days[0].id]);
+  const kind = n.kind || 'tip';
+  open(`<h3>${n.id ? 'Editar nota' : 'Nueva nota'}</h3><form class="form" data-submit="note-save">
+    <input type="hidden" name="id" value="${esc(n.id || '')}">
+    <fieldset class="field"><legend>Tipo</legend><div class="kind-pick">${Object.entries(NOTE_KINDS).map(([k, [i, l]]) => `<label class="chip k-${k}"><input type="radio" name="kind" value="${k}" ${k === kind ? 'checked' : ''}>${ic(i)} ${l}</label>`).join('')}</div></fieldset>
+    ${input('Título *', 'title', n.title, 'required maxlength="120" placeholder="Ej.: Llevar el pasaporte"')}
+    ${textarea('Detalle', 'detail', n.detail)}
+    ${input('Hora (opcional)', 'time', n.time, 'type="time"')}
+    <fieldset class="field"><legend>Días</legend><div class="day-pick">${D.days.map((d) => `<label class="chip"><input type="checkbox" name="days" value="${esc(d.id)}" ${days.has(d.id) ? 'checked' : ''}><b>${d.n}</b> ${esc(fmtShort(d.date))}</label>`).join('')}</div></fieldset>
+    <p class="hint">La ve todo el grupo (con la sincronización activa).</p>
+    ${buttons('note-del', n.id, n, 'notes')}</form>`);
+}
+
 // ------------------------------------------------------------------ travelers
 const COLORS = ['#1c7ed6', '#e8590c', '#2f9e44', '#ae3ec9', '#f08c00', '#0c8599', '#e03131', '#5c940d'];
 export function openTravelerForm(t = {}) {
@@ -234,6 +249,17 @@ register({
     const who = I.traveler[val(f, 'assignee')];
     closeModal(form); toast(who && who.id !== me() ? `Tarea asignada a ${who.name}` : 'Tarea guardada'); app.rerender();
   },
+  'note-new': (el) => openNoteForm({}, el.dataset.day),
+  'note-edit': (el, e) => { if (e?.target.closest('a')) return; const n = I.note[el.dataset.id]; if (n) openNoteForm(n); },
+  'note-save': (form, _, app) => {
+    const f = new FormData(form), days = f.getAll('days').map(String);
+    if (!days.length) return toast('Elegí al menos un día');
+    const prev = I.note[val(f, 'id')] || {};
+    const { edited, ...base } = prev;
+    cols.put('notes', { ...base, id: val(f, 'id') || uid('n-'), kind: val(f, 'kind') || 'tip', title: val(f, 'title'), detail: val(f, 'detail'), time: val(f, 'time'), days, ...(!prev.id && { by: me() }) });
+    closeModal(form); app.rerender();
+  },
+  'note-del': (el, _, app) => { if (!confirmDel('esta nota')) return; cols.del('notes', el.dataset.id); closeModal(el); app.rerender(); },
   'task-del': (el, _, app) => { if (!confirmDel('esta tarea')) return; cols.del('tasks', el.dataset.id); closeModal(el); app.rerender(); },
 
   'traveler-new': () => openTravelerForm(),

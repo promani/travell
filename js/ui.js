@@ -1,5 +1,5 @@
 // Shared rendering pieces: badges, activity rows, day cards (departure / arrival / info), map boxes, action registry.
-import { D, I, done, checks } from './store.js';
+import { D, I, done, checks, NOTE_KINDS } from './store.js';
 import { esc, ic, icon, fmtDate, fmtShort, hhmm, cap, isoDate, imgUrl, extLink } from './util.js';
 import { departureTimes, lodgingOfDay } from './tripstate.js';
 import { TripMap } from './map.js';
@@ -179,6 +179,20 @@ export function renderCards(day, ctx, { skipTripStart = false } = {}) {
   }).join('');
 }
 
-// ------------------------------------------------------------------ notes (alerts) relevant to a day
-export const notesFor = (day) => D.notes.filter((n) => (n.days || []).includes(day.id));
-export const noteHtml = (n) => `<div class="note ${n.level === 'warn' ? 'warn' : 'info'}"><b>${ic(n.level === 'warn' ? 'triangle-exclamation' : 'circle-info')} ${esc(n.title)}</b><p>${esc(n.detail)}</p></div>`;
+// ------------------------------------------------------------------ notes: tips, reminders and alerts of a day
+const KIND_ORDER = { alerta: 0, recordatorio: 1, tip: 2 };
+/** The day's notes: alerts first, then reminders by time, then tips. */
+export const notesFor = (day) => D.notes.filter((n) => n.days.includes(day.id))
+  .sort((a, b) => KIND_ORDER[a.kind] - KIND_ORDER[b.kind] || (a.time || '99').localeCompare(b.time || '99'));
+const noteRow = (n) => `<li class="nrow k-${n.kind}" data-act="note-edit" data-id="${esc(n.id)}">
+  <span class="nrow-ic">${ic(n.icon || NOTE_KINDS[n.kind][0])}</span>
+  <div><b>${n.time ? `<span class="nrow-time">${esc(n.time)}</span> ` : ''}${esc(n.title)}</b>${n.detail ? `<p>${esc(n.detail)}</p>` : ''}
+    ${(n.links || []).map((l) => `<p>${extLink(l.url, l.title)}</p>`).join('')}</div></li>`;
+/** One card with the day's notes and a button to add one. Empty days show just the button. */
+export function notesCard(day, { title = 'Notas del día', compact = false } = {}) {
+  const list = notesFor(day);
+  if (compact && !list.length) return '';
+  return `<section class="card notes-card"><div class="card-head"><h3>${ic('note-sticky')} ${esc(title)}</h3>
+      <button class="btn small" data-act="note-new" data-day="${esc(day.id)}">${ic('plus')} Nota</button></div>
+    ${list.length ? `<ul class="nlist">${list.map(noteRow).join('')}</ul>` : '<p class="muted">Tips, recordatorios o alertas para este día: los ve todo el grupo.</p>'}</section>`;
+}

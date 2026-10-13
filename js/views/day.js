@@ -2,7 +2,7 @@ import { D, I, done, settings, now } from '../store.js';
 import { hasTicket, transportTicket, ticketCode, paintAttachments, freeUrls } from '../ticket.js';
 import { esc, ic, fmtShort, fmtWeekdayShort, cap } from '../util.js';
 import { tripPhase, activityNow, lodgingOfDay, dayClockNote } from '../tripstate.js';
-import { heroImg, actRow, renderCards, notesFor, noteHtml, dayLabel, statusBadge, extLink, transportIcon, register, cat, bookingSite } from '../ui.js';
+import { heroImg, actRow, renderCards, notesCard, dayLabel, statusBadge, extLink, transportIcon, register, cat, bookingSite } from '../ui.js';
 import { thumbsFor } from './photos.js';
 import { dayTotalText } from './expenses.js';
 import { resourcesForDay, resRow } from './resources.js';
@@ -68,7 +68,7 @@ export function render({ id }, ctx) {
   </header>
 
   ${renderCards(day, ctx)}
-  ${notesFor(day).map(noteHtml).join('')}
+  ${notesCard(day)}
 
   <section class="card">
     <div class="card-head"><h3>Actividades</h3>

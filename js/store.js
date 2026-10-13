@@ -11,11 +11,13 @@ export const DATA_BASE = (params.get('data') || 'data').replace(/\/$/, '');
 const REQUIRED = ['trip', 'itinerary'];
 const OPTIONAL = ['transport', 'lodging', 'documents', 'travelers', 'tasks', 'notes', 'requirements', 'resources', 'phrases'];
 /** Collections the user can create/edit in the app (merged over the JSON). */
-export const EDITABLE = ['places', 'lodging', 'activities', 'tasks', 'travelers', 'resources'];
+export const EDITABLE = ['places', 'lodging', 'activities', 'tasks', 'travelers', 'resources', 'notes'];
 /** Collections that only live in the overlay. */
 export const LOCAL_ONLY = ['expenses', 'positions', 'suggestions', 'passports', 'tickets'];
 
 export const BASE = {};
+/** Kinds of notes: [icon, label]. */
+export const NOTE_KINDS = { alerta: ['triangle-exclamation', 'Alerta'], recordatorio: ['bell', 'Recordatorio'], tip: ['lightbulb', 'Tip'] };
 export const D = { trip: null, days: [], transport: [], lodging: [], places: [], documents: [], travelers: [], tasks: [], notes: [], requirements: [], resources: [], phrases: { languages: [], groups: [], kanji: [] } };
 export const I = {};
 
@@ -143,7 +145,7 @@ const minutes = (hhmm) => { const x = /^(\d{1,2}):(\d{2})/.exec(hhmm || ''); ret
 /** Overlay records that change or hide something from the JSON files. */
 export function overriddenBase() {
   const baseActs = BASE.days.flatMap((d) => d.activities);
-  const base = { places: BASE.places, lodging: BASE.lodging, tasks: BASE.tasks, travelers: BASE.travelers, resources: BASE.resources, activities: baseActs };
+  const base = { places: BASE.places, lodging: BASE.lodging, tasks: BASE.tasks, travelers: BASE.travelers, resources: BASE.resources, notes: BASE.notes, activities: baseActs };
   const out = [];
   for (const [name, arr] of Object.entries(base)) {
     const ids = new Map(arr.map((x) => [x.id, x]));
@@ -155,7 +157,9 @@ export function overriddenBase() {
 /** Recompute D and I from BASE + overlay. Cheap enough to run after every edit. */
 export function rebuild() {
   D.trip = BASE.trip;
-  for (const k of ['transport', 'documents', 'notes', 'requirements']) D[k] = BASE[k];
+  for (const k of ['transport', 'documents', 'requirements']) D[k] = BASE[k];
+  // notes: tips, reminders and alerts per day. Older files used level warn / info instead of kind.
+  D.notes = merged(BASE.notes, 'notes').map((n) => ({ ...n, kind: NOTE_KINDS[n.kind] ? n.kind : n.level === 'warn' ? 'alerta' : 'tip', days: n.days || [] }));
   D.phrases = { languages: [], groups: [], kanji: [], ...(Array.isArray(BASE.phrases) ? {} : BASE.phrases) };
   D.travelers = merged(BASE.travelers, 'travelers');
   D.places = merged(BASE.places, 'places');
@@ -185,7 +189,7 @@ export function rebuild() {
     return { ...d, activities: list, lodgingId: l ? l.id : null };
   });
 
-  for (const k of ['day', 'dayByDate', 'place', 'lodging', 'transport', 'doc', 'traveler', 'city', 'activity', 'task', 'resource']) I[k] = {};
+  for (const k of ['day', 'dayByDate', 'place', 'lodging', 'transport', 'doc', 'traveler', 'city', 'activity', 'task', 'resource', 'note']) I[k] = {};
   D.days.forEach((d) => { I.day[d.id] = d; I.dayByDate[d.date] = d; d.activities.forEach((a) => { I.activity[a.id] = a; }); });
   D.places.forEach((p) => { I.place[p.id] = p; p.days = []; });
   D.days.forEach((d) => d.activities.forEach((a) => { const p = I.place[a.placeId]; if (p && !p.days.includes(d.id)) p.days.push(d.id); }));
@@ -195,6 +199,7 @@ export function rebuild() {
   D.travelers.forEach((x) => { I.traveler[x.id] = x; });
   D.tasks.forEach((x) => { I.task[x.id] = x; });
   D.resources.forEach((x) => { I.resource[x.id] = x; });
+  D.notes.forEach((x) => { I.note[x.id] = x; });
   D.trip.cities.forEach((c) => { I.city[c.id] = c; });
   bus.emit('data');
 }

@@ -3,7 +3,7 @@
 import { D, I, done, me, now } from '../store.js';
 import { esc, ic, fmtShort } from '../util.js';
 import { tripPhase, activityNow, lodgingOfDay } from '../tripstate.js';
-import { departureCard, checklistCard, heroImg, renderCards, actRow, notesFor, noteHtml, dayLabel } from '../ui.js';
+import { departureCard, checklistCard, heroImg, renderCards, actRow, notesCard, dayLabel } from '../ui.js';
 import { openTasks, taskRow } from './tasks.js';
 import { suggestions } from '../suggest.js';
 import { weatherLine } from '../weather.js';
@@ -70,7 +70,7 @@ export function render(_, ctx) {
       h += `<section class="card"><div class="card-head"><h3>${current ? 'Ahora y lo que sigue' : next ? 'Lo que sigue' : 'Hoy'}</h3><a href="#/dia/${day.id}">Ver el día →</a></div>
         ${rows.map((a) => actRow(a, { current: a === current, next: a === next })).join('')}</section>`;
     }
-    h += notesFor(day).map(noteHtml).join('');
+    h += notesCard(day, { title: 'Notas de hoy', compact: true });
   }
 
   if (st.phase !== 'post') {

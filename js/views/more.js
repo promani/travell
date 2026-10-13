@@ -116,7 +116,7 @@ export function ajustes() {
 
   ${(() => { const ov = overriddenBase(); return ov.length ? `<section class="card"><h3>${ic('rotate-left')} Cambios sobre el JSON</h3>
     <p class="hint">Registros del itinerario original que editaste o borraste en la app. Restaurar vuelve a la versión del JSON (en todos los celulares sincronizados).</p>
-    <ul class="people">${ov.map((o) => `<li><div><b>${esc(o.title)}</b><small>${esc({ places: 'Lugar', lodging: 'Alojamiento', tasks: 'Tarea', travelers: 'Viajero', activities: 'Actividad' }[o.col])} · ${o.deleted ? 'borrado' : 'editado'}</small></div>
+    <ul class="people">${ov.map((o) => `<li><div><b>${esc(o.title)}</b><small>${esc({ places: 'Lugar', lodging: 'Alojamiento', tasks: 'Tarea', travelers: 'Viajero', activities: 'Actividad', resources: 'Recurso', notes: 'Nota' }[o.col])} · ${o.deleted ? 'borrado' : 'editado'}</small></div>
       <button class="btn small" data-act="restore-one" data-col="${o.col}" data-id="${esc(o.id)}">Restaurar</button></li>`).join('')}</ul></section>` : ''; })()}
 
   <section class="card"><h3>${ic('key')} Administración</h3>
