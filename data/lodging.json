@@ -61,8 +61,8 @@
     "address": null,
     "addressLocal": null,
     "confirmation": null,
-    "lat": 35.2538,
-    "lon": 139.011,
+    "lat": 35.2454,
+    "lon": 139.0062,
     "approx": true
   },
   {
@@ -91,7 +91,7 @@
     "id": "l05",
     "cityId": "kobe",
     "name": "Portopia Hotel",
-    "area": "Port Island (Shiomi-koen)",
+    "area": "Port Island (estación Shimin Hiroba)",
     "checkInDay": "d15",
     "checkIn": "2026-11-26",
     "checkOutDay": "d19",
@@ -105,9 +105,9 @@
     "address": null,
     "addressLocal": null,
     "confirmation": null,
-    "lat": 34.6613,
-    "lon": 135.2181,
-    "approx": true
+    "lat": 34.665,
+    "lon": 135.2139,
+    "approx": false
   },
   {
     "id": "l07",
@@ -184,8 +184,8 @@
     "checkOutDay": "d23",
     "checkOut": "2026-12-04",
     "notes": "1 noche, cerca del aeropuerto para el vuelo de las 11:50 del 4/12.",
-    "lat": 29.1189,
-    "lon": 110.4813,
+    "lat": 29.147,
+    "lon": 110.451,
     "options": [
       {
         "name": "Hampton by Hilton 72 Qilou",

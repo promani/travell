@@ -89,11 +89,13 @@
     "lon": 139.7101,
     "approx": false,
     "area": null,
-    "description": "Gran jardín con arces en otoño, a pasos de Shinjuku.",
+    "description": "Gran jardín con arces en su mejor momento a fines de noviembre, a pasos de Shinjuku. Abre a las 9:00; el lunes 23/11 abre por feriado.",
     "cost": null,
     "link": null,
     "source": "extra",
-    "days": []
+    "days": [
+      "d12"
+    ]
   },
   {
     "id": "p-e-ginza",
@@ -187,11 +189,13 @@
     "lon": 135.1903,
     "approx": false,
     "area": null,
-    "description": "Casas de comerciantes extranjeros del siglo XIX en la ladera.",
+    "description": "Casas de comerciantes extranjeros del siglo XIX en la ladera, a 15 min a pie de Sannomiya. Cierran ~17:00–18:00.",
     "cost": null,
     "link": null,
     "source": "extra",
-    "days": []
+    "days": [
+      "d15"
+    ]
   },
   {
     "id": "p-e-summerpalace",
@@ -243,7 +247,7 @@
   },
   {
     "cityId": "zhangjiajie",
-    "approx": true,
+    "approx": false,
     "cost": null,
     "link": null,
     "source": "itinerario",
@@ -251,8 +255,8 @@
     "name": "Aeropuerto de Zhangjiajie Hehua (DYG)",
     "nameLocal": "张家界荷花国际机场",
     "category": "traslado",
-    "lat": 29.1028,
-    "lon": 110.443,
+    "lat": 29.103,
+    "lon": 110.4416,
     "area": "Yongding",
     "description": "A ~15 min del centro de Zhangjiajie y del teleférico de Tianmen; a ~50 min de Wulingyuan.",
     "days": [
@@ -263,17 +267,17 @@
   {
     "cityId": "zhangjiajie",
     "approx": true,
-    "cost": "~¥260–280 con teleférico (aprox.)",
+    "cost": "¥288 Línea C (aprox.)",
     "link": "https://www.tianmenshan.com.cn/",
     "source": "itinerario",
     "id": "p-tianmen",
-    "name": "Montaña Tianmen",
-    "nameLocal": "天门山",
+    "name": "Montaña Tianmen: portón y teleférico express",
+    "nameLocal": "天门山山门 · 天门洞快线索道",
     "category": "aventura",
-    "lat": 29.1153,
-    "lon": 110.4795,
+    "lat": 29.067,
+    "lon": 110.4732,
     "area": "Yongding",
-    "description": "Teleférico desde el centro de la ciudad, caminos de vidrio en el acantilado y la Puerta del Cielo, un arco natural con 999 escalones.",
+    "description": "Desde octubre de 2026 el teleférico largo del centro está cerrado por obras: se entra por el portón al pie de la montaña y se sube en el teleférico express (Línea C) a la Puerta del Cielo, con escaleras mecánicas hasta la cima.",
     "days": [
       "d21"
     ]
@@ -281,17 +285,17 @@
   {
     "cityId": "zhangjiajie",
     "approx": true,
-    "cost": "~¥225 (aprox.)",
+    "cost": "~¥145 en invierno (aprox.)",
     "link": null,
     "source": "itinerario",
     "id": "p-wulingyuan",
     "name": "Parque Forestal Nacional de Zhangjiajie",
     "nameLocal": "张家界国家森林公园",
     "category": "naturaleza",
-    "lat": 29.3489,
-    "lon": 110.5464,
+    "lat": 29.3543,
+    "lon": 110.5305,
     "area": "Wulingyuan",
-    "description": "Miles de columnas de piedra arenisca entre la niebla: Yuanjiajie (las montañas de Avatar), el ascensor Bailong y Tianzi Shan. La entrada vale varios días.",
+    "description": "Miles de columnas de arenisca entre la niebla: el ascensor Bailong, Yuanjiajie (las montañas de Avatar) y Tianzi Shan. La entrada es nominativa con pasaporte y vale 4 días.",
     "days": [
       "d22"
     ]
@@ -306,12 +310,1034 @@
     "name": "72 Qilou",
     "nameLocal": "七十二奇楼",
     "category": "noche",
-    "lat": 29.1189,
-    "lon": 110.4813,
+    "lat": 29.1476,
+    "lon": 110.4507,
     "area": "Yongding",
-    "description": "Complejo de edificios con forma de montaña que se ilumina de noche, en el centro de Zhangjiajie.",
+    "description": "Complejo de edificios con forma de montaña que se ilumina de noche (16:30–23:00), al norte de la ciudad y a ~10–15 min del aeropuerto.",
     "days": [
       "d22"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "Gratis",
+    "link": null,
+    "id": "p-xintiandi",
+    "name": "Xintiandi",
+    "nameLocal": "新天地",
+    "cityId": "shanghai",
+    "category": "compras",
+    "lat": 31.2195,
+    "lon": 121.4753,
+    "approx": false,
+    "area": "Huangpu",
+    "description": "Manzanas de casas shikumen restauradas con cafés, tiendas y restaurantes; la versión prolija de Tianzifang, a 15 min a pie.",
+    "days": [
+      "d04"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "Gratis",
+    "link": null,
+    "id": "p-wukang-mansion",
+    "name": "Wukang Mansion",
+    "nameLocal": "武康大楼",
+    "cityId": "shanghai",
+    "category": "cultura",
+    "lat": 31.2037,
+    "lon": 121.437,
+    "approx": false,
+    "area": "Xuhui",
+    "description": "Edificio de 1924 en forma de proa en la esquina de Wukang Rd y Huaihai Rd. La foto clásica es desde la vereda de enfrente al atardecer.",
+    "days": [
+      "d04"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥150–250 por persona (aprox.)",
+    "link": null,
+    "id": "p-oldjesse",
+    "name": "Old Jesse (Tianping Rd)",
+    "nameLocal": "老吉士酒家",
+    "cityId": "shanghai",
+    "category": "gastronomia",
+    "lat": 31.2052,
+    "lon": 121.4384,
+    "approx": true,
+    "area": "Xuhui",
+    "description": "Cocina shanghainesa casera en una casa de pasaje (41 Tianping Rd), con Bib Gourmand: hongshao rou, cabeza de pescado con cebolla de verdeo. Reservar; abre 11:00–14:30 y 17:00–21:30.",
+    "days": [
+      "d04"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥100–150 el trago (aprox.)",
+    "link": "https://www.theworlds50best.com/bars/asia/the-list/speak-low.html",
+    "id": "p-speaklow",
+    "name": "Speak Low",
+    "nameLocal": "Speak Low",
+    "cityId": "shanghai",
+    "category": "noche",
+    "lat": 31.2148,
+    "lon": 121.466,
+    "approx": true,
+    "area": "Concesión Francesa",
+    "description": "Speakeasy de tres pisos escondido detrás de una tienda de bartending (579 Fuxing Middle Rd), de la lista Asia’s 50 Best Bars. Abre a las 18:00; llegar temprano para evitar la fila.",
+    "days": [
+      "d04"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "Gratis",
+    "link": null,
+    "id": "p-bailianzx",
+    "name": "Bailian ZX (shopping de anime)",
+    "nameLocal": "百联ZX创趣场",
+    "cityId": "shanghai",
+    "category": "compras",
+    "lat": 31.2368,
+    "lon": 121.484,
+    "approx": true,
+    "area": "Nanjing Road",
+    "description": "El primer shopping de China dedicado al anime, el manga y los videojuegos: figuras, merchandising y cafés temáticos, sobre Nanjing Road peatonal. Abre 10:00–22:00.",
+    "days": [
+      "d23"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥200–300 por persona (aprox.)",
+    "link": null,
+    "id": "p-wangbaohe",
+    "name": "Wang Bao He",
+    "nameLocal": "王宝和酒家",
+    "cityId": "shanghai",
+    "category": "gastronomia",
+    "lat": 31.2348,
+    "lon": 121.478,
+    "approx": true,
+    "area": "Huangpu",
+    "description": "Casa de 1744 especializada en cangrejo peludo y vino amarillo de Shaoxing (603 Fuzhou Rd), a 10 min a pie del Bund. Reservar en temporada.",
+    "days": [
+      "d05"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "Gratis",
+    "link": "https://english.shanghai.gov.cn/en-MuseumsGalleries/20241205/756c96bd7dd940378b9ac056f11429e2.html",
+    "id": "p-shmuseum-east",
+    "name": "Museo de Shanghai (sede Este)",
+    "nameLocal": "上海博物馆东馆",
+    "cityId": "shanghai",
+    "category": "cultura",
+    "lat": 31.2192,
+    "lon": 121.547,
+    "approx": true,
+    "area": "Pudong",
+    "description": "La sede nueva del Museo de Shanghai (2024): bronces, jade, cerámica y caligrafía. Gratis con pasaporte; abre 10:00–18:00 (última entrada 17:00) y cierra los martes. Queda sobre la línea 2, entre el Maglev y el Bund.",
+    "days": [
+      "d23"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥60–150 por persona (aprox.)",
+    "link": null,
+    "id": "p-nanxiang",
+    "name": "Nanxiang Mantou Dian (Yu Garden)",
+    "nameLocal": "南翔馒头店",
+    "cityId": "shanghai",
+    "category": "gastronomia",
+    "lat": 31.2274,
+    "lon": 121.4917,
+    "approx": true,
+    "area": "Huangpu",
+    "description": "La casa histórica de xiaolongbao frente al lago del Yu Garden: fila para llevar abajo, salón con mesas arriba.",
+    "days": [
+      "d04"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥30–40 (aprox.)",
+    "link": null,
+    "id": "p-shizilin",
+    "name": "Jardín del Bosque de los Leones",
+    "nameLocal": "狮子林",
+    "cityId": "suzhou",
+    "category": "cultura",
+    "lat": 31.3231,
+    "lon": 120.6249,
+    "approx": false,
+    "area": "Gusu",
+    "description": "Jardín clásico (UNESCO) con un laberinto de rocas del lago Tai, a 300 m del Jardín del Administrador Humilde. Se recorre en una hora.",
+    "days": [
+      "d06"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥45–55 (aprox.)",
+    "link": null,
+    "id": "p-liuyuan",
+    "name": "Jardín de la Permanencia",
+    "nameLocal": "留园",
+    "cityId": "suzhou",
+    "category": "cultura",
+    "lat": 31.3176,
+    "lon": 120.588,
+    "approx": false,
+    "area": "Gusu",
+    "description": "Uno de los cuatro grandes jardines de China (UNESCO), con galerías largas y la roca Guanyun, a 1,5 km de Shantang. En noviembre cierra ~17:00.",
+    "days": [
+      "d06"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥60–80 (aprox.)",
+    "link": null,
+    "id": "p-huqiu",
+    "name": "Colina del Tigre",
+    "nameLocal": "虎丘",
+    "cityId": "suzhou",
+    "category": "cultura",
+    "lat": 31.3381,
+    "lon": 120.5764,
+    "approx": false,
+    "area": "Huqiu",
+    "description": "Colina con la pagoda inclinada de Yunyan (961) al extremo oeste de la calle Shantang. Alternativa al Jardín de la Permanencia; cierra ~17:00.",
+    "days": [
+      "d06"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥140–200 por persona (aprox.)",
+    "link": null,
+    "id": "p-songhelou",
+    "name": "Songhelou",
+    "nameLocal": "松鹤楼",
+    "cityId": "suzhou",
+    "category": "gastronomia",
+    "lat": 31.3128,
+    "lon": 120.6215,
+    "approx": false,
+    "area": "Guanqian",
+    "description": "Restaurante histórico de cocina de Suzhou (72 Taijian Nong); el plato insignia es el pescado ardilla agridulce.",
+    "days": [
+      "d06"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "Gratis",
+    "link": null,
+    "id": "p-kunqu",
+    "name": "Museo de la Ópera Kunqu",
+    "nameLocal": "中国昆曲博物馆",
+    "cityId": "suzhou",
+    "category": "cultura",
+    "lat": 31.3152,
+    "lon": 120.6315,
+    "approx": false,
+    "area": "Pingjiang",
+    "description": "Museo de la ópera kunqu en un antiguo gremio con escenario de madera tallada, a metros de la calle Pingjiang. Gratis; cierra ~16:30.",
+    "days": [
+      "d06"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "Cubierto ~¥500–1.000 + tragos (aprox.)",
+    "link": null,
+    "id": "p-r-nonbei",
+    "name": "Nonbei Yokocho",
+    "nameLocal": "のんべい横丁",
+    "cityId": "tokyo",
+    "category": "noche",
+    "lat": 35.6603,
+    "lon": 139.7026,
+    "approx": true,
+    "area": "Shibuya",
+    "description": "Callejón de unos 40 bares diminutos junto a las vías, a pasos de Hachiko. Entran 5 a 8 personas y varios cobran cubierto.",
+    "days": [
+      "d10"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": null,
+    "link": null,
+    "id": "p-r-parco",
+    "name": "Shibuya Parco (Pokémon, Nintendo, Jump Shop)",
+    "nameLocal": "渋谷PARCO",
+    "cityId": "tokyo",
+    "category": "compras",
+    "lat": 35.6621,
+    "lon": 139.6986,
+    "approx": false,
+    "area": "Shibuya",
+    "description": "En el piso 6: Pokémon Center Shibuya, Nintendo Tokyo y Jump Shop. A 5 min a pie del cruce.",
+    "days": [
+      "d10"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": null,
+    "link": null,
+    "id": "p-r-mandarake",
+    "name": "Mandarake Complex",
+    "nameLocal": "まんだらけコンプレックス",
+    "cityId": "tokyo",
+    "category": "compras",
+    "lat": 35.7004,
+    "lon": 139.7709,
+    "approx": true,
+    "area": "Akihabara",
+    "description": "Ocho pisos de manga, figuras y juguetes usados, con mucho anime retro (Mazinger, Saint Seiya, Evangelion). Abre ~12:00.",
+    "days": [
+      "d11"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": null,
+    "link": null,
+    "id": "p-r-superpotato",
+    "name": "Super Potato Akihabara",
+    "nameLocal": "スーパーポテト 秋葉原店",
+    "cityId": "tokyo",
+    "category": "compras",
+    "lat": 35.6994,
+    "lon": 139.7708,
+    "approx": true,
+    "area": "Akihabara",
+    "description": "Videojuegos y consolas retro (Famicom, Super Famicom) con un piso de arcade retro arriba.",
+    "days": [
+      "d11"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "30 min ¥1.500; 90 min ¥2.700; sin límite ¥3.800",
+    "link": "https://sakemarket.tokyo/",
+    "id": "p-r-kurand-akiba",
+    "name": "KURAND Sake Market Akihabara",
+    "nameLocal": "KURAND SAKE MARKET 秋葉原店",
+    "cityId": "tokyo",
+    "category": "noche",
+    "lat": 35.7018,
+    "lon": 139.7712,
+    "approx": true,
+    "area": "Akihabara",
+    "description": "Bar de sake libre: cada uno se sirve de las heladeras más de 100 sakes de bodegas chicas. Fines de semana y feriados abre también de 12 a 16 h.",
+    "days": [
+      "d11"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "Gratis",
+    "link": null,
+    "id": "p-r-nezu",
+    "name": "Santuario Nezu",
+    "nameLocal": "根津神社",
+    "cityId": "tokyo",
+    "category": "cultura",
+    "lat": 35.7203,
+    "lon": 139.7606,
+    "approx": false,
+    "area": "Yanaka",
+    "description": "Santuario de 1706 con un túnel de pequeños torii rojos, a 10 min a pie de Yanaka. Gratis.",
+    "days": [
+      "d11"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": null,
+    "link": null,
+    "id": "p-r-isetan",
+    "name": "Isetan Shinjuku (depachika)",
+    "nameLocal": "伊勢丹新宿店",
+    "cityId": "tokyo",
+    "category": "gastronomia",
+    "lat": 35.6917,
+    "lon": 139.7046,
+    "approx": false,
+    "area": "Shinjuku",
+    "description": "El subsuelo de comida del gran almacén: bento, wagashi y sake para llevar. Abre a las 10:00; ideal para el almuerzo del Romancecar.",
+    "days": [
+      "d12"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥2.700–2.900 (aprox.)",
+    "link": null,
+    "id": "p-r-thermaeyu",
+    "name": "Thermae-Yu (onsen en Kabukicho)",
+    "nameLocal": "テルマー湯",
+    "cityId": "tokyo",
+    "category": "onsen",
+    "lat": 35.695,
+    "lon": 139.7027,
+    "approx": true,
+    "area": "Shinjuku",
+    "description": "Onsen con agua termal de Izu en pleno Kabukicho, abierto las 24 h. Con tatuajes chicos se entra tapándolos (venden parches) y mostrando el pasaporte.",
+    "days": [
+      "d07"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "¥1.500 (aprox.)",
+    "link": "https://www.itchiku-museum.com/",
+    "id": "p-e-kubota-itchiku",
+    "name": "Museo de Arte Itchiku Kubota",
+    "nameLocal": "久保田一竹美術館",
+    "cityId": "kawaguchiko",
+    "category": "cultura",
+    "lat": 35.5274,
+    "lon": 138.7598,
+    "approx": false,
+    "area": "Lago Kawaguchi norte",
+    "description": "Kimonos teñidos a mano con la técnica tsujigahana, con jardín y casa de té, pegado al Corredor de arces. Última entrada 16:30.",
+    "days": [
+      "d09"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "Gratis",
+    "link": null,
+    "id": "p-e-oishi-park",
+    "name": "Parque Oishi",
+    "nameLocal": "大石公園",
+    "cityId": "kawaguchiko",
+    "category": "naturaleza",
+    "lat": 35.5233,
+    "lon": 138.7465,
+    "approx": false,
+    "area": "Lago Kawaguchi norte",
+    "description": "Parque a la orilla del lago con el Fuji del otro lado del agua, al final de la Red Line.",
+    "days": [
+      "d09"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "Gratis",
+    "link": "https://fujiyoshida.net/en/see-and-do/410",
+    "id": "p-e-honcho-dori",
+    "name": "Calle Honcho (Fujiyoshida)",
+    "nameLocal": "本町通り",
+    "cityId": "kawaguchiko",
+    "category": "cultura",
+    "lat": 35.493,
+    "lon": 138.8041,
+    "approx": true,
+    "area": "Shimoyoshida",
+    "description": "Calle comercial retro que apunta derecho al Fuji, a 10 min de la estación Shimoyoshida. Prohibido sacar fotos parado en la calzada.",
+    "days": [
+      "d09"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "¥500; ¥400 con Free Pass (aprox.)",
+    "link": "https://www.hakonesekisyo.jp/",
+    "id": "p-e-hakone-sekisho",
+    "name": "Puesto de control de Hakone",
+    "nameLocal": "箱根関所",
+    "cityId": "hakone",
+    "category": "cultura",
+    "lat": 35.1922,
+    "lon": 139.0264,
+    "approx": false,
+    "area": "Hakone-machi",
+    "description": "Reconstrucción del puesto de control del período Edo sobre el antiguo Tokaido, a orillas del lago Ashi, con un pequeño museo. 9:00–17:00.",
+    "days": [
+      "d13"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "Gratis",
+    "link": null,
+    "id": "p-e-cedar-avenue",
+    "name": "Avenida de cedros del antiguo Tokaido",
+    "nameLocal": "箱根旧街道杉並木",
+    "cityId": "hakone",
+    "category": "naturaleza",
+    "lat": 35.1948,
+    "lon": 139.0279,
+    "approx": false,
+    "area": "Moto-Hakone",
+    "description": "Unos 500 m del antiguo camino Tokaido entre cedros de casi 400 años, a orillas del lago Ashi.",
+    "days": [
+      "d13"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥500–1.000 (aprox.)",
+    "link": "https://amasakechaya.jp/",
+    "id": "p-e-amazake-chaya",
+    "name": "Amazake-chaya",
+    "nameLocal": "甘酒茶屋",
+    "cityId": "hakone",
+    "category": "gastronomia",
+    "lat": 35.2022,
+    "lon": 139.0489,
+    "approx": false,
+    "area": "Hatajuku",
+    "description": "Casa de té de techo de paja del período Edo sobre el antiguo Tokaido: amazake (bebida dulce de arroz, sin alcohol) y mochi.",
+    "days": [
+      "d13"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥2.000; descuento con Free Pass (aprox.)",
+    "link": "https://www.hakone-oam.or.jp/",
+    "id": "p-e-chokoku-no-mori",
+    "name": "Museo al Aire Libre de Hakone",
+    "nameLocal": "彫刻の森美術館",
+    "cityId": "hakone",
+    "category": "cultura",
+    "lat": 35.2443,
+    "lon": 139.0521,
+    "approx": false,
+    "area": "Ninotaira",
+    "description": "Esculturas al aire libre entre montañas, pabellón Picasso y baño de pies termal. Plan B si llueve.",
+    "days": [
+      "d13"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥2.200; descuento con Free Pass (aprox.)",
+    "link": "https://www.polamuseum.or.jp/",
+    "id": "p-e-pola-museum",
+    "name": "Museo de Arte Pola",
+    "nameLocal": "ポーラ美術館",
+    "cityId": "hakone",
+    "category": "cultura",
+    "lat": 35.2567,
+    "lon": 139.0212,
+    "approx": false,
+    "area": "Sengokuhara",
+    "description": "Impresionistas y arte japonés moderno en un museo en el bosque, a minutos en bus del hotel. Plan B si llueve.",
+    "days": [
+      "d13"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": null,
+    "link": "https://www.pokemon.co.jp/shop/pokecen/osakadx/",
+    "id": "p-e-pokemondx",
+    "name": "Pokémon Center Osaka DX",
+    "nameLocal": "ポケモンセンターオーサカDX",
+    "cityId": "osaka",
+    "category": "compras",
+    "lat": 34.6739,
+    "lon": 135.5009,
+    "approx": false,
+    "area": "Shinsaibashi",
+    "description": "El Pokémon Center más grande de Osaka, en el piso 9 del Daimaru Shinsaibashi, con el Pokémon Café al lado. ~10:00–20:00.",
+    "days": [
+      "d14"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": null,
+    "link": null,
+    "id": "p-e-dendentown",
+    "name": "Den Den Town (Nipponbashi)",
+    "nameLocal": "でんでんタウン",
+    "cityId": "osaka",
+    "category": "compras",
+    "lat": 34.6597,
+    "lon": 135.5058,
+    "approx": false,
+    "area": "Nipponbashi",
+    "description": "La calle de electrónica, anime y figuras de Osaka (Mandarake, tiendas retro), pegada a Kuromon.",
+    "days": [
+      "d14"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥2.000–4.000 (aprox.)",
+    "link": null,
+    "id": "p-e-uranamba",
+    "name": "Ura Namba",
+    "nameLocal": "裏なんば",
+    "cityId": "osaka",
+    "category": "noche",
+    "lat": 34.6645,
+    "lon": 135.5045,
+    "approx": true,
+    "area": "Namba",
+    "description": "Callejones detrás de la estación Namba con izakayas chicos y bares de pie; más local y barato que Dotonbori.",
+    "days": [
+      "d14"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "¥1.000 mirador / ¥1.200 con terraza (aprox.)",
+    "link": "https://www.kobe-port-tower.com/en",
+    "id": "p-e-meriken",
+    "name": "Meriken Park y Kobe Port Tower",
+    "nameLocal": "メリケンパーク・神戸ポートタワー",
+    "cityId": "kobe",
+    "category": "noche",
+    "lat": 34.6826,
+    "lon": 135.1867,
+    "approx": false,
+    "area": "Harborland",
+    "description": "El frente del puerto de Kobe, con la torre roja de 108 m (mirador y terraza hasta las 23:00). Enfrente, Harborland y umie Mosaic.",
+    "days": [
+      "d15"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥1.000–2.500 (aprox.)",
+    "link": null,
+    "id": "p-e-nankinmachi",
+    "name": "Nankinmachi (barrio chino de Kobe)",
+    "nameLocal": "南京町",
+    "cityId": "kobe",
+    "category": "gastronomia",
+    "lat": 34.688,
+    "lon": 135.188,
+    "approx": true,
+    "area": "Motomachi",
+    "description": "Dos calles de puestos con nikuman, gyoza y dim sum para comer parado, a 10 min de Sannomiya.",
+    "days": [
+      "d17"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "Gratis",
+    "link": null,
+    "id": "p-e-tetsujin",
+    "name": "Estatua de Tetsujin 28",
+    "nameLocal": "鉄人28号モニュメント",
+    "cityId": "kobe",
+    "category": "cultura",
+    "lat": 34.6556,
+    "lon": 135.144,
+    "approx": false,
+    "area": "Shin-Nagata",
+    "description": "Robot de 18 m en el parque Wakamatsu, a 5 min de JR Shin-Nagata (10 min de tren desde Sannomiya). Gratis e iluminado de noche.",
+    "days": [
+      "d17"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥800 (aprox.)",
+    "link": "https://arimaspa-kingin.jp/",
+    "id": "p-e-kinnoyu",
+    "name": "Kin-no-yu (baño público de Arima)",
+    "nameLocal": "金の湯",
+    "cityId": "arima",
+    "category": "onsen",
+    "lat": 34.7979,
+    "lon": 135.2477,
+    "approx": true,
+    "area": "Arima",
+    "description": "El baño público de agua \"dorada\" (rojiza, con hierro y sal). 8:00–22:00; cierra el 2.º y 4.º martes. Hay pase combinado con Gin-no-yu.",
+    "days": [
+      "d18"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "Gratis",
+    "link": null,
+    "id": "p-e-zuihoji",
+    "name": "Parque Zuihoji (hojas rojas en Arima)",
+    "nameLocal": "瑞宝寺公園",
+    "cityId": "arima",
+    "category": "naturaleza",
+    "lat": 34.8,
+    "lon": 135.2545,
+    "approx": true,
+    "area": "Arima",
+    "description": "Jardín de arces del antiguo templo Zuihoji, a 15–20 min a pie subiendo desde la estación. El 29/11 puede estar sobre el final de la temporada.",
+    "days": [
+      "d18"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥1.000 en temporada (aprox.)",
+    "link": "https://tofukuji.jp/",
+    "id": "p-r-tofukuji",
+    "name": "Tofuku-ji (puente Tsutenkyo)",
+    "nameLocal": "東福寺",
+    "cityId": "kyoto",
+    "category": "naturaleza",
+    "lat": 34.977,
+    "lon": 135.7743,
+    "approx": false,
+    "area": "Higashiyama sur",
+    "description": "Templo zen con un valle de arces visto desde el puente de madera Tsutenkyo, de lo más famoso de Kioto en hojas rojas. Se llena: ir a la apertura (8:30 en temporada).",
+    "days": [
+      "d16"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥800 (aprox.)",
+    "link": "https://www.kodaiji.com/",
+    "id": "p-r-kodaiji",
+    "name": "Kodai-ji",
+    "nameLocal": "高台寺",
+    "cityId": "kyoto",
+    "category": "cultura",
+    "lat": 35.0005,
+    "lon": 135.7812,
+    "approx": false,
+    "area": "Higashiyama",
+    "description": "Templo con jardín y bosque de bambú entre Ninenzaka y Yasaka; en otoño se ilumina de noche (17:00–22:00).",
+    "days": [
+      "d16"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "Gratis",
+    "link": null,
+    "id": "p-r-yasaka",
+    "name": "Santuario Yasaka",
+    "nameLocal": "八坂神社",
+    "cityId": "kyoto",
+    "category": "cultura",
+    "lat": 35.0037,
+    "lon": 135.7785,
+    "approx": false,
+    "area": "Gion",
+    "description": "El santuario principal de Gion, al final de Shijo-dori, con faroles encendidos de noche. Siempre abierto y gratis.",
+    "days": [
+      "d16"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥4.000–8.000 la cena (aprox.)",
+    "link": null,
+    "id": "p-r-pontocho",
+    "name": "Pontocho",
+    "nameLocal": "先斗町",
+    "cityId": "kyoto",
+    "category": "gastronomia",
+    "lat": 35.0055,
+    "lon": 135.771,
+    "approx": false,
+    "area": "Kawaramachi",
+    "description": "Callejón angosto de restaurantes junto al río Kamo, varios con terraza sobre el río y menús kaiseki u obanzai.",
+    "days": [
+      "d16"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥600 con degustación (aprox.)",
+    "link": "https://www.gekkeikan.co.jp/enjoy/museum/",
+    "id": "p-r-gekkeikan",
+    "name": "Distrito de sake de Fushimi (Gekkeikan Okura)",
+    "nameLocal": "月桂冠大倉記念館",
+    "cityId": "kyoto",
+    "category": "gastronomia",
+    "lat": 34.9318,
+    "lon": 135.7611,
+    "approx": false,
+    "area": "Fushimi",
+    "description": "Bodegas de sake de madera junto a un canal con sauces; el museo de Gekkeikan tiene degustación. A 10 min de Fushimi Inari; 9:30–16:30. Alternativa al sake de Nada.",
+    "days": []
+  },
+  {
+    "source": "revision",
+    "cost": "~¥1.200 (aprox.)",
+    "link": "https://isuien.or.jp/",
+    "id": "p-r-isuien",
+    "name": "Jardín Isuien",
+    "nameLocal": "依水園",
+    "cityId": "nara",
+    "category": "naturaleza",
+    "lat": 34.6851,
+    "lon": 135.8358,
+    "approx": false,
+    "area": "Nara Park",
+    "description": "Jardín de paseo con el portón de Todai-ji y el monte Wakakusa de fondo, con arces en otoño. 9:30–16:30; cierra los martes.",
+    "days": [
+      "d17"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "Gratis",
+    "link": null,
+    "id": "p-r-nigatsudo",
+    "name": "Nigatsu-do (Todai-ji)",
+    "nameLocal": "二月堂",
+    "cityId": "nara",
+    "category": "cultura",
+    "lat": 34.6894,
+    "lon": 135.8446,
+    "approx": false,
+    "area": "Nara Park",
+    "description": "Pabellón de Todai-ji en la ladera con una terraza de madera que mira a todo Nara, entre Todai-ji y Kasuga. Siempre abierto y gratis.",
+    "days": [
+      "d17"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": null,
+    "link": null,
+    "id": "p-r-naramachi",
+    "name": "Naramachi",
+    "nameLocal": "ならまち",
+    "cityId": "nara",
+    "category": "cultura",
+    "lat": 34.678,
+    "lon": 135.8305,
+    "approx": false,
+    "area": "Naramachi",
+    "description": "Barrio de casas de comerciantes de madera alrededor de Gango-ji, con casas de té y tiendas. Casi todo cierra ~17:00.",
+    "days": [
+      "d17"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥150–250 por persona (aprox.)",
+    "link": null,
+    "id": "p-siji-dengshikou",
+    "name": "Siji Minfu Dengshikou (pato laqueado)",
+    "nameLocal": "四季民福烤鸭店（灯市口店）",
+    "cityId": "beijing",
+    "category": "gastronomia",
+    "lat": 39.9186,
+    "lon": 116.4076,
+    "approx": true,
+    "area": "Dongcheng",
+    "description": "Pato laqueado en horno de leña, a 5 min del metro Dengshikou. No toma reservas: lista de espera por WeChat; a las 20 h, ~30 min.",
+    "days": [
+      "d19"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥30–50 (aprox.)",
+    "link": "https://guide.michelin.com/sg/zh_CN/beijing-municipality/beijing/restaurant/no-69-fangzhuanchang-zhajiangmian",
+    "id": "p-fangzhuanchang69",
+    "name": "Fangzhuanchang Nº 69 (zhajiangmian)",
+    "nameLocal": "方砖厂69号炸酱面",
+    "cityId": "beijing",
+    "category": "gastronomia",
+    "lat": 39.9405,
+    "lon": 116.4022,
+    "approx": true,
+    "area": "Dongcheng",
+    "description": "Zhajiangmian con recomendación Michelin en la punta norte de Nanluoguxiang; fideos y salsa se reponen gratis. Al mediodía hay cola.",
+    "days": [
+      "d20"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥30 combinada (aprox.)",
+    "link": null,
+    "id": "p-gulou",
+    "name": "Torres del Tambor y de la Campana",
+    "nameLocal": "鼓楼 / 钟楼",
+    "cityId": "beijing",
+    "category": "cultura",
+    "lat": 39.94,
+    "lon": 116.3938,
+    "approx": false,
+    "area": "Dongcheng",
+    "description": "Las torres que marcaban la hora de la ciudad imperial, entre Nanluoguxiang y Houhai. En invierno 9:30–16:30, venta hasta las 16:00.",
+    "days": [
+      "d20"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥120 por persona (aprox.)",
+    "link": null,
+    "id": "p-kaoroji",
+    "name": "Kaorou Ji (cordero asado, Houhai)",
+    "nameLocal": "烤肉季（后海店）",
+    "cityId": "beijing",
+    "category": "gastronomia",
+    "lat": 39.9388,
+    "lon": 116.3928,
+    "approx": true,
+    "area": "Xicheng",
+    "description": "Casa de cordero asado al estilo hui fundada en 1848, junto al puente Yinding.",
+    "days": [
+      "d20"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": null,
+    "link": null,
+    "id": "p-greatleap6",
+    "name": "Great Leap Brewing #6",
+    "nameLocal": "大跃啤酒（豆角胡同6号）",
+    "cityId": "beijing",
+    "category": "noche",
+    "lat": 39.9363,
+    "lon": 116.399,
+    "approx": true,
+    "area": "Dongcheng",
+    "description": "La primera cervecería artesanal de Pekín, en un patio de hutong cerca de Nanluoguxiang, con cervezas de pimienta de Sichuan o té. Confirmar que abra el martes.",
+    "days": [
+      "d20"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": null,
+    "link": null,
+    "id": "p-tianmen-cave",
+    "name": "Puerta del Cielo (Tianmen Dong)",
+    "nameLocal": "天门洞",
+    "cityId": "zhangjiajie",
+    "category": "aventura",
+    "lat": 29.0514,
+    "lon": 110.4827,
+    "approx": false,
+    "area": "Yongding",
+    "description": "Arco natural de 131 m en la roca con la escalera de 999 escalones; por dentro, escaleras mecánicas hasta la cima y los caminos de vidrio.",
+    "days": [
+      "d21"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥65–72 la subida (aprox.)",
+    "link": null,
+    "id": "p-bailong",
+    "name": "Ascensor Bailong",
+    "nameLocal": "百龙天梯",
+    "cityId": "zhangjiajie",
+    "category": "aventura",
+    "lat": 29.3512,
+    "lon": 110.4612,
+    "approx": false,
+    "area": "Wulingyuan",
+    "description": "Ascensor vidriado de 326 m pegado al acantilado, del valle a la meseta de Yuanjiajie.",
+    "days": [
+      "d22"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": null,
+    "link": null,
+    "id": "p-yuanjiajie",
+    "name": "Yuanjiajie: Montaña Hallelujah",
+    "nameLocal": "袁家界 · 阿凡达哈利路亚山",
+    "cityId": "zhangjiajie",
+    "category": "naturaleza",
+    "lat": 29.3452,
+    "lon": 110.4372,
+    "approx": false,
+    "area": "Wulingyuan",
+    "description": "Circuito a pie por miradores entre columnas de arenisca: la Montaña Hallelujah de Avatar y el Primer Puente Bajo el Cielo.",
+    "days": [
+      "d22"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": null,
+    "link": null,
+    "id": "p-tianzi",
+    "name": "Tianzi Shan",
+    "nameLocal": "天子山 · 西海峰林",
+    "cityId": "zhangjiajie",
+    "category": "naturaleza",
+    "lat": 29.3832,
+    "lon": 110.4892,
+    "approx": false,
+    "area": "Wulingyuan",
+    "description": "Meseta con miradores sobre un bosque de picos (Mar del Oeste, Pincel Imperial) y el parque He Long.",
+    "days": [
+      "d22"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": "~¥67–72 la bajada (aprox.)",
+    "link": null,
+    "id": "p-tianzi-cable",
+    "name": "Teleférico de Tianzi",
+    "nameLocal": "天子山索道",
+    "cityId": "zhangjiajie",
+    "category": "traslado",
+    "lat": 29.3785,
+    "lon": 110.506,
+    "approx": false,
+    "area": "Wulingyuan",
+    "description": "Bajada de la meseta de Tianzi al valle; de ahí ~15 min a la puerta de Wulingyuan. Cierra ~17:00 y para con hielo.",
+    "days": [
+      "d22"
+    ]
+  },
+  {
+    "source": "revision",
+    "cost": null,
+    "link": null,
+    "id": "p-golden-whip",
+    "name": "Arroyo del Látigo Dorado",
+    "nameLocal": "金鞭溪",
+    "cityId": "zhangjiajie",
+    "category": "naturaleza",
+    "lat": 29.3404,
+    "lon": 110.4508,
+    "approx": true,
+    "area": "Wulingyuan",
+    "description": "Sendero llano de ~7,5 km junto a un arroyo entre los pilares (2,5–3 h completo). Un tramo corto entra antes de subir por el Bailong.",
+    "days": []
+  },
+  {
+    "source": "revision",
+    "cost": "~¥100 por persona (aprox.)",
+    "link": null,
+    "id": "p-xibu",
+    "name": "Calle Xibu",
+    "nameLocal": "溪布街",
+    "cityId": "zhangjiajie",
+    "category": "gastronomia",
+    "lat": 29.3472,
+    "lon": 110.5524,
+    "approx": false,
+    "area": "Wulingyuan",
+    "description": "Calle peatonal de estilo tujia en el pueblo de Wulingyuan, con comida, artesanías y vida de noche.",
+    "days": [
+      "d21"
     ]
   }
 ]
