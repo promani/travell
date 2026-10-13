@@ -35,7 +35,6 @@ export function onboarding(_, ctx) {
     <p class="muted">Así la app te muestra tus tareas, comparte tu ubicación con el grupo (si la activás) y sabe de quién son los gastos que cargás.</p>
     <ul class="onboard-list">${D.travelers.map((t) => `<li><button class="onboard-pick" data-act="set-me" data-id="${esc(t.id)}">
       <span class="who big" style="--c:${esc(t.color || '#888')}">${initials(t)}</span><b>${esc(t.name)}</b><em>${ic('chevron-right')}</em></button></li>`).join('')}</ul>
-    <button class="btn" data-act="traveler-new">${ic('plus')} Soy otra persona</button>
     <p class="hint">Queda guardado solo en este celular. Lo podés cambiar después en Más → Viajeros.</p>
   </section>`;
 }
@@ -88,8 +87,7 @@ export function render(_, ctx) {
     const where = pos && !pos.deleted ? `${t.id === mine ? 'Tu ubicación actual' : `Ubicación ${ago(Date.now() - pos.updatedAt)}`}${dist}` : 'Sin ubicación';
     return `<li><span class="who big" style="--c:${esc(t.color || '#888')}">${esc(t.name.trim().slice(0, 2).toUpperCase())}</span>
       <div><b>${esc(t.name)}${t.id === mine ? ' (vos)' : ''}</b><small>${esc(where)}</small></div>
-      ${pos && !pos.deleted && t.id !== mine ? `<a class="btn tiny" href="#/mapa?person=${esc(t.id)}">Mapa</a>` : ''}
-      <button class="btn tiny" data-act="traveler-edit" data-id="${esc(t.id)}">Editar</button></li>`;
+      ${pos && !pos.deleted && t.id !== mine ? `<a class="btn tiny" href="#/mapa?person=${esc(t.id)}">Mapa</a>` : ''}</li>`;
   }).join('');
 
   return `<header class="pagehead"><h1>${ic('users')} Viajeros</h1></header>
@@ -102,8 +100,7 @@ export function render(_, ctx) {
       const draw = () => { m.setItems(personItems()); const pts = personItems().map((p) => [p.pos.lat, p.pos.lon]); if (gps.pos) pts.push([gps.pos.lat, gps.pos.lon]); if (pts.length) m.fit(pts); };
       draw(); ctx.cleanup(bus.on('positions', draw)); ctx.cleanup(onPosition(() => {}));
     }, 'map-people')}
-    <ul class="people">${rows}</ul>
-    <div class="row-actions"><button class="btn small" data-act="traveler-new">${ic('plus')} Agregar viajero</button></div></section>
+    <ul class="people">${rows}</ul></section>
 
   <h2 class="grp">${ic('passport')} Pasaportes</h2>
   ${passportCards()}

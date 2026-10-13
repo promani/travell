@@ -1,4 +1,4 @@
-// ABM (alta / baja / modificación) forms: places, lodging, activities, tasks, travelers, notes.
+// ABM (alta / baja / modificación) forms: places, lodging, activities, tasks, notes.
 // Saved as overlay records (store.cols) on top of the JSON; location from the map, GPS or typed coordinates.
 import { D, I, cols, me, settings, NOTE_KINDS } from '../store.js';
 import { esc, ic, uid, toast, openModal, closeModal, fmtShort, haversine } from '../util.js';
@@ -172,17 +172,6 @@ export function openNoteForm(n = {}, dayId = null) {
     ${buttons('note-del', n.id, n, 'notes')}</form>`);
 }
 
-// ------------------------------------------------------------------ travelers
-const COLORS = ['#1c7ed6', '#e8590c', '#2f9e44', '#ae3ec9', '#f08c00', '#0c8599', '#e03131', '#5c940d'];
-export function openTravelerForm(t = {}) {
-  const color = t.color || COLORS[D.travelers.length % COLORS.length];
-  open(`<h3>${t.id ? 'Editar viajero' : 'Nuevo viajero'}</h3><form class="form" data-submit="traveler-save">
-    <input type="hidden" name="id" value="${esc(t.id || '')}">
-    ${input('Nombre *', 'name', t.name, 'required maxlength="40"')}
-    <label class="field">Color<input type="color" name="color" value="${esc(color)}"></label>
-    ${buttons('traveler-del', t.id, t, 'travelers')}</form>`);
-}
-
 // ------------------------------------------------------------------ actions
 const parsePrefill = (el) => { try { return JSON.parse(el.dataset.prefill || '{}'); } catch { return {}; } };
 register({
@@ -262,20 +251,4 @@ register({
   'note-del': (el, _, app) => { if (!confirmDel('esta nota')) return; cols.del('notes', el.dataset.id); closeModal(el); app.rerender(); },
   'task-del': (el, _, app) => { if (!confirmDel('esta tarea')) return; cols.del('tasks', el.dataset.id); closeModal(el); app.rerender(); },
 
-  'traveler-new': () => openTravelerForm(),
-  'traveler-edit': (el) => openTravelerForm(I.traveler[el.dataset.id]),
-  'traveler-save': (form, _, app) => {
-    const f = new FormData(form);
-    const id = val(f, 'id') || uid('v-');
-    cols.put('travelers', { id, name: val(f, 'name'), color: val(f, 'color') });
-    if (!me()) settings.set('me', id);
-    closeModal(form); app.rerender();
-  },
-  'traveler-del': (el, _, app) => {
-    if (D.travelers.length <= 1) return toast('Tiene que quedar al menos un viajero');
-    if (!confirm('¿Borrar este viajero? Los gastos y tareas que tenga quedan sin dueño.')) return;
-    cols.del('travelers', el.dataset.id);
-    if (me() === el.dataset.id) settings.set('me', null);
-    closeModal(el); app.rerender();
-  },
 });

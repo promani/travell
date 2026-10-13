@@ -228,3 +228,21 @@ test('notes: every note has a kind and real days; tips live in notes, not in day
   assert.equal(I.note['n-test'].kind, 'recordatorio');
   cols.del('notes', 'n-test');
 });
+
+test('travelers come only from travelers.json; old app-saved ones with the same name are folded in', () => {
+  const { cols, settings, D, I, rebuild } = store;
+  cols.merge('travelers', [{ id: 'yo', name: 'Pehuen', updatedAt: 1 }, { id: 'v-x1', name: 'Sole ', updatedAt: 1 }, { id: 'v-zz', name: 'Otro', updatedAt: 1 }]);
+  cols.merge('expenses', [{ id: 'ex-old', desc: 'Té', amount: 10, currency: 'CNY', paidBy: 'yo', split: { mode: 'equal', among: ['yo', 'v-x1', 'facundo'] }, updatedAt: 1 }]);
+  cols.merge('tasks', [{ id: 'k-old', title: 'x', assignee: 'v-x1', createdBy: 'yo', updatedAt: 1 }]);
+  settings.set('me', 'yo');
+  rebuild();
+  assert.deepEqual(D.travelers.map((t) => t.id), ['pehuen', 'sole', 'facundo']);
+  const ex = cols.map('expenses')['ex-old'];
+  assert.equal(ex.paidBy, 'pehuen');
+  assert.deepEqual(ex.split.among, ['pehuen', 'sole', 'facundo']);
+  assert.deepEqual([cols.map('tasks')['k-old'].assignee, cols.map('tasks')['k-old'].createdBy], ['sole', 'pehuen']);
+  assert.equal(settings.get('me'), 'pehuen');
+  assert.ok(cols.map('travelers').yo.deleted && cols.map('travelers')['v-x1'].deleted, 'old records deleted (synced)');
+  assert.ok(!I.traveler['v-zz'] && !cols.map('travelers')['v-zz'].deleted, 'an unknown name is hidden, not deleted');
+  settings.set('me', null);
+});

@@ -140,6 +140,46 @@ function merged(base, name) {
   return [...m.values()];
 }
 
+/**
+ * Travelers the app saved before travelers.json had the real names (the example "Yo" / "Viajero2" renamed in the app,
+ * or someone added with "Soy otra persona"). One with the same name as a traveler of the file is folded into it: its
+ * expenses, tasks, passport and "who am I" move to the real id. Then the old record is deleted (synced like any edit).
+ */
+function foldTravelers() {
+  const norm = (s) => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+  const real = new Map((BASE.travelers || []).map((t) => [norm(t.name), t.id]));
+  const ids = new Set((BASE.travelers || []).map((t) => t.id));
+  const alias = {};
+  for (const r of cols.list('travelers')) {
+    if (r.deleted || ids.has(r.id)) continue;
+    if (real.has(norm(r.name))) alias[r.id] = real.get(norm(r.name));
+  }
+  const olds = Object.keys(alias);
+  if (!olds.length) return;
+  const to = (id) => alias[id] || id;
+  const quiet = { rebuild: false };
+  for (const e of cols.live('expenses')) {
+    const s = e.split || {};
+    const touched = olds.includes(e.paidBy) || (s.among || []).some((x) => alias[x]) || Object.keys(s.shares || {}).some((x) => alias[x]);
+    if (!touched) continue;
+    const shares = s.shares && Object.fromEntries(Object.entries(s.shares).map(([k, v]) => [to(k), v]));
+    cols.put('expenses', { ...e, paidBy: to(e.paidBy), split: { ...s, ...(s.among && { among: [...new Set(s.among.map(to))] }), ...(shares && { shares }) } }, quiet);
+  }
+  for (const t of cols.live('tasks')) {
+    if (alias[t.assignee] || alias[t.createdBy]) cols.put('tasks', { ...t, assignee: to(t.assignee), createdBy: to(t.createdBy) }, quiet);
+  }
+  const passports = cols.map('passports');
+  for (const old of olds) {
+    const p = passports[old];
+    if (p && !p.deleted) {
+      if (!passports[alias[old]] || passports[alias[old]].deleted) cols.put('passports', { ...p, id: alias[old] }, quiet);
+      cols.put('passports', { id: old, deleted: true }, quiet);
+    }
+    cols.put('travelers', { id: old, deleted: true }, quiet);
+  }
+  if (alias[me()]) settings.set('me', alias[me()]);
+}
+
 const minutes = (hhmm) => { const x = /^(\d{1,2}):(\d{2})/.exec(hhmm || ''); return x ? +x[1] * 60 + +x[2] : null; };
 
 /** Overlay records that change or hide something from the JSON files. */
@@ -161,7 +201,9 @@ export function rebuild() {
   // notes: tips, reminders and alerts per day. Older files used level warn / info instead of kind.
   D.notes = merged(BASE.notes, 'notes').map((n) => ({ ...n, kind: NOTE_KINDS[n.kind] ? n.kind : n.level === 'warn' ? 'alerta' : 'tip', days: n.days || [] }));
   D.phrases = { languages: [], groups: [], kanji: [], ...(Array.isArray(BASE.phrases) ? {} : BASE.phrases) };
-  D.travelers = merged(BASE.travelers, 'travelers');
+  // the travelers are the ones in travelers.json; the app does not add, rename or remove them
+  foldTravelers();
+  D.travelers = BASE.travelers || [];
   D.places = merged(BASE.places, 'places');
   D.tasks = merged(BASE.tasks, 'tasks');
   D.resources = merged(BASE.resources, 'resources');
