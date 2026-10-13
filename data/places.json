@@ -1292,9 +1292,7 @@
     "cost": "Tenryu-ji ~¥500 (aprox.)",
     "link": null,
     "source": "itinerario",
-    "days": [
-      "d19"
-    ]
+    "days": []
   },
   {
     "id": "p-kinkakuji",
@@ -1310,9 +1308,7 @@
     "cost": "~¥500 (aprox.)",
     "link": null,
     "source": "itinerario",
-    "days": [
-      "d19"
-    ]
+    "days": []
   },
   {
     "id": "p-nishiki",
@@ -1328,9 +1324,7 @@
     "cost": null,
     "link": null,
     "source": "itinerario",
-    "days": [
-      "d19"
-    ]
+    "days": []
   },
   {
     "id": "p-kix",
@@ -1663,6 +1657,24 @@
     "source": "itinerario",
     "days": [
       "d17"
+    ]
+  },
+  {
+    "id": "p-fukuchiyama",
+    "name": "Vía abandonada del Fukuchiyama (Namaze – Takedao)",
+    "nameLocal": "JR福知山線廃線敷",
+    "cityId": "kobe",
+    "category": "aventura",
+    "lat": 34.832,
+    "lon": 135.316,
+    "approx": true,
+    "area": "Nishinomiya / Takarazuka (Hyogo)",
+    "description": "Caminata de unos 5 km por la vieja vía del tren junto al río Muko, con puentes y túneles sin luz. Sin baños ni negocios en el camino.",
+    "cost": "Gratis",
+    "link": "https://www.hyogo-tourism.jp/world/spot/detail_1037.html",
+    "source": "itinerario",
+    "days": [
+      "d19"
     ]
   }
 ]
