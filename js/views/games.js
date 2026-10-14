@@ -1,4 +1,4 @@
-// Juego del día: the same puzzles for every traveler each day (Tango, Zip, Queens), with the day's ranking and the trip's
+// Juego del día: the same puzzles for every traveler each day (Tango, Zip, Queens, Patches), with the day's ranking and the trip's
 // records per game. Results are { id: "<game>:<date>:<traveler>", game, date, traveler, ms } in the synced 'games'
 // collection; a game in progress stays on this phone. Nobody sees the others' times until they solve it themselves.
 import { D, I, cols, kv, me, bus } from '../store.js';
@@ -9,6 +9,7 @@ import { who } from './tasks.js';
 import * as tango from '../tango.js';
 import * as zip from '../zip.js';
 import * as queens from '../queens.js';
+import * as patches from '../patches.js';
 
 export const today = () => tripPhase().today;
 const fmtMs = (ms) => { const s = Math.round(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
@@ -76,6 +77,19 @@ const GAMES = {
       <li>Dos reinas nunca se tocan, ni siquiera en diagonal.</li>
       <li>Tocá una vez para marcar una cruz (donde no puede ir) y otra vez para poner la reina. Arrastrá para marcar varias cruces.</li>
       <li>Hay una sola solución y se llega sin adivinar.</li>`,
+  },
+  patches: {
+    label: 'Patches', icon: 'table-cells-large',
+    intro: 'Dividí la grilla en rectángulos, uno por pista, del tamaño y la forma que dice.',
+    puzzle: (date) => patches.puzzle(date),
+    empty: () => [],
+    solution: (p) => p.solution.map((r) => ({ ...r })),
+    valid: (data) => Array.isArray(data) && data.every((r) => Number.isInteger(r?.w)),
+    board: patchesBoard,
+    rules: `<li>Arrastrá el dedo para dibujar un rectángulo; tocalo para borrarlo.</li>
+      <li>Cada rectángulo tiene exactamente una pista y entre todos cubren la grilla.</li>
+      <li>El número es la cantidad de casillas. La forma dice si es un cuadrado <span class="pt-shape square"></span>, más ancho que alto <span class="pt-shape wide"></span> o más alto que ancho <span class="pt-shape tall"></span>.</li>
+      <li>Hay una sola solución.</li>`,
   },
 };
 const KEYS = Object.keys(GAMES);
@@ -225,6 +239,58 @@ function bindQueens(board) {
   board.addEventListener('pointercancel', up);
 }
 
+// ------------------------------------------------------------------ Patches board
+const PATCH_COLORS = ['#f6b8c6', '#a9d3f5', '#c4e3a8', '#ffdf85', '#d2bff2', '#ffc596', '#9fe3d6', '#f2c4e6', '#b9e0a5', '#ffd3b0', '#b8c7f5', '#e6dca0'];
+let patchDraft = null;
+function patchesBoard() {
+  const { p, data: rects } = state, N = patches.N, pct = (v) => `${(v / N) * 100}%`;
+  const box = (r, cls, color) => `<div class="pt-patch ${cls}" style="left:${pct(r.c)};top:${pct(r.r)};width:${pct(r.w)};height:${pct(r.h)}${color ? `;--c:${color}` : ''}"></div>`;
+  const patchesHtml = rects.map((r) => { const ks = patches.cluesIn(r, p); return box(r, ks.length === 1 ? (patches.goodPatch(r, p) ? 'ok' : 'off') : 'bad', ks.length === 1 ? PATCH_COLORS[ks[0] % PATCH_COLORS.length] : ''); }).join('');
+  const clueAt = new Map(p.clues.map((k) => [k.cell, k]));
+  const cells = [...Array(N * N)].map((_, i) => { const k = clueAt.get(i); return `<div class="pt-cell">${k ? `<b class="pt-clue">${k.shape ? `<span class="pt-shape ${k.shape}"></span>` : ''}${k.area ?? ''}</b>` : ''}</div>`; }).join('');
+  return `${cells}${patchesHtml}${patchDraft ? box(patchDraft, 'draft') : ''}`;
+}
+// Drag from one cell to another to draw a patch (it replaces the ones it overlaps); a tap on a patch removes it.
+function bindPatches(board) {
+  let start = -1, before = null;
+  const N = patches.N;
+  const cellAt = (e) => {
+    const r = board.getBoundingClientRect();
+    const c = Math.min(N - 1, Math.max(0, Math.floor(((e.clientX - r.left) / r.width) * N))), y = Math.min(N - 1, Math.max(0, Math.floor(((e.clientY - r.top) / r.height) * N)));
+    return y * N + c;
+  };
+  const rectOf = (a, b) => { const r0 = Math.min(Math.floor(a / N), Math.floor(b / N)), r1 = Math.max(Math.floor(a / N), Math.floor(b / N)), c0 = Math.min(a % N, b % N), c1 = Math.max(a % N, b % N); return { r: r0, c: c0, w: c1 - c0 + 1, h: r1 - r0 + 1 }; };
+  const holds = (rect, i) => patches.cellsOf(rect).includes(i);
+  board.addEventListener('pointerdown', (e) => {
+    if (!state || state.won || state.game !== 'patches') return;
+    start = cellAt(e); before = state.data.map((r) => ({ ...r })); patchDraft = null;
+    resume();
+    board.setPointerCapture?.(e.pointerId);
+  });
+  board.addEventListener('pointermove', (e) => {
+    if (start < 0) return;
+    const i = cellAt(e);
+    if (i === start && !patchDraft) return;
+    patchDraft = rectOf(start, i);
+    paint();
+  });
+  const up = (e) => {
+    if (start < 0) return;
+    if (patchDraft && e.type === 'pointerup') {
+      const cells = patches.cellsOf(patchDraft);
+      state.data = state.data.filter((r) => !patches.cellsOf(r).some((i) => cells.includes(i)));
+      state.data.push(patchDraft);
+    } else if (!patchDraft) {
+      state.data = state.data.filter((r) => !holds(r, start));
+    }
+    patchDraft = null; start = -1;
+    if (JSON.stringify(before) !== JSON.stringify(state.data)) state.history.push(before);
+    if (patches.solved(state.data, state.p)) finish(); else { persist(); paint(); }
+  };
+  board.addEventListener('pointerup', up);
+  board.addEventListener('pointercancel', up);
+}
+
 // ------------------------------------------------------------------ page
 function rankingHtml(game, date, showTimes) {
   const rs = resultsOf(game, date), miss = missing(game, date);
@@ -263,6 +329,7 @@ export function render(params, ctx) {
   ctx.cleanup(() => { clearInterval(timer); document.removeEventListener('visibilitychange', onVis); pause(); });
   if (game === 'zip') ctx.after(() => { const b = $('#tg-board'); if (b) bindZip(b); });
   if (game === 'queens') ctx.after(() => { const b = $('#tg-board'); if (b) bindQueens(b); });
+  if (game === 'patches') ctx.after(() => { const b = $('#tg-board'); if (b) bindPatches(b); });
 
   const tabs = KEYS.map((k) => `<a class="chip${k === game ? ' on' : ''}" href="#/juego?g=${k}" ${k === game ? 'aria-current="page"' : ''}>${ic(GAMES[k].icon)} ${esc(GAMES[k].label)}${solvedByMe(k, date) ? ` ${ic('check')}` : ''}</a>`).join('');
   return `<header class="pagehead"><h1>${ic('puzzle-piece')} Juego del día</h1>
@@ -272,7 +339,7 @@ export function render(params, ctx) {
     <div class="card-head"><h3>${esc(g.label)} · ${esc(fmtShort(date))}</h3><span class="tg-time" id="tg-time">${ic('stopwatch')} ${fmtMs(mine ? mine.ms : elapsed())}</span></div>
     <p class="hint">${esc(g.intro)}</p>
     ${mine ? `<p class="tg-won">${ic('champagne-glasses')} ¡Resuelto en ${fmtMs(mine.ms)}!</p>` : ''}
-    <div class="tg-board ${game === 'zip' ? 'zp-board' : game === 'queens' ? 'qn-board' : ''}" id="tg-board">${g.board()}</div>
+    <div class="tg-board ${game === 'zip' ? 'zp-board' : game === 'queens' ? 'qn-board' : game === 'patches' ? 'pt-board' : ''}" id="tg-board">${g.board()}</div>
     ${mine ? '' : `<div class="row-actions"><button class="btn small" id="tg-undo" data-act="game-undo" ${state.history.length ? '' : 'disabled'}>${ic('rotate-left')} Deshacer</button>
       <button class="btn small" data-act="game-clear">${ic('eraser')} Borrar</button></div>`}
     <details class="tg-rules"><summary>Reglas</summary><ul>${g.rules}</ul></details>
@@ -289,10 +356,10 @@ export function homeCard() {
   const pending = KEYS.map((k) => ({ k, miss: missing(k, date) })).filter((x) => x.miss.length);
   if (!pending.length) return '';
   const mineLeft = pending.filter((x) => x.miss.some((t) => t.id === me())).map((x) => GAMES[x.k].label);
-  const lines = pending.map(({ k, miss }) => {
-    const others = miss.filter((t) => t.id !== me()).map((t) => t.name);
-    return others.length ? `${GAMES[k].label}: falta${others.length > 1 ? 'n' : ''} ${others.join(', ')}` : '';
-  }).filter(Boolean);
+  // others, grouped by person: "Sole, Facundo (Zip)" — no list when they still have every game to play
+  const others = D.travelers.filter((t) => t.id !== me()).map((t) => ({ t, left: pending.filter((x) => x.miss.some((m) => m.id === t.id)).map((x) => GAMES[x.k].label) }))
+    .filter((x) => x.left.length).map(({ t, left }) => (left.length === KEYS.length ? t.name : `${t.name} (${left.join(', ')})`));
+  const lines = others.length ? [`Falta${others.length > 1 ? 'n' : ''} ${others.join(', ')}`] : [];
   const href = mineLeft.length ? `#/juego?g=${pending.find((x) => x.miss.some((t) => t.id === me())).k}` : '#/juego';
   return `<a class="card tg-home${mineLeft.length ? ' due' : ''}" href="${href}">${ic('puzzle-piece')}<div><b>Juego del día${mineLeft.length ? `: te ${mineLeft.length > 1 ? 'faltan' : 'falta'} ${esc(mineLeft.join(' y '))}` : ''}</b>
     <small>${esc(lines.join(' · ') || 'Solo faltás vos')}</small></div><em>›</em></a>`;

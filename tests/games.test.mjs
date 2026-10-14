@@ -5,6 +5,7 @@ import { installBrowserStubs } from './helpers.mjs';
 import * as tango from '../js/tango.js';
 import * as zip from '../js/zip.js';
 import * as queens from '../js/queens.js';
+import * as patches from '../js/patches.js';
 
 test('the puzzle of a date is the same every time and differs between dates', () => {
   assert.deepEqual(tango.puzzle('2026-11-18'), tango.puzzle('2026-11-18'));
@@ -88,4 +89,18 @@ test('queens: same puzzle per date, 8 connected regions of 3+ cells, a single so
   const p = queens.puzzle('2026-11-18'), marks = Array(N * N).fill(0);
   marks[0] = 2; marks[N + 1] = 2;                                                   // touching diagonally
   assert.deepEqual([...queens.clashes(marks, p.regions)].sort((a, b) => a - b), [0, N + 1]);
+});
+
+test('patches: same puzzle per date, a single solution that tiles the board, every clue says something', () => {
+  assert.deepEqual(patches.puzzle('2026-11-18'), patches.puzzle('2026-11-18'));
+  for (let d = 1; d <= 60; d++) {
+    const p = patches.puzzle(`2026-12-${d}`);
+    assert.equal(patches.count(p.clues, 3), 1, `day ${d}`);
+    assert.ok(patches.solved(p.solution, p));
+    assert.ok(p.clues.every((k) => k.area != null || k.shape != null));
+  }
+  const p = patches.puzzle('2026-11-18');
+  assert.equal(patches.solved(p.solution.slice(1), p), false);                                   // a hole
+  const big = { r: 0, c: 0, w: 6, h: 6 };
+  assert.equal(patches.goodPatch(big, p), false);                                                // many clues
 });

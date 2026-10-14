@@ -19,7 +19,7 @@ export function menu(_, ctx) {
     ['#/docs', 'file-lines', 'Documentos', 'Visas, trámites de entrada, seguro'],
     ['#/recursos', 'book', 'Recursos', 'Enlaces, mapas del metro, guías y apps por ciudad'],
     ['#/mate', 'mug-hot', 'Mate', 'Un jueguito para matar el tiempo en vuelos, trenes y esperas'],
-    ['#/juego', 'puzzle-piece', 'Juego del día', 'Tango, Zip y Queens, los mismos para todos cada día, con ranking y récords'],
+    ['#/juego', 'puzzle-piece', 'Juego del día', 'Tango, Zip, Queens y Patches, los mismos para todos cada día, con ranking y récords'],
     ['#/cheatsheet', 'language', 'Cheat sheet', 'Frases y kanji útiles en chino y japonés'],
     ['#/alojamientos', 'hotel', 'Alojamientos', 'Hoteles, reservas y check-in'],
     ['#/transporte', 'train', 'Transporte', 'Vuelos y trenes por día, con pasajes y QR'],
