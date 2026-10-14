@@ -216,7 +216,7 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
   - **Tango** (`js/tango.js`): grilla de 6×6 con soles y lunas, 3 de cada uno por fila y columna, nunca tres iguales seguidos, `=` y `×` entre casillas. Una sola solución, se resuelve con lógica, sin adivinar.
   - **Zip** (`js/zip.js`): un camino que pasa por las 36 casillas, del 1 al 8 en orden, sin cruzar paredes. Se dibuja arrastrando el dedo (los tramos rectos se completan solos) y se vuelve atrás arrastrando o tocando el camino. Vale cualquier camino que cumpla las reglas.
   - **Queens** (`js/queens.js`): 8×8 con 8 regiones de color; una reina por fila, columna y región, sin que se toquen. Se toca para marcar una cruz y otra vez para la reina; arrastrar marca varias cruces. Una sola solución, se resuelve con lógica.
-  - **Patches** (`js/patches.js`): dividir el 6×6 en rectángulos, uno por pista; la pista dice cuántas casillas tiene y/o su forma (cuadrado, ancho, alto). Se arrastra para dibujar un rectángulo y se toca para borrarlo. Una sola solución.
+  - **Patches** (`js/patches.js`): dividir el 6×6 en rectángulos, uno por pista; la pista dice cuántas casillas tiene y/o su forma (cuadrado, ancho, alto). Se arrastra para dibujar un rectángulo y se toca para borrarlo. Una sola solución, se resuelve con lógica.
 - El tablero está tapado hasta tocar **Iniciar**: cuenta regresiva de 4 segundos y recién ahí arranca el reloj. Al resolverlo, papel picado, el tablero rebota y el celular vibra.
 - Son los mismos para todos: se generan en el celular a partir de la fecha del viaje, sin internet.
 - En Inicio aparece una tarjeta hasta que todos resolvieron los cuatro ("te falta Zip", "Faltan Sole, Facundo (Zip)").

@@ -1,6 +1,6 @@
 // Patches (like LinkedIn's): split a 6×6 grid in rectangles ("patches"). Every patch holds exactly one clue; the
 // clue tells its number of cells and/or its shape (square, wide, tall). The puzzle of a date is the same on every
-// phone (seeded by the date) and has a single solution.
+// phone (seeded by the date), has a single solution and is solvable by logic, without guessing.
 import { rng } from './tango.js';
 
 export const N = 6;
@@ -76,20 +76,64 @@ export function count(clues, cap = 2) {
   return found;
 }
 
+// ------------------------------------------------------------------ logic solver
+// What a person does, without guessing. Each clue keeps the rectangles it could still be; repeat until nothing changes:
+//  - a clue with a single rectangle left takes it, and the rest drop the ones that overlap it;
+//  - the cells every rectangle of a clue covers are that clue's: the others drop rectangles over them;
+//  - a cell only one clue can reach is that clue's: it keeps only the rectangles over that cell;
+//  - a rectangle that would leave some cell or some other clue with no way out is dropped (one step ahead).
+// Returns the rectangles (one per clue) or null if it gets stuck.
+export function deduce(clues) {
+  let cand = candidates(clues).map((list) => list.map((rect) => ({ rect, cells: cellsOf(rect) })));
+  const overlaps = (x, y) => x.cells.some((i) => y.cells.includes(i));
+  const reach = (cs) => {   // for each cell, the clues that can still cover it
+    const by = Array.from({ length: CELLS }, () => new Set());
+    cs.forEach((list, n) => list.forEach((x) => x.cells.forEach((i) => by[i].add(n))));
+    return by;
+  };
+  for (let changed = true; changed;) {
+    changed = false;
+    const keep = (n, f) => { const next = cand[n].filter(f); if (next.length !== cand[n].length) { cand[n] = next; changed = true; } };
+    for (let n = 0; n < cand.length; n++) {
+      if (!cand[n].length) return null;
+      // cells that are surely this clue's (all its rectangles cover them)
+      const sure = cand[n][0].cells.filter((i) => cand[n].every((x) => x.cells.includes(i)));
+      if (sure.length) for (let m = 0; m < cand.length; m++) if (m !== n) keep(m, (x) => !x.cells.some((i) => sure.includes(i)));
+    }
+    if (changed) continue;
+    const by = reach(cand);
+    for (let i = 0; i < CELLS; i++) {
+      if (!by[i].size) return null;
+      if (by[i].size === 1) { const [n] = by[i]; keep(n, (x) => x.cells.includes(i)); }
+    }
+    if (changed) continue;
+    // one step ahead: place a rectangle and see if every other clue and every cell still has a way
+    for (let n = 0; n < cand.length; n++) {
+      if (cand[n].length < 2) continue;
+      keep(n, (x) => {
+        const rest = cand.map((list, m) => (m === n ? [x] : list.filter((y) => !overlaps(x, y))));
+        return rest.every((list) => list.length) && reach(rest).every((set) => set.size);
+      });
+    }
+  }
+  return cand.every((list) => list.length === 1) ? cand.map((list) => list[0].rect) : null;
+}
+
 // Start with full clues (size and shape) in a random cell of each patch, then drop sizes and shapes while the
-// solution stays unique. Every clue keeps at least one of the two.
+// solution stays unique and the logic solver still finds it. Every clue keeps at least one of the two.
 export function puzzle(seed) {
   const rnd = rng('patches:' + seed);
   for (;;) {
     const rects = tiling(rnd);
     const clues = rects.map((rect) => { const cells = cellsOf(rect); return { cell: cells[Math.floor(rnd() * cells.length)], area: rect.w * rect.h, shape: shapeOf(rect) }; });
-    if (count(clues) !== 1) continue;
+    const logical = () => count(clues) === 1 && deduce(clues) !== null;
+    if (!logical()) continue;
     for (const [n, key] of shuffle(clues.flatMap((_, n) => [[n, 'area'], [n, 'shape']]), rnd)) {
       const k = clues[n], other = key === 'area' ? 'shape' : 'area';
       if (k[other] == null) continue;
       const keep = k[key];
       k[key] = null;
-      if (count(clues) !== 1) k[key] = keep;
+      if (!logical()) k[key] = keep;
     }
     return { clues, solution: rects };
   }
