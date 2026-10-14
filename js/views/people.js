@@ -46,6 +46,8 @@ export async function pendingSetup() {
   if (loc === 'denied') items.push({ ic: 'location-dot', title: 'Ubicación bloqueada', text: 'Habilitala en los permisos del sitio del navegador para ver lugares cercanos y compartir dónde estás.' });
   else if (loc !== 'granted') items.push({ ic: 'location-dot', title: 'Ubicación', text: 'Para ordenar lugares por cercanía y mostrarle al grupo dónde estás (solo si lo activás).',
     actions: '<button class="btn small primary" data-act="perm-ask">Permitir</button>' });
+  if (!syncConfigured()) items.push({ ic: 'arrows-rotate', title: 'Sincronizar con el grupo', text: 'Sin el código del grupo no ves lo que cargan los demás: tiempos del Juego del día, tareas, gastos, ubicaciones.',
+    actions: '<a class="btn small primary" href="#/viajeros#sync">Activar</a>' });
   if (syncConfigured() && 'Notification' in window && Notification.permission === 'default') {
     items.push({ ic: 'bell', title: 'Avisos', text: 'Para enterarte cuando alguien del grupo te asigna una tarea.',
       actions: '<button class="btn small primary" data-act="notif-ask">Permitir</button>' });
@@ -92,7 +94,7 @@ export function render(_, ctx) {
 
   return `<header class="pagehead"><h1>${ic('users')} Viajeros</h1></header>
   <div id="perm"></div>
-  <section class="card"><h3>¿Quién sos en este celular?</h3>
+  <section class="card" id="quien"><h3>¿Quién sos en este celular?</h3>
     <select data-change="set-me-select" aria-label="Quién sos"><option value="">— Elegí —</option>${D.travelers.map((t) => `<option value="${esc(t.id)}" ${t.id === mine ? 'selected' : ''}>${esc(t.name)}</option>`).join('')}</select></section>
 
   <section class="card"><h3>${ic('location-dot')} Dónde está cada uno</h3>
@@ -111,7 +113,7 @@ export function render(_, ctx) {
     <p class="hint">${syncConfigured() ? 'Se envía cifrada al grupo por la sincronización.' : 'Sin sincronización configurada, la ubicación solo llega a los demás si les mandás el link.'}</p>
     <div class="row-actions"><button class="btn small" data-act="share-link" ${mine ? '' : 'disabled'}>${ic('share-from-square')} Mandar mi ubicación por link</button></div></section>
 
-  <section class="card"><h3>${ic('arrows-rotate')} Sincronizar con el grupo</h3>
+  <section class="card" id="sync"><h3>${ic('arrows-rotate')} Sincronizar con el grupo</h3>
     <p class="hint">Opcional. Con un <b>relay</b> (servidor mínimo incluido en <code>server/relay.mjs</code>) los celulares comparten tareas, lugares, gastos, viajeros y ubicaciones. Los datos viajan <b>cifrados</b> con el código del grupo: el servidor no puede leerlos. Todos tienen que usar el mismo código.</p>
     <form class="form" data-submit="sync-save">
       <label class="field">URL del relay<input name="relayUrl" type="url" placeholder="https://mi-relay.example.com" value="${esc(settings.get('relayUrl', '') || defaultRelayUrl())}"></label>

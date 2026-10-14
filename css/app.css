@@ -626,3 +626,5 @@ body.onboarding main { padding-bottom: var(--s6); }
 .tr-hist-t td { padding: var(--s1) var(--s2); border-top: 1px solid var(--line); } .tr-hist-t td:last-child { text-align: right; }
 .tr-hist-t td small { display: inline; } .tr-hist-t .fa-star { color: var(--acc); }
 .tr-hist-t tr.now td { background: color-mix(in srgb, var(--pri) 10%, transparent); }
+.tg-hint { font-size: var(--fs-sm); padding: var(--s2) var(--s3); border-radius: var(--r-sm); background: color-mix(in srgb, var(--info) 10%, var(--card)); }
+.tg-hint .fa-solid { color: var(--info); }
