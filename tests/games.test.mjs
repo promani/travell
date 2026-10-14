@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { installBrowserStubs } from './helpers.mjs';
 import * as tango from '../js/tango.js';
 import * as zip from '../js/zip.js';
+import * as queens from '../js/queens.js';
 
 test('the puzzle of a date is the same every time and differs between dates', () => {
   assert.deepEqual(tango.puzzle('2026-11-18'), tango.puzzle('2026-11-18'));
@@ -66,4 +67,25 @@ test('zip: same puzzle per date, its path solves it step by step, and the rules 
   assert.equal(zip.solved([...p.solution].reverse(), p), false);              // has to start at 1
   assert.equal(zip.canStep([start], start, p), false);                          // never twice the same cell
   if (zip.adjacent(start, +three)) assert.equal(zip.canStep([start], +three, p), false);   // numbers in order
+});
+
+test('queens: same puzzle per date, 8 connected regions of 3+ cells, a single solution the logic finds', () => {
+  assert.deepEqual(queens.puzzle('2026-11-18'), queens.puzzle('2026-11-18'));
+  const N = queens.N;
+  for (let d = 1; d <= 30; d++) {
+    const p = queens.puzzle(`2026-12-${d}`), reg = p.regions;
+    for (let k = 0; k < N; k++) {
+      const cells = reg.map((x, i) => (x === k ? i : -1)).filter((i) => i >= 0);
+      assert.ok(cells.length >= 3, `day ${d} region ${k} too small`);
+      const seen = new Set([cells[0]]), todo = [cells[0]];
+      while (todo.length) { const i = todo.pop(); for (const j of [i - N, i + N, i % N ? i - 1 : -1, i % N < N - 1 ? i + 1 : -1]) if (j >= 0 && j < N * N && reg[j] === k && !seen.has(j)) { seen.add(j); todo.push(j); } }
+      assert.equal(seen.size, cells.length, `day ${d} region ${k} split`);
+    }
+    assert.deepEqual(queens.deduce(reg), p.solution);
+    const marks = Array(N * N).fill(0); p.solution.forEach((i) => { marks[i] = 2; });
+    assert.ok(queens.solved(marks, reg));
+  }
+  const p = queens.puzzle('2026-11-18'), marks = Array(N * N).fill(0);
+  marks[0] = 2; marks[N + 1] = 2;                                                   // touching diagonally
+  assert.deepEqual([...queens.clashes(marks, p.regions)].sort((a, b) => a - b), [0, N + 1]);
 });

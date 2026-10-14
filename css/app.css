@@ -507,3 +507,10 @@ body.onboarding main { padding-bottom: var(--s6); }
 .zp-path { position: absolute; inset: 3px; width: calc(100% - 6px); height: calc(100% - 6px); pointer-events: none; z-index: 1; }
 .zp-path polyline { fill: none; stroke: var(--pri); stroke-width: .34; stroke-linecap: round; stroke-linejoin: round; opacity: .85; }
 .tg-tabs { margin-bottom: 0; }
+/* Queens: coloured regions with thick borders between them; the board takes the finger to cross out cells */
+.tg-board.qn-board { grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 1px; padding: 0; background: #0000004d; border: 3px solid #1d2329; touch-action: none; user-select: none; -webkit-user-select: none; width: min(100%, 24rem); }
+.qn-cell { position: relative; aspect-ratio: 1; background: var(--c); color: #1d2329; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+.qn-cell.br::after, .qn-cell.bb::before { content: ''; position: absolute; z-index: 1; background: #1d2329; }
+.qn-cell.br::after { top: -1px; bottom: -1px; right: -2px; width: 3px; } .qn-cell.bb::before { left: -1px; right: -1px; bottom: -2px; height: 3px; }
+.qn-cell.bad { color: #c92a2a; background: repeating-linear-gradient(45deg, var(--c) 0 6px, #ff6b6b66 6px 12px); }
+.qn-x { font-style: normal; font-size: 1rem; opacity: .55; }

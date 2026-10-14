@@ -1,4 +1,4 @@
-// Juego del día: the same puzzles for every traveler each day (Tango, Zip), with the day's ranking and the trip's
+// Juego del día: the same puzzles for every traveler each day (Tango, Zip, Queens), with the day's ranking and the trip's
 // records per game. Results are { id: "<game>:<date>:<traveler>", game, date, traveler, ms } in the synced 'games'
 // collection; a game in progress stays on this phone. Nobody sees the others' times until they solve it themselves.
 import { D, I, cols, kv, me, bus } from '../store.js';
@@ -8,6 +8,7 @@ import { tripPhase } from '../tripstate.js';
 import { who } from './tasks.js';
 import * as tango from '../tango.js';
 import * as zip from '../zip.js';
+import * as queens from '../queens.js';
 
 export const today = () => tripPhase().today;
 const fmtMs = (ms) => { const s = Math.round(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; };
@@ -62,6 +63,19 @@ const GAMES = {
       <li>Pasá por los números en orden y terminá en el último.</li>
       <li>El camino tiene que pasar por <b>todas</b> las casillas, una sola vez. Las paredes no se cruzan.</li>
       <li>Para volver atrás, arrastrá hacia atrás o tocá una casilla del camino.</li>`,
+  },
+  queens: {
+    label: 'Queens', icon: 'crown',
+    intro: 'Poné una reina por fila, por columna y por color, sin que se toquen.',
+    puzzle: (date) => queens.puzzle(date),
+    empty: () => Array(queens.N * queens.N).fill(0),
+    solution: (p) => { const m = Array(queens.N * queens.N).fill(0); p.solution.forEach((i) => { m[i] = 2; }); return m; },
+    valid: (data) => Array.isArray(data) && data.length === queens.N * queens.N,
+    board: queensBoard,
+    rules: `<li>Una reina ${ic('crown')} en cada fila, en cada columna y en cada región de color.</li>
+      <li>Dos reinas nunca se tocan, ni siquiera en diagonal.</li>
+      <li>Tocá una vez para marcar una cruz (donde no puede ir) y otra vez para poner la reina. Arrastrá para marcar varias cruces.</li>
+      <li>Hay una sola solución y se llega sin adivinar.</li>`,
   },
 };
 const KEYS = Object.keys(GAMES);
@@ -167,6 +181,50 @@ function bindZip(board) {
   board.addEventListener('pointercancel', up);
 }
 
+// ------------------------------------------------------------------ Queens board
+const REGION_COLORS = ['#f6b8c6', '#a9d3f5', '#c4e3a8', '#ffdf85', '#d2bff2', '#ffc596', '#9fe3d6', '#d9d4cc'];
+function queensBoard() {
+  const { p, data: marks } = state, N = queens.N, reg = p.regions;
+  const bad = queens.clashes(marks, reg);
+  return marks.map((v, i) => {
+    const edges = `${i % N < N - 1 && reg[i + 1] !== reg[i] ? ' br' : ''}${i < N * (N - 1) && reg[i + N] !== reg[i] ? ' bb' : ''}`;
+    return `<div class="qn-cell${edges}${bad.has(i) ? ' bad' : ''}" data-i="${i}" style="--c:${REGION_COLORS[reg[i]]}">${v === 2 ? ic('crown') : v === 1 ? '<i class="qn-x">×</i>' : ''}</div>`;
+  }).join('');
+}
+// Tap: empty → cross → queen → empty. Dragging from an empty cell crosses out every empty cell it goes over.
+function bindQueens(board) {
+  let start = -1, dragging = false, before = null;
+  const cellAt = (e) => {
+    const r = board.getBoundingClientRect(), N = queens.N;
+    const c = Math.floor(((e.clientX - r.left) / r.width) * N), y = Math.floor(((e.clientY - r.top) / r.height) * N);
+    return c < 0 || y < 0 || c >= N || y >= N ? -1 : y * N + c;
+  };
+  const check = () => { if (queens.solved(state.data, state.p.regions)) finish(); else { persist(); paint(); } };
+  board.addEventListener('pointerdown', (e) => {
+    if (!state || state.won || state.game !== 'queens') return;
+    start = cellAt(e); if (start < 0) return;
+    dragging = false; before = state.data.slice();
+    resume();
+    board.setPointerCapture?.(e.pointerId);
+  });
+  board.addEventListener('pointermove', (e) => {
+    if (start < 0) return;
+    const i = cellAt(e);
+    if (i < 0 || (i === start && !dragging)) return;
+    if (!dragging) { if (state.data[start] !== 0) { start = -1; return; } dragging = true; state.data[start] = 1; }
+    if (state.data[i] === 0) { state.data[i] = 1; paint(); }
+  });
+  const up = (e) => {
+    if (start < 0) return;
+    if (!dragging && e.type === 'pointerup') state.data[start] = (state.data[start] + 1) % 3;
+    if (before.join() !== state.data.join()) state.history.push(before);
+    start = -1; dragging = false;
+    check();
+  };
+  board.addEventListener('pointerup', up);
+  board.addEventListener('pointercancel', up);
+}
+
 // ------------------------------------------------------------------ page
 function rankingHtml(game, date, showTimes) {
   const rs = resultsOf(game, date), miss = missing(game, date);
@@ -204,6 +262,7 @@ export function render(params, ctx) {
   document.addEventListener('visibilitychange', onVis);
   ctx.cleanup(() => { clearInterval(timer); document.removeEventListener('visibilitychange', onVis); pause(); });
   if (game === 'zip') ctx.after(() => { const b = $('#tg-board'); if (b) bindZip(b); });
+  if (game === 'queens') ctx.after(() => { const b = $('#tg-board'); if (b) bindQueens(b); });
 
   const tabs = KEYS.map((k) => `<a class="chip${k === game ? ' on' : ''}" href="#/juego?g=${k}" ${k === game ? 'aria-current="page"' : ''}>${ic(GAMES[k].icon)} ${esc(GAMES[k].label)}${solvedByMe(k, date) ? ` ${ic('check')}` : ''}</a>`).join('');
   return `<header class="pagehead"><h1>${ic('puzzle-piece')} Juego del día</h1>
@@ -213,7 +272,7 @@ export function render(params, ctx) {
     <div class="card-head"><h3>${esc(g.label)} · ${esc(fmtShort(date))}</h3><span class="tg-time" id="tg-time">${ic('stopwatch')} ${fmtMs(mine ? mine.ms : elapsed())}</span></div>
     <p class="hint">${esc(g.intro)}</p>
     ${mine ? `<p class="tg-won">${ic('champagne-glasses')} ¡Resuelto en ${fmtMs(mine.ms)}!</p>` : ''}
-    <div class="tg-board ${game === 'zip' ? 'zp-board' : ''}" id="tg-board">${g.board()}</div>
+    <div class="tg-board ${game === 'zip' ? 'zp-board' : game === 'queens' ? 'qn-board' : ''}" id="tg-board">${g.board()}</div>
     ${mine ? '' : `<div class="row-actions"><button class="btn small" id="tg-undo" data-act="game-undo" ${state.history.length ? '' : 'disabled'}>${ic('rotate-left')} Deshacer</button>
       <button class="btn small" data-act="game-clear">${ic('eraser')} Borrar</button></div>`}
     <details class="tg-rules"><summary>Reglas</summary><ul>${g.rules}</ul></details>
