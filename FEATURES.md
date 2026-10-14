@@ -209,5 +209,13 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
 - La app es genérica: el viaje se define en `data/*.json` y `?data=carpeta` carga otro.
 - El estado local (fotos, gastos, códigos) se separa por viaje.
 - Falta un selector de viajes y una forma simple de crear uno nuevo. Por ahora los datos siguen en el repo a propósito (ver backlog).
+## 22. Juego del día ✅
+
+- Un **Tango** por día (como el de LinkedIn): grilla de 6×6 con soles y lunas, 3 de cada uno por fila y columna, nunca tres iguales seguidos, `=` y `×` entre casillas. Está en **Más → Juego del día** (`#/juego`).
+- Es el mismo para todos: se genera en el celular a partir de la fecha del viaje (`js/tango.js`), sin internet. Siempre tiene una sola solución y se resuelve con lógica, sin adivinar.
+- En Inicio aparece una tarjeta hasta que lo resolvieron todos ("te toca", "faltan Sole, Facundo").
+- Ranking del día por tiempo (los tiempos de los demás se ven recién cuando lo resolvés) y récords del viaje: días ganados, jugados, racha y mejor tiempo.
+- Los resultados se sincronizan con el grupo como el resto de los datos de la app (colección `games`, cifrada); la partida a medias queda en el celular.
+- Próximos juegos posibles: Queens, Zip y Patches.
 
 Ver también: [VISION.md](VISION.md) · [ARCHITECTURE.md](ARCHITECTURE.md) · [BACKLOG.md](BACKLOG.md)

@@ -13,7 +13,7 @@ const OPTIONAL = ['transport', 'lodging', 'documents', 'travelers', 'tasks', 'no
 /** Collections the user can create/edit in the app (merged over the JSON, which Claude edits through the MCP). */
 export const EDITABLE = ['places', 'lodging', 'activities', 'tasks', 'travelers', 'resources', 'notes', 'tickets', 'expenses', 'passports'];
 /** Collections that only live in the overlay. */
-export const LOCAL_ONLY = ['positions', 'suggestions'];
+export const LOCAL_ONLY = ['positions', 'suggestions', 'games'];
 
 export const BASE = {};
 /** Kinds of notes: [icon, label]. */
