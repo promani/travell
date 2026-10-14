@@ -506,9 +506,11 @@ body.onboarding main { padding-bottom: var(--s6); }
   .mate-bar .mate-keys { display: inline; }
 }
 /* suggestion on days with a flight or a train */
-.mate-sug { display: flex; align-items: center; gap: var(--s3); text-decoration: none; color: inherit; }
-.mate-sug > span { font-size: 2rem; line-height: 1; } .mate-sug div { flex: 1; min-width: 0; } .mate-sug b { display: block; }
+.mate-sug-main { display: flex; align-items: center; gap: var(--s3); text-decoration: none; color: inherit; }
+.mate-sug-main > span { font-size: 2rem; line-height: 1; } .mate-sug-main div { flex: 1; min-width: 0; } .mate-sug-main b { display: block; }
 .mate-sug small { color: var(--muted); } .mate-sug em { font-style: normal; font-size: 1.4rem; color: var(--muted); }
+.mate-sug-alt { display: block; margin-top: var(--s2); padding-top: var(--s2); border-top: 1px solid var(--line); font-size: var(--fs-sm); text-decoration: none; color: var(--muted); }
+.mate-sug-alt b, .mate-sug-alt .fa-solid { color: var(--pri); }
 /* Zip: cells under a path drawn in SVG; the board takes the finger (no scrolling while dragging) */
 .zp-board { position: relative; touch-action: none; user-select: none; -webkit-user-select: none; }
 .zp-cell { aspect-ratio: 1; background: var(--card); display: flex; align-items: center; justify-content: center; }
@@ -538,3 +540,73 @@ body.onboarding main { padding-bottom: var(--s6); }
 .pt-clue { position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; border-radius: var(--r-pill); background: #fffffff2; color: #1d2329; font-size: .95rem; box-shadow: 0 0 0 1px #1d232933; }
 .pt-shape { display: inline-block; border: 2px solid currentColor; border-radius: 2px; vertical-align: middle; }
 .pt-shape.square { width: 10px; height: 10px; } .pt-shape.wide { width: 15px; height: 8px; } .pt-shape.tall { width: 8px; height: 15px; }
+
+/* Entrenar (js/views/train.js; exercises js/camino.js, js/clasificar.js, js/eco.js): calm screens, no scores */
+.back { display: inline-flex; align-items: center; gap: var(--s1); text-decoration: none; font-weight: 600; font-size: var(--fs-sm); }
+.tr-card { display: flex; flex-direction: column; align-items: center; text-align: center; gap: var(--s2); }
+.tr-icon { font-size: 2.6rem; color: var(--pri); line-height: 1; margin-top: var(--s2); }
+.tr-card h2 { margin: 0; } .tr-card > .muted { margin: 0; }
+.tr-how { text-align: left; max-width: 26rem; padding-left: 1.2rem; font-size: var(--fs-sm); margin: var(--s2) 0; } .tr-how li { margin-bottom: var(--s1); }
+.tr-go { min-width: 10rem; margin-bottom: var(--s2); }
+.tr-done .row-actions { justify-content: center; }
+.tr-play { align-items: stretch; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+.tr-top { display: flex; align-items: center; gap: var(--s3); }
+.tr-hits { font-weight: 700; color: var(--ok); font-variant-numeric: tabular-nums; min-width: 3rem; text-align: left; }
+.tr-time { flex: 1; height: 6px; border-radius: var(--r-pill); background: var(--line); overflow: hidden; }
+.tr-time i { display: block; height: 100%; width: 100%; background: var(--pri); border-radius: inherit; transition: width .2s linear; }
+.tr-top > span:empty { flex: 1; }
+.tr-stage { display: flex; flex-direction: column; align-items: center; gap: var(--s3); padding: var(--s2) 0; }
+.tr-msg { margin: 0; min-height: 1.5em; font-weight: 600; text-align: center; }
+.tr-msg.fell { color: var(--bad); } .tr-msg.made { color: var(--ok); }
+.tr-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); width: min(100%, 22rem); min-height: var(--ctl-sm); font-size: var(--fs-sm); }
+
+.cm-grid { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 5px; width: min(100%, 22rem); }
+.cm-cell { aspect-ratio: 1; border: 0; padding: 0; border-radius: var(--r-sm); background: var(--sunk); box-shadow: inset 0 0 0 1px var(--line); color: var(--pri); font-size: 1.2rem;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background .25s; }
+.cm-cell.near { box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--pri) 45%, transparent); }
+.cm-cell.been { background: color-mix(in srgb, var(--pri) 20%, var(--card)); }
+.cm-cell.start { box-shadow: inset 0 0 0 2px var(--pri); }
+.cm-cell.hole { background: color-mix(in srgb, var(--text) 72%, var(--bg)); }
+.cm-cell.hole.here { background: var(--bad); }
+.cm-me { width: 46%; height: 46%; border-radius: 50%; background: var(--pri); box-shadow: 0 2px 6px #0003; }
+
+.cs-arena, .ec-arena { width: 100%; display: flex; flex-direction: column; align-items: center; gap: var(--s4); touch-action: none; }
+.cs-arena.switch #cs-rule, .cs-arena.switch .cs-bin { animation: cs-flash .6s; }
+@keyframes cs-flash { 0% { background: color-mix(in srgb, var(--acc) 35%, var(--card)); } 100% { background: var(--card); } }
+#cs-rule { padding: 0 var(--s3); border-radius: var(--r-pill); color: var(--muted); }
+.cs-card-slot { height: 11rem; width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.cs-card { width: 10rem; height: 10rem; border-radius: var(--r-lg); background: var(--card); box-shadow: var(--shadow), 0 0 0 1px var(--line); display: flex; align-items: center; justify-content: center; transition: transform .17s ease-in, opacity .17s; }
+.cs-card svg { width: 72%; height: 72%; } .cs-card svg[viewBox$="200 100"] { width: 90%; }
+.cs-card.in { animation: cs-in .18s ease-out; } @keyframes cs-in { from { transform: scale(.85); opacity: 0; } }
+.cs-card.out-left { transform: translateX(-140%) rotate(-12deg); opacity: 0; } .cs-card.out-right { transform: translateX(140%) rotate(12deg); opacity: 0; }
+.cs-card.wrong { box-shadow: 0 0 0 3px var(--bad); transition-delay: .25s; animation: shake .25s; }
+@keyframes shake { 25% { translate: -6px; } 75% { translate: 6px; } }
+.cs-bins { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); width: 100%; }
+.cs-bin { min-height: 4.5rem; border: 1px solid var(--line); border-radius: var(--r); background: var(--card); color: var(--text); font: inherit; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: var(--s2); padding: var(--s2); }
+.cs-bin:active { background: color-mix(in srgb, var(--pri) 15%, var(--card)); }
+.cs-bin .fa-solid { color: var(--muted); }
+.cs-dot { width: .9rem; height: .9rem; border-radius: 50%; display: inline-block; }
+.cs-mini { width: 1.1rem; height: 1.1rem; fill: currentColor; }
+
+.ec-slot { height: 11rem; display: flex; align-items: center; justify-content: center; }
+.ec-item { position: relative; width: 9.5rem; height: 9.5rem; border-radius: var(--r-lg); background: var(--card); box-shadow: var(--shadow), 0 0 0 1px var(--line);
+  display: flex; align-items: center; justify-content: center; font-size: 4.2rem; color: var(--pri); transition: box-shadow .2s; }
+.ec-item.in { animation: cs-in .2s ease-out; }
+.ec-item.ok { box-shadow: 0 0 0 3px var(--ok); } .ec-item.wrong { box-shadow: 0 0 0 3px var(--bad); }
+.ec-mark { position: absolute; right: -.6rem; top: -.6rem; width: 1.8rem; height: 1.8rem; border-radius: 50%; font-size: 1rem; color: #fff; display: flex; align-items: center; justify-content: center; }
+.ec-item.ok .ec-mark { background: var(--ok); } .ec-item.wrong .ec-mark { background: var(--bad); }
+.ec-btns { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); width: 100%; }
+.ec-btns .btn { min-height: 4.5rem; font-size: var(--fs-md); flex-direction: column; gap: 2px; }
+.ec-btns .btn small { font-size: var(--fs-xs); } .ec-btns .ec-next { grid-column: 1 / -1; flex-direction: row; }
+@media (hover: none) { .ec-btns .btn small { display: none; } }
+@media (orientation: landscape) and (max-height: 500px) {
+  /* sideways: the answers go left and right of the figure, like holding a controller */
+  .cs-arena, .ec-arena { display: grid; grid-template: "msg msg msg" auto "l mid r" auto / 1fr auto 1fr; gap: var(--s2) var(--s4); align-items: center; }
+  .cs-bins, .ec-btns { display: contents; }
+  #cs-rule, #ec-ask { grid-area: msg; justify-self: center; }
+  .cs-card-slot, .ec-slot { grid-area: mid; height: 8rem; width: 12rem; } .cs-card, .ec-item { width: 7.5rem; height: 7.5rem; } .ec-item { font-size: 3.2rem; }
+  .cs-bin[data-side=left], .ec-no { grid-area: l; } .cs-bin[data-side=right], .ec-yes, .ec-btns .ec-next { grid-area: r; }
+  .cs-bin, .ec-btns .btn { min-height: 6rem; }
+  .cm-grid { width: min(100%, 58vh); }
+}

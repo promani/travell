@@ -19,6 +19,7 @@ import './views/passports.js';
 import { ticketActions, migrateDocuments } from './ticket.js';
 import * as resources from './views/resources.js';
 import * as mate from './views/mate.js';
+import * as train from './views/train.js';
 import * as games from './views/games.js';
 import { paintSimBar } from './views/sim.js';
 import { watchTheme } from './theme.js';
@@ -44,6 +45,7 @@ const ROUTES = {
   pasaportes: () => { setTimeout(() => location.replace('#/viajeros'), 0); return ''; },   // passports are now part of each traveler
   recursos: (p, c) => resources.render(p, c), juego: (p, c) => games.render(p, c),
   ubicacion: (p) => receiveLocation(p), buscar: (p, c) => search.render(p, c), mate: (p, c) => mate.render(p, c),
+  entrenar: (p, c) => train.render(p, c),
   ajustes: (p, c) => { c.after(() => more.storageInfo(c)); return more.ajustes(); },
 };
 const NAV_GROUP = { '': 'inicio', inicio: 'inicio', dia: 'dia', itinerario: 'dia', mapa: 'mapa', lugar: 'mapa', lugares: 'mapa', gastos: 'gastos' };   // anything else lights up "Más"
