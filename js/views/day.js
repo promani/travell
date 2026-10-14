@@ -1,8 +1,8 @@
 import { D, I, done, settings, now, forMe } from '../store.js';
 import { hasTicket, transportTicket, ticketCode, paintAttachments, freeUrls } from '../ticket.js';
 import { esc, ic, imgFormUrl, fmtShort, fmtWeekdayShort, cap } from '../util.js';
-import { tripPhase, activityNow, lodgingOfDay, dayClockNote } from '../tripstate.js';
-import { heroImg, actRow, renderCards, notesCard, dayLabel, statusBadge, extLink, transportIcon, register, cat, bookingSite, lodgingOptions, whoBadge } from '../ui.js';
+import { tripPhase, activityNow, lodgingOfDay, dayClockNote, transportTimes } from '../tripstate.js';
+import { heroImg, actRow, renderCards, notesCard, dayLabel, statusBadge, extLink, transportIcon, register, cat, bookingSite, lodgingOptions, whoBadge, mapBox } from '../ui.js';
 import { thumbsFor } from './photos.js';
 import { dayTotalText } from './expenses.js';
 import { resourcesForDay, resRow } from './resources.js';
@@ -27,6 +27,64 @@ function transportRow(t) {
     ${hasTicket(t) ? transportTicket(t) : ''}</div></li>`;
 }
 
+// ------------------------------------------------------------------ flight: its own card (times, airports, duration, code and QR)
+/** "15:00 PVG T2" → ["15:00", "PVG T2"]; "~18:10 (14/11)" → ["~18:10", "(14/11)"]. */
+const splitEnd = (v) => { const m = /^(~?\d{1,2}:\d{2})\s*(.*)$/.exec(v || ''); return m ? [m[1], m[2]] : ['', v || '']; };
+function flightCard(t) {
+  const [from, to] = (t.route || '').split(/\s*→\s*/);
+  const [dt, dp] = splitEnd(t.depart), [at, ap] = splitEnd(t.arrive);
+  const { dep, arr } = transportTimes(t);
+  const mins = dep && arr ? Math.round((arr - dep) / 60000) : null;
+  const dur = mins > 0 ? `${Math.floor(mins / 60)} h ${String(mins % 60).padStart(2, '0')}` : '';
+  const end = (time, where, city) => `<div><b>${esc(time || '—')}</b>${where ? `<span>${esc(where)}</span>` : ''}${city ? `<small>${esc(city)}</small>` : ''}</div>`;
+  return `<section class="card card-flight ${forMe(t) ? '' : 'not-mine'}">
+    <div class="card-head"><h3>${ic('plane')} ${esc(t.service || 'Vuelo')}</h3><span>${whoBadge(t)} ${statusBadge(t.status)}</span></div>
+    <div class="flight">${end(dt, dp, from)}<div class="flight-mid">${ic('plane')}${dur ? `<small>${esc(dur)}</small>` : ''}</div>${end(at, ap, to)}</div>
+    ${t.price && t.price !== 'Ya pagado' ? `<p><small>${ic('credit-card')} ${esc(t.price)}</small></p>` : ''}
+    ${t.buyWhere && t.status === 'pendiente' ? `<p><small>${ic('cart-shopping')} ${esc(t.buyWhere)}${t.buyWhen ? ' — ' + esc(t.buyWhen) : ''}</small></p>` : ''}
+    ${t.notes ? `<p class="note-line">${esc(t.notes)}</p>` : ''}
+    ${t.link ? `<p>${extLink(t.link, 'Más info')}</p>` : ''}
+    ${transportTicket(t)}</section>`;
+}
+
+// ------------------------------------------------------------------ lodging: always its own card (not only on check-in days)
+function lodgingBlock(l, day) {
+  const nightN = Math.round((new Date(day.date) - new Date(l.checkIn)) / 86400000) + 1;
+  const tomorrow = D.days[D.days.indexOf(day) + 1];
+  const when = [l.checkIn === day.date ? `Check-in hoy${l.checkInTime ? ' desde las ' + l.checkInTime : ''}` : `Noche ${nightN} de ${l.nights}`,
+    tomorrow && l.checkOut === tomorrow.date ? `check-out mañana${l.checkOutTime ? ' a las ' + l.checkOutTime : ''}` : ''].filter(Boolean).join(' · ');
+  return `<div class="lodg ${forMe(l) ? '' : 'not-mine'}">
+    <div class="card-head"><b class="lodg-name">${esc(l.name)}</b><span>${whoBadge(l)} ${statusBadge(l.status)}</span></div>
+    <p class="muted">${esc(when)}${l.area ? ' · ' + esc(l.area) : ''}</p>
+    ${l.address ? `<p>${ic('map-location-dot')} ${esc(l.address)}</p>` : ''}
+    ${l.confirmation ? `<p>${ic('key')} Reserva: <b>${esc(l.confirmation)}</b></p>` : ''}
+    ${l.notes ? `<p class="note-line">${esc(l.notes)}</p>` : ''}
+    ${lodgingOptions(l)}
+    <div class="row-actions">${l.addressLocal ? `<button class="btn small" data-act="show-address" data-id="${esc(l.id)}">Mostrar dirección al taxista</button>` : ''}
+      ${l.bookingUrl ? extLink(l.bookingUrl, bookingSite(l.bookingUrl)) : ''}${l.link ? extLink(l.link, 'Hotel') : ''}
+      <button class="btn small" data-act="lodging-edit" data-id="${esc(l.id)}">${ic('pen')} Editar</button></div></div>`;
+}
+function lodgingCard(day, ctx, { noTransfers }) {
+  const i = D.days.indexOf(day), next = D.days[i + 1];
+  // tonight: this phone's traveler's room first (lodgingOfDay), then the others' (shown dimmed)
+  const main = lodgingOfDay(day);
+  const tonight = [main, ...D.lodging.filter((x) => x !== main && x.checkIn <= day.date && day.date < x.checkOut)].filter(Boolean);
+  const out = D.lodging.filter((x) => x.checkOutDay === day.id && !tonight.includes(x));
+  const onPlane = /avi[oó]n/i.test(day.sleepsAt || '') || !next;
+  if (!tonight.length && !out.length && onPlane) return '';
+  const outHtml = out.map((x) => `<p class="lodg-out ${forMe(x) ? '' : 'not-mine'}">${ic('suitcase-rolling')} Check-out · <b>${esc(x.name)}</b>${x.checkOutTime ? ` · ${esc(x.checkOutTime)}` : ''} ${whoBadge(x)}</p>`).join('');
+  const missing = !main && !onPlane ? `<div class="note warn"><b>${ic('bed')} No hay hospedaje cargado para esta noche</b>
+    <div class="row-actions"><button class="btn small" data-act="lodging-new" data-prefill='${esc(JSON.stringify({ checkIn: day.date, checkOut: next.date, cityId: day.cityId }))}'>${ic('plus')} Cargar hospedaje</button></div></div>` : '';
+  // a day without moving around: the map opens on the lodging, with the day's places around it
+  const map = noTransfers && main && Number.isFinite(main.lat) ? mapBox(ctx, `lmap-${day.id}`, (m) => {
+    const places = [...new Set(day.activities.map((a) => a.placeId))].map((id) => I.place[id]).filter(Boolean);
+    m.setItems([{ kind: 'lodging', lodging: main }, ...places.map((p) => ({ kind: 'poi', place: p }))]);
+    m.setView(main.lat, main.lon, 14);
+  }, 'map-card') : '';
+  return `<section class="card card-lodging"><h3>${ic('bed')} ${onPlane && !tonight.length ? 'Alojamiento' : 'Dónde dormís'}</h3>
+    ${outHtml}${tonight.map((l) => lodgingBlock(l, day)).join('')}${missing}${map}</section>`;
+}
+
 export function render({ id }, ctx) {
   const st = tripPhase();
   const day = I.day[id] || (st.phase === 'during' ? st.day : D.days[0]);
@@ -37,8 +95,10 @@ export function render({ id }, ctx) {
   const isToday = day.id === todayId;
   const { current, next: nextA } = isToday ? activityNow(day, now()) : {};
   const acts = day.activities.filter((a) => !onlyMust || a.priority === 'imperdible');
-  const trans = D.transport.filter((t) => t.day === day.id);
-  const lodgIn = D.lodging.filter((x) => x.checkInDay === day.id), lodgOut = D.lodging.filter((x) => x.checkOutDay === day.id);
+  const dayTrans = D.transport.filter((t) => t.day === day.id);
+  const flights = dayTrans.filter((t) => t.kind === 'vuelo').sort((a, b) => forMe(b) - forMe(a));
+  const trans = dayTrans.filter((t) => t.kind !== 'vuelo');
+  const noTransfers = !dayTrans.length && !(day.cards || []).some((c) => c.type === 'departure' || c.type === 'arrival');
   const docs = D.documents.filter((x) => x.day === day.id);
   const res = resourcesForDay(day);
   const dayPlaces = [...new Set(day.activities.map((a) => a.placeId).filter(Boolean))];
@@ -67,7 +127,8 @@ export function render({ id }, ctx) {
       <a class="btn small" href="#/fotos?day=${day.id}">${ic('camera')} Fotos</a><a class="btn small" href="#/gastos?day=${day.id}">${ic('money-bill-wave')} Gastos</a></div>
   </header>
 
-  ${renderCards(day, ctx)}
+  ${renderCards(day, ctx, { withLodging: false })}
+  ${flights.map(flightCard).join('')}
   ${notesCard(day)}
 
   <section class="card">
@@ -78,14 +139,8 @@ export function render({ id }, ctx) {
     <p class="hint">Tocá una actividad para ver el detalle. El círculo ${ic('check')} la marca como hecha (se guarda en este dispositivo).</p>
   </section>
 
-  ${!l && !/avi[oó]n/i.test(day.sleepsAt || '') && i < D.days.length - 1 ? `<div class="note warn"><b>${ic('bed')} No hay hospedaje cargado para esta noche</b>
-    <div class="row-actions"><button class="btn small" data-act="lodging-new" data-prefill='${esc(JSON.stringify({ checkIn: day.date, checkOut: next.date, cityId: day.cityId }))}'>${ic('plus')} Cargar hospedaje</button></div></div>` : ''}
-  ${(trans.length || lodgIn.length || lodgOut.length) ? `<section class="card"><h3>Logística</h3><ul class="tlist">
-    ${lodgOut.map((x) => `<li class="trow ${forMe(x) ? '' : 'not-mine'}"><span class="o-ic">${ic('suitcase-rolling')}</span><div><b>Check-out · ${esc(x.name)}</b> ${whoBadge(x)}<small>${esc(x.checkOutTime || '')}</small></div></li>`).join('')}
-    ${trans.map(transportRow).join('')}
-    ${lodgIn.map((x) => `<li class="trow ${forMe(x) ? '' : 'not-mine'}"><span class="o-ic">${ic('hotel')}</span><div><b>Check-in · ${esc(x.name)}</b> ${statusBadge(x.status)} ${whoBadge(x)} <button class="btn tiny" data-act="lodging-edit" data-id="${esc(x.id)}">Editar</button><small>${esc([x.area, x.checkInTime, x.notes].filter(Boolean).join(' · '))}</small>
-      ${x.confirmation ? `<small>${ic('key')} Reserva: <b>${esc(x.confirmation)}</b></small>` : ''}
-      ${x.bookingUrl ? `<small>${extLink(x.bookingUrl, bookingSite(x.bookingUrl))}</small>` : ''}${x.link ? `<small>${extLink(x.link, 'Hotel')}</small>` : ''}${lodgingOptions(x)}</div></li>`).join('')}</ul></section>` : ''}
+  ${lodgingCard(day, ctx, { noTransfers })}
+  ${trans.length ? `<section class="card"><h3>Logística</h3><ul class="tlist">${trans.map(transportRow).join('')}</ul></section>` : ''}
 
   ${docs.length ? `<section class="card"><h3>${ic('file-lines')} Documentos de este día</h3><ul class="doc-mini">${docs.map((x) => `<li><a href="#/docs/${esc(x.type)}"><b>${esc(x.title)}</b><small>${esc(ticketCode(`doc:${x.id}`, x.code) || x.subtitle || '')}</small></a></li>`).join('')}</ul></section>` : ''}
   ${res.length ? `<section class="card"><div class="card-head"><h3>${ic('book')} Recursos${day.cityId ? ' · ' + esc(I.city[day.cityId].name) : ''}</h3><a href="#/recursos${day.cityId ? '?city=' + esc(day.cityId) : ''}">Ver →</a></div>

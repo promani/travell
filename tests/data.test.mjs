@@ -54,6 +54,13 @@ test('records for some travelers only: each phone gets its own flight, room and 
   assert.ok(store.forMe(I.transport['t-ca919']) && store.forMe(I.transport.t04));
 });
 
+test('departure cards: leaving the hotel comes clearly before being at the airport', () => {
+  for (const d of D.days) for (const c of (d.cards || []).filter((x) => x.type === 'departure' && x.leaveHomeAt)) {
+    const { leave, airport } = departureTimes(c, d);
+    assert.ok(airport - leave >= 30 * 60000, `${d.id} ${c.transportId}: salir ${leave.toISOString()} / aeropuerto ${airport.toISOString()}`);
+  }
+});
+
 test('a new activity is placed by start time and links its place', () => {
   cols.put('places', { id: 'p-t', name: 'Test', category: 'gastronomia', cityId: 'shanghai', lat: 31.23, lon: 121.47 });
   cols.put('activities', { id: 'a-t', dayId: 'd04', title: 'Mediodía', start: '12:30', category: 'gastronomia', placeId: 'p-t' });

@@ -679,10 +679,10 @@
           "icon": "plane-departure",
           "title": "Hoy volás a Tokio",
           "transportId": "t04",
-          "airportLeadMinutes": 180,
+          "airportLeadMinutes": 120,
           "leaveHomeAt": "12:00",
           "airportPlaceId": "p-pvg",
-          "note": "Hotel → Pudong T2: salir con 3 h de margen para un vuelo internacional (metro línea 2 / Maglev / DiDi).",
+          "note": "Hotel → Pudong T2 (~1 h en metro línea 2 / Maglev / DiDi): llegar 2 h antes del vuelo internacional.",
           "docTypes": [
             "pasaje"
           ],
@@ -697,10 +697,10 @@
           "icon": "plane-departure",
           "title": "Hoy volás a Tokio",
           "transportId": "t-ca919",
-          "airportLeadMinutes": 180,
+          "airportLeadMinutes": 125,
           "leaveHomeAt": "11:00",
           "airportPlaceId": "p-pvg",
-          "note": "Hotel → Pudong T2: salir con 3 h de margen para un vuelo internacional (metro línea 2 / Maglev / DiDi). Pehuén y Sole salen una hora después hacia la misma terminal.",
+          "note": "Hotel → Pudong T2 (~1 h en metro línea 2 / Maglev / DiDi): llegar 2 h antes del vuelo internacional. Pehuén y Sole salen una hora después hacia la misma terminal.",
           "docTypes": [
             "pasaje"
           ],
@@ -897,7 +897,7 @@
           "category": "traslado",
           "priority": "imperdible",
           "title": "Hotel → Pudong T2",
-          "detail": "Salir con 3 h de margen para un vuelo internacional (CA919 a las 14:05).",
+          "detail": "Llegar 2 h antes del vuelo internacional (CA919 a las 14:05).",
           "area": null,
           "how": "Metro línea 2 / Maglev / DiDi",
           "cost": null,
@@ -918,7 +918,7 @@
           "category": "traslado",
           "priority": "imperdible",
           "title": "Hotel → Pudong T2",
-          "detail": "Salir con 3 h de margen para un vuelo internacional.",
+          "detail": "Llegar 2 h antes del vuelo internacional (9C6217 a las 15:00).",
           "area": null,
           "how": "Metro línea 2 / Maglev / DiDi",
           "cost": null,

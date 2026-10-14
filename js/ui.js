@@ -42,7 +42,7 @@ export function bookingSite(url) {
   return name ? `Reserva en ${name}` : 'Ver la reserva';
 }
 /** Badge for a record only some travelers do ("Solo Facundo"); '' when it is for everyone. */
-export const whoBadge = (r) => (whoLabel(r) ? `<span class="badge who">${ic('user')} ${esc(whoLabel(r))}</span>` : '');
+export const whoBadge = (r) => (whoLabel(r) ? `<span class="badge solo">${ic('user')} ${esc(whoLabel(r))}</span>` : '');
 export const dayLabel = (day) => cap(fmtDate(day.date, { weekday: 'long', day: 'numeric', month: 'long' }));
 export const transportIcon = (k) => ic({ vuelo: 'plane', tren: 'train', bus: 'bus', auto: 'car' }[k] || 'route');
 
@@ -110,13 +110,17 @@ export function departureCard(card, day, { hero = false } = {}) {
   const { t, dep, airport, leave, tz } = departureTimes(card, day);
   const place = card.airportPlaceId ? I.place[card.airportPlaceId] : null;
   const target = leave || airport;
+  // from home on the first day, from the hotel afterwards; when leaving and being at the airport are (almost) the same
+  // time, only the time to leave is shown
+  const from = card.tripStart ? 'casa' : 'el hotel';
+  const sameTime = leave && airport && Math.abs(airport - leave) < 15 * 60000;
   const cells = [
-    leave && ['Salir de casa', hhmm(leave, tz), ''],
-    airport && [hero ? 'Aeropuerto' : 'Estar en el aeropuerto', hhmm(airport, tz), place && !hero ? place.name.replace(/ \(.*\)/, '') : ''],
+    leave && [`Salir de ${from}`, hhmm(leave, tz), ''],
+    airport && !sameTime && [hero ? 'Aeropuerto' : 'Estar en el aeropuerto', hhmm(airport, tz), place && !hero ? place.name.replace(/ \(.*\)/, '') : ''],
     dep && ['Despega', hhmm(dep, tz), hero ? fmtShort(isoDate(dep, tz)) : `${fmtShort(isoDate(dep, tz))}${t?.service ? ' · ' + t.service : ''}`],
   ].filter(Boolean);
   const grid = `<div class="go-grid">${cells.map(([l, v, s]) => `<div><small>${l}</small><b>${v}</b>${s ? `<em>${esc(s)}</em>` : ''}</div>`).join('')}</div>`;
-  const count = target ? `<p class="countdown" data-countdown="${target.getTime()}" data-label="${leave ? 'para salir de casa' : 'para llegar al aeropuerto'}"></p>` : '';
+  const count = target ? `<p class="countdown" data-countdown="${target.getTime()}" data-label="${leave ? `para salir de ${from}` : 'para llegar al aeropuerto'}"></p>` : '';
   const airportBtn = place ? `<a class="btn" href="#/mapa?focus=${esc(place.id)}">${ic('map')} ${hero ? esc(place.name.replace(/ \(.*\)/, '')) : 'Aeropuerto'}</a>` : '';
   // The hero only keeps the times; the checklist goes in its own card below (see checklistCard) and the
   // document shortcuts are already on the home screen.
@@ -135,8 +139,8 @@ export function checklistCard(card, day) {
     ${card.checklist.map((it, i) => `<label class="check"><input type="checkbox" data-act="toggle-check" data-key="${esc(keys[i])}" ${checks.has(keys[i]) ? 'checked' : ''}><span>${esc(it)}</span></label>`).join('')}</section>`;
 }
 
-export function arrivalCard(card, day, ctx) {
-  const lodging = (card.lodgingId && I.lodging[card.lodgingId]) || lodgingOfDay(day);
+export function arrivalCard(card, day, ctx, { withLodging = true } = {}) {
+  const lodging = withLodging && ((card.lodgingId && I.lodging[card.lodgingId]) || lodgingOfDay(day));
   const id = `amap-${day.id}-${Math.random().toString(36).slice(2, 6)}`;
   const mapHtml = card.map ? mapBox(ctx, id, (m) => {
     const items = [];
@@ -175,11 +179,12 @@ export function infoCard(card) {
     ${(card.links || []).map((l) => `<p>${extLink(l.url, l.title)}</p>`).join('')}</section>`;
 }
 
-export function renderCards(day, ctx, { skipTripStart = false } = {}) {
+/** The day's cards. The day view passes withLodging: false because it has its own lodging card. */
+export function renderCards(day, ctx, { skipTripStart = false, withLodging = true } = {}) {
   // a card for some travelers only (e.g. each one's own flight) shows on their phones; phones without a name see all
   return (day.cards || []).filter(forMe).map((c) => {
     if (c.type === 'departure') return skipTripStart && c.tripStart ? '' : departureCard(c, day);
-    if (c.type === 'arrival') return arrivalCard(c, day, ctx);
+    if (c.type === 'arrival') return arrivalCard(c, day, ctx, { withLodging });
     return infoCard(c);
   }).join('');
 }
