@@ -159,6 +159,10 @@ export function resolveChange(files, ch) {
   if (c.name && !cur && !(typeof data[c.name] === 'string' && data[c.name].trim())) return { error: `${col}/${rid}: falta ${c.name}` };
   for (const k of ['date', 'checkIn', 'checkOut']) if (data[k] != null && data[k] !== '' && !DATE.test(data[k])) return { error: `${col}/${rid}: ${k} tiene que ser AAAA-MM-DD` };
   if (col === 'lodging' && data.checkIn && data.checkOut && data.checkOut <= data.checkIn) return { error: `alojamiento ${rid}: el check-out tiene que ser después del check-in` };
+  // travelers: [ids] marks what only some travelers do (their own flight, room, activity or day card); absent = everyone
+  const travelerIds = new Set((files['travelers.json'] || []).map((t) => t.id));
+  const badWho = (r) => r?.travelers != null && !(Array.isArray(r.travelers) && r.travelers.every((t) => travelerIds.has(t)));
+  if (badWho(data) || (c.kind === 'days' && (data.cards || []).some(badWho))) return { error: `${col}/${rid}: travelers es una lista de ids de viajeros (${[...travelerIds].join(', ')})` };
   if (col === 'places') for (const k of ['lat', 'lon']) if (data[k] != null && !Number.isFinite(data[k])) return { error: `lugar ${rid}: ${k} tiene que ser un número` };
   if (col === 'tickets') {
     const [kind, ref] = [rid.slice(0, rid.indexOf(':')), rid.slice(rid.indexOf(':') + 1)];

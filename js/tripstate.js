@@ -1,5 +1,5 @@
 // Where are we in the trip? (before / during / after) and derived facts about "today".
-import { D, I, now } from './store.js';
+import { D, I, now, forMe } from './store.js';
 import { isoDate, daysBetween, at, parseAt, tzOffset, fmtOffset, deviceTz } from './util.js';
 
 // ------------------------------------------------------------------ time zones
@@ -28,8 +28,8 @@ export function transportTimes(t) {
 }
 /** When the day's flight (or any transport with an exact time) leaves: the moment the zone changes. */
 function switchAt(day) {
-  const cardT = (day.cards || []).find((c) => c.type === 'departure' && I.transport[c.transportId]?.day === day.id);
-  const t = cardT ? I.transport[cardT.transportId] : D.transport.find((x) => x.day === day.id && x.departAt);
+  const cardT = (day.cards || []).find((c) => c.type === 'departure' && forMe(c) && I.transport[c.transportId]?.day === day.id);
+  const t = cardT ? I.transport[cardT.transportId] : D.transport.find((x) => x.day === day.id && x.departAt && forMe(x));
   return t ? transportTimes(t).dep : null;
 }
 /** Zone for an "HH:MM" of that day. */
@@ -107,7 +107,7 @@ export function activityTimes(a, day) {
 export function activityNow(day, n = now()) {
   let current = null, next = null;
   for (const a of day.activities) {
-    if (!a.start) continue;
+    if (!a.start || !forMe(a)) continue;
     const { s, e } = activityTimes(a, day);
     if (s <= n && n < e) current = current || a;
     else if (s > n && !next) next = a;

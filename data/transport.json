@@ -74,7 +74,34 @@
     "link": null,
     "code": null,
     "departAt": "2026-11-18T15:00",
-    "arriveAt": "2026-11-18T18:40"
+    "arriveAt": "2026-11-18T18:40",
+    "travelers": [
+      "pehuen",
+      "sole"
+    ]
+  },
+  {
+    "id": "t-ca919",
+    "day": "d07",
+    "date": "2026-11-18",
+    "route": "Shanghai → Tokio",
+    "kind": "vuelo",
+    "medium": "Vuelo",
+    "service": "Air China CA919",
+    "depart": "14:05 PVG T2",
+    "arrive": "18:10 NRT T1",
+    "price": null,
+    "status": "reservado",
+    "buyWhere": null,
+    "buyWhen": null,
+    "link": null,
+    "code": "PCKJ9E",
+    "departAt": "2026-11-18T14:05",
+    "arriveAt": "2026-11-18T18:10",
+    "notes": "Clase L-Economy · Airbus A350-900 · 3 h 05.",
+    "travelers": [
+      "facundo"
+    ]
   },
   {
     "id": "t05",

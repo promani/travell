@@ -1,5 +1,5 @@
 // Shared rendering pieces: badges, activity rows, day cards (departure / arrival / info), map boxes, action registry.
-import { D, I, done, checks, NOTE_KINDS } from './store.js';
+import { D, I, done, checks, NOTE_KINDS, forMe, whoLabel } from './store.js';
 import { esc, ic, icon, fmtDate, fmtShort, hhmm, cap, isoDate, imgUrl, extLink } from './util.js';
 import { departureTimes, lodgingOfDay } from './tripstate.js';
 import { TripMap } from './map.js';
@@ -41,6 +41,8 @@ export function bookingSite(url) {
   const name = Object.entries(known).find(([d]) => host === d || host.endsWith('.' + d))?.[1];
   return name ? `Reserva en ${name}` : 'Ver la reserva';
 }
+/** Badge for a record only some travelers do ("Solo Facundo"); '' when it is for everyone. */
+export const whoBadge = (r) => (whoLabel(r) ? `<span class="badge who">${ic('user')} ${esc(whoLabel(r))}</span>` : '');
 export const dayLabel = (day) => cap(fmtDate(day.date, { weekday: 'long', day: 'numeric', month: 'long' }));
 export const transportIcon = (k) => ic({ vuelo: 'plane', tren: 'train', bus: 'bus', auto: 'car' }[k] || 'route');
 
@@ -61,13 +63,13 @@ export function actRow(a, { current = false, next = false } = {}) {
   const isDone = done.has(a.id);
   const c = cat(a.category);
   const time = a.start ? `${esc(a.start)}${a.end ? `<small>${esc(a.end)}</small>` : ''}` : `<small>${esc(a.slot || '')}</small>`;
-  return `<article class="act ${isDone ? 'is-done' : ''} ${current ? 'is-now' : ''} ${next ? 'is-next' : ''}" data-act-id="${esc(a.id)}">
+  return `<article class="act ${isDone ? 'is-done' : ''} ${current ? 'is-now' : ''} ${next ? 'is-next' : ''} ${forMe(a) ? '' : 'not-mine'}" data-act-id="${esc(a.id)}">
     <button class="act-done" data-act="toggle-done" data-id="${esc(a.id)}" aria-label="Marcar como hecho" aria-pressed="${isDone}">${ic('check')}</button>
     <div class="act-main" data-act="toggle-act" role="button" tabindex="0" aria-expanded="false">
       <div class="act-time">${time}</div>
       <div class="act-body">
         <div class="act-title"><span class="act-ic" style="--c:${c.color}">${icon(c.icon)}</span> ${esc(a.title)}</div>
-        <div class="act-tags">${current ? '<span class="badge now">Ahora</span>' : next ? '<span class="badge next">Sigue</span>' : ''}
+        <div class="act-tags">${current ? '<span class="badge now">Ahora</span>' : next ? '<span class="badge next">Sigue</span>' : ''}${whoBadge(a)}
           ${a.priority !== 'recomendado' ? prioBadge(a.priority) : ''}${a.source === 'app' ? '<span class="badge">nueva</span>' : ''}${a.status === 'reservado' ? statusBadge('reservado') : resvBadge(a.reservation)}</div>
       </div>
       <span class="chev" aria-hidden="true">▾</span>
@@ -174,7 +176,8 @@ export function infoCard(card) {
 }
 
 export function renderCards(day, ctx, { skipTripStart = false } = {}) {
-  return (day.cards || []).map((c) => {
+  // a card for some travelers only (e.g. each one's own flight) shows on their phones; phones without a name see all
+  return (day.cards || []).filter(forMe).map((c) => {
     if (c.type === 'departure') return skipTripStart && c.tripStart ? '' : departureCard(c, day);
     if (c.type === 'arrival') return arrivalCard(c, day, ctx);
     return infoCard(c);

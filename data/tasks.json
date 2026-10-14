@@ -82,17 +82,17 @@
   },
   {
     "id": "k06",
-    "title": "Hotel Novotel Nara 25/11",
+    "title": "Novotel Nara 25/11: habitación de Pehuén y Sole",
     "when": "Ya",
     "dueAt": null,
     "urgent": true,
     "day": "d14",
     "status": "pendiente",
-    "notes": null,
+    "notes": "Facundo ya tiene la suya (single con desayuno, reserva 9097093265897).",
     "assignee": null,
     "priority": "alta",
     "covers": [
-      "lodging:l04"
+      "lodging:l11"
     ],
     "source": "json"
   },

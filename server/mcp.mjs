@@ -28,9 +28,9 @@ export function tripContext(files) {
   return {
     trip: { ...pick(trip, ['id', 'title', 'description', 'start', 'end', 'locale']), home: trip.home, cities: (trip.cities || []).map((c) => pick(c, ['id', 'name', 'tz'])), currencies: trip.currencies },
     travelers: list('travelers.json').map((t) => pick(t, ['id', 'name'])),
-    days: days.map((d) => ({ ...pick(d, ['id', 'n', 'date', 'cityId', 'title']), activities: (d.activities || []).map((a) => pick(a, ['id', 'start', 'end', 'title', 'placeId', 'reservation', 'status'])) })),
-    transport: list('transport.json').map((t) => pick(t, ['id', 'date', 'day', 'route', 'kind', 'service', 'depart', 'arrive', 'status', 'code'])),
-    lodging: list('lodging.json').map((l) => pick(l, ['id', 'cityId', 'name', 'area', 'checkIn', 'checkOut', 'status', 'confirmation'])),
+    days: days.map((d) => ({ ...pick(d, ['id', 'n', 'date', 'cityId', 'title']), activities: (d.activities || []).map((a) => pick(a, ['id', 'start', 'end', 'title', 'placeId', 'reservation', 'status', 'travelers'])) })),
+    transport: list('transport.json').map((t) => pick(t, ['id', 'date', 'day', 'route', 'kind', 'service', 'depart', 'arrive', 'status', 'code', 'travelers'])),
+    lodging: list('lodging.json').map((l) => pick(l, ['id', 'cityId', 'name', 'area', 'checkIn', 'checkOut', 'status', 'confirmation', 'travelers'])),
     documents: list('documents.json').map((d) => pick(d, ['id', 'type', 'title', 'status'])),
     tickets: list('tickets.json').map((t) => ({ ...pick(t, ['id', 'code', 'link']), qrs: t.qrs?.length || undefined })),
     passports: list('passports.json').map((p) => pick(p, ['id', 'expires'])),
@@ -55,6 +55,7 @@ const CHANGE_RULES = `Formato de cada cambio (es lo único que puede modificar e
 - Las actividades llevan "dayId" con el id del día. Un id nuevo: corto, en minúsculas, con prefijo de la colección (ej. "l-hanting-bund", "t-mu746").
 - El código de reserva va en el propio registro: transport.code (el PNR de un vuelo), documents.code, lodging.confirmation (y el link del hotel en lodging.bookingUrl).
 - tickets = lo que acompaña a algo que ya existe y no tiene campo propio: los QRs (el texto que contiene el QR; la app lo dibuja), el link a la reserva y el código de una actividad. Su id es "<${Object.keys(TICKET_KINDS).join('|')}>:<id>" (ej. "transport:t01", "activity:A052", "doc:doc04"). Un hotel todavía sin elegir puede llevar lodging.options: [{ "name", "note", "url" }] con los candidatos; al reservar, se completan name, status "reservado" y la reserva.
+- Lo que hace solo una parte del grupo (el vuelo o la habitación de uno, una actividad aparte) lleva "travelers": [ids de viajeros]; sin ese campo es de todos. Si el grupo se separa (cada uno en su vuelo), cargá un registro por cada parte, cada uno con su travelers. Las tarjetas del día (days.cards, ej. la de salida al aeropuerto) también aceptan travelers. Cada celular muestra lo suyo primero y lo de los demás atenuado.
 - expenses: gastos compartidos. amount en la moneda de currency, paidBy y split con ids de viajeros, category: comida | transporte | alojamiento | entradas | compras | otros.
 - passports: id = id del viajero.
 - Los archivos (PDF, capturas) no se suben por acá: guardá lo que dicen (código, horarios, link). La persona los adjunta desde la app si los quiere ver sin internet.

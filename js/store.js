@@ -77,6 +77,15 @@ export const settings = {
 };
 /** Traveler id of whoever uses this device. */
 export const me = () => settings.get('me', null);
+// Records only some travelers do (a flight, a hotel room, an activity, a day card) carry `travelers: [ids]`;
+// without it they are for everyone. A phone that hasn't said who it is sees everything.
+export const forMe = (r) => !r?.travelers?.length || !me() || r.travelers.includes(me());
+/** "Solo Facundo" / "Pehuén y Sole" for a record limited to some travelers; '' when it is for everyone. */
+export function whoLabel(r) {
+  const names = (r?.travelers || []).map((id) => I.traveler[id]?.name || id);
+  if (!names.length || names.length >= D.travelers.length) return '';
+  return names.length === 1 ? `Solo ${names[0]}` : `${names.slice(0, -1).join(', ')} y ${names.at(-1)}`;
+}
 // App colour (top bar): this phone's choice in Ajustes, else the trip's "brand" in trip.json
 export const DEFAULT_BRAND = '#0b6e7f';
 export const brandColor = () => settings.get('brand', null) || D.trip?.brand || DEFAULT_BRAND;
@@ -229,8 +238,9 @@ export function rebuild() {
       if (m != null) key = m;
       return { a, k: m ?? key };
     }).sort((x, y) => x.k - y.k).map((x) => x.a);
-    // the night's lodging: whichever covers this date (booked ones first)
-    const l = D.lodging.filter((x) => x.checkIn <= d.date && d.date < x.checkOut).sort((x, y) => (y.status === 'reservado') - (x.status === 'reservado'))[0];
+    // the night's lodging: whichever covers this date (this phone's traveler's first, then booked ones)
+    const l = D.lodging.filter((x) => x.checkIn <= d.date && d.date < x.checkOut)
+      .sort((x, y) => forMe(y) - forMe(x) || (y.status === 'reservado') - (x.status === 'reservado'))[0];
     return { ...d, activities: list, lodgingId: l ? l.id : null };
   });
 

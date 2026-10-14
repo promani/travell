@@ -1,8 +1,8 @@
-import { D, I, done, settings, now } from '../store.js';
+import { D, I, done, settings, now, forMe } from '../store.js';
 import { hasTicket, transportTicket, ticketCode, paintAttachments, freeUrls } from '../ticket.js';
 import { esc, ic, imgFormUrl, fmtShort, fmtWeekdayShort, cap } from '../util.js';
 import { tripPhase, activityNow, lodgingOfDay, dayClockNote } from '../tripstate.js';
-import { heroImg, actRow, renderCards, notesCard, dayLabel, statusBadge, extLink, transportIcon, register, cat, bookingSite, lodgingOptions } from '../ui.js';
+import { heroImg, actRow, renderCards, notesCard, dayLabel, statusBadge, extLink, transportIcon, register, cat, bookingSite, lodgingOptions, whoBadge } from '../ui.js';
 import { thumbsFor } from './photos.js';
 import { dayTotalText } from './expenses.js';
 import { resourcesForDay, resRow } from './resources.js';
@@ -17,8 +17,8 @@ function strip(active, todayId) {
 
 function transportRow(t) {
   const times = [t.depart, t.arrive].filter(Boolean).join(' → ');
-  return `<li class="trow"><span class="o-ic">${transportIcon(t.kind)}</span><div>
-    <b>${esc(t.route)}</b> ${statusBadge(t.status)}
+  return `<li class="trow ${forMe(t) ? '' : 'not-mine'}"><span class="o-ic">${transportIcon(t.kind)}</span><div>
+    <b>${esc(t.route)}</b> ${statusBadge(t.status)} ${whoBadge(t)}
     <small>${esc([t.medium, t.service].filter(Boolean).join(' · '))}${times ? ' · ' + esc(times) : ''}</small>
     ${t.price ? `<small>${ic('credit-card')} ${esc(t.price)}</small>` : ''}
     ${t.buyWhere && t.status === 'pendiente' ? `<small>${ic('cart-shopping')} ${esc(t.buyWhere)}${t.buyWhen ? ' — ' + esc(t.buyWhen) : ''}</small>` : ''}
@@ -81,9 +81,9 @@ export function render({ id }, ctx) {
   ${!l && !/avi[oó]n/i.test(day.sleepsAt || '') && i < D.days.length - 1 ? `<div class="note warn"><b>${ic('bed')} No hay hospedaje cargado para esta noche</b>
     <div class="row-actions"><button class="btn small" data-act="lodging-new" data-prefill='${esc(JSON.stringify({ checkIn: day.date, checkOut: next.date, cityId: day.cityId }))}'>${ic('plus')} Cargar hospedaje</button></div></div>` : ''}
   ${(trans.length || lodgIn.length || lodgOut.length) ? `<section class="card"><h3>Logística</h3><ul class="tlist">
-    ${lodgOut.map((x) => `<li class="trow"><span class="o-ic">${ic('suitcase-rolling')}</span><div><b>Check-out · ${esc(x.name)}</b><small>${esc(x.checkOutTime || '')}</small></div></li>`).join('')}
+    ${lodgOut.map((x) => `<li class="trow ${forMe(x) ? '' : 'not-mine'}"><span class="o-ic">${ic('suitcase-rolling')}</span><div><b>Check-out · ${esc(x.name)}</b> ${whoBadge(x)}<small>${esc(x.checkOutTime || '')}</small></div></li>`).join('')}
     ${trans.map(transportRow).join('')}
-    ${lodgIn.map((x) => `<li class="trow"><span class="o-ic">${ic('hotel')}</span><div><b>Check-in · ${esc(x.name)}</b> ${statusBadge(x.status)} <button class="btn tiny" data-act="lodging-edit" data-id="${esc(x.id)}">Editar</button><small>${esc([x.area, x.checkInTime, x.notes].filter(Boolean).join(' · '))}</small>
+    ${lodgIn.map((x) => `<li class="trow ${forMe(x) ? '' : 'not-mine'}"><span class="o-ic">${ic('hotel')}</span><div><b>Check-in · ${esc(x.name)}</b> ${statusBadge(x.status)} ${whoBadge(x)} <button class="btn tiny" data-act="lodging-edit" data-id="${esc(x.id)}">Editar</button><small>${esc([x.area, x.checkInTime, x.notes].filter(Boolean).join(' · '))}</small>
       ${x.confirmation ? `<small>${ic('key')} Reserva: <b>${esc(x.confirmation)}</b></small>` : ''}
       ${x.bookingUrl ? `<small>${extLink(x.bookingUrl, bookingSite(x.bookingUrl))}</small>` : ''}${x.link ? `<small>${extLink(x.link, 'Hotel')}</small>` : ''}${lodgingOptions(x)}</div></li>`).join('')}</ul></section>` : ''}
 

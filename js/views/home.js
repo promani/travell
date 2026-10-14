@@ -1,6 +1,6 @@
 // Home: a hero for the moment of the trip, the two document shortcuts and only what needs attention today.
 // Permissions/setup live in "Más", places in "Mapa", the full document list in "Docs".
-import { D, I, done, me, now } from '../store.js';
+import { D, I, done, me, now, forMe } from '../store.js';
 import { esc, ic, fmtShort } from '../util.js';
 import { tripPhase, activityNow, lodgingOfDay } from '../tripstate.js';
 import { departureCard, checklistCard, heroImg, renderCards, actRow, notesCard, dayLabel } from '../ui.js';
@@ -56,7 +56,7 @@ export function render(_, ctx) {
   ctx.after(paintAttachments);
   const st = tripPhase();
   const day = st.day;
-  const startCard = st.phase === 'during' ? day.cards.find((c) => c.type === 'departure' && c.tripStart) : null;
+  const startCard = st.phase === 'during' ? day.cards.find((c) => c.type === 'departure' && c.tripStart && forMe(c)) : null;
   let h = st.phase === 'pre' ? heroPre(st) : st.phase === 'post' ? heroPost() : startCard ? departureCard(startCard, day, { hero: true }) : heroDuring(st);
   if (st.phase !== 'post') h += quickLinks();
   if (startCard) h += checklistCard(startCard, day);
@@ -64,7 +64,7 @@ export function render(_, ctx) {
   if (st.phase === 'during') {
     h += renderCards(day, ctx, { skipTripStart: true });
     const { current, next } = activityNow(day, now());
-    const first = day.activities.filter((a) => !done.has(a.id)).slice(0, 3);
+    const first = day.activities.filter((a) => !done.has(a.id) && forMe(a)).slice(0, 3);
     const rows = (current || next ? [current, next].filter(Boolean) : first);
     if (rows.length) {
       h += `<section class="card"><div class="card-head"><h3>${current ? 'Ahora y lo que sigue' : next ? 'Lo que sigue' : 'Hoy'}</h3><a href="#/dia/${day.id}">Ver el día →</a></div>

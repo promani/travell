@@ -15,6 +15,9 @@ const select = (label, name, options, cur, attrs = '') => `<label class="field">
 const cityOptions = () => D.trip.cities.map((c) => [c.id, c.name]);
 const dayOptions = (blank = '—') => [['', blank], ...D.days.map((d) => [d.id, `Día ${d.n} · ${fmtShort(d.date)} · ${d.title}`])];
 const travelerOptions = (blank) => [...(blank ? [['', blank]] : []), ...D.travelers.map((t) => [t.id, t.name])];
+// Who does it: every traveler ticked = everyone (no `travelers` field); a subset is saved as travelers: [ids]
+const whoPick = (r) => `<fieldset class="field"><legend>Quiénes</legend><div class="day-pick">${D.travelers.map((t) => `<label class="chip"><input type="checkbox" name="travelers" value="${esc(t.id)}" ${!r.travelers?.length || r.travelers.includes(t.id) ? 'checked' : ''}>${esc(t.name)}</label>`).join('')}</div></fieldset>`;
+const whoVal = (f) => { const ids = f.getAll('travelers'); return ids.length && ids.length < D.travelers.length ? ids : null; };
 const buttons = (delAct, id, rec, col) => `<div class="row-actions"><button class="btn primary" type="submit">Guardar</button>
   <button class="btn" type="button" data-act="close-modal">Cancelar</button>
   ${delAct && id ? `<button class="btn danger" type="button" data-act="${delAct}" data-id="${esc(id)}">Borrar</button>` : ''}
@@ -116,6 +119,7 @@ export function openLodgingForm(l = {}) {
     <div class="two">${input('N° de reserva', 'confirmation', l.confirmation)}${input('Link a la reserva', 'bookingUrl', l.bookingUrl, 'type="url" placeholder="Booking, Trip.com, Airbnb…"')}</div>
     ${input('Sitio del hotel', 'link', l.link, 'type="url" placeholder="https://"')}
     ${textarea('Notas', 'notes', l.notes)}
+    ${whoPick(l)}
     ${buttons('lodging-del', l.id, l, 'lodging')}</form>`, { lat: l.lat, lon: l.lon, cityId: l.cityId });
 }
 
@@ -136,6 +140,7 @@ export function openActivityForm(a = {}) {
     <div class="two">${input('Zona', 'area', a.area)}${input('Cómo llegar', 'how', a.how)}</div>
     <div class="two">${input('Costo', 'cost', a.cost)}${input('Link', 'link', a.link, 'type="url" placeholder="https://"')}</div>
     <div class="two">${select('Reserva', 'reservation', [['', 'No hace falta'], ['recomendada', 'Recomendada'], ['requerida', 'Necesaria']], a.reservation)}${select('Estado', 'status', [['', '—'], ['pendiente', 'Pendiente'], ['reservado', 'Reservado']], a.status)}</div>
+    ${whoPick(a)}
     ${buttons('act-del', a.id, a, 'activities')}</form>`);
 }
 
@@ -204,7 +209,7 @@ register({
     const id = val(f, 'id') || uid('l-u-');
     cols.put('lodging', { id, name: val(f, 'name'), cityId: val(f, 'cityId'), status: val(f, 'status'), checkIn: val(f, 'checkIn'), checkOut: val(f, 'checkOut'),
       checkInTime: val(f, 'checkInTime'), checkOutTime: val(f, 'checkOutTime'), area: val(f, 'area'), address: val(f, 'address'), addressLocal: val(f, 'addressLocal'),
-      ...loc, approx: false, confirmation: val(f, 'confirmation'), bookingUrl: val(f, 'bookingUrl'), link: val(f, 'link'), notes: val(f, 'notes') });
+      ...loc, approx: false, confirmation: val(f, 'confirmation'), bookingUrl: val(f, 'bookingUrl'), link: val(f, 'link'), notes: val(f, 'notes'), travelers: whoVal(f) });
     closeModal(form); toast('Alojamiento guardado'); app.rerender();
   },
   'lodging-del': (el, _, app) => { if (!confirmDel('este alojamiento')) return; cols.del('lodging', el.dataset.id); closeModal(el); app.rerender(); },
@@ -217,7 +222,7 @@ register({
     const prev = I.activity[id] || {};
     cols.put('activities', { id, dayId: val(f, 'dayId'), title: val(f, 'title'), start: val(f, 'start'), end: val(f, 'end'), category: val(f, 'category'),
       priority: val(f, 'priority'), placeId: val(f, 'placeId'), detail: val(f, 'detail'), area: val(f, 'area'), how: val(f, 'how'), cost: val(f, 'cost'),
-      link: val(f, 'link'), reservation: val(f, 'reservation'), status: val(f, 'status'), slot: prev.slot || null,
+      link: val(f, 'link'), reservation: val(f, 'reservation'), status: val(f, 'status'), travelers: whoVal(f), slot: prev.slot || null,
       cityId: prev.cityId || I.day[val(f, 'dayId')]?.cityId || null, source: prev.source || 'app' });
     closeModal(form); toast('Actividad guardada'); app.rerender();
   },

@@ -1,7 +1,7 @@
 // Calendar export (.ics): activities with a time, nights at each hotel, when to leave for the airport and my tasks
 // with a due date. Times go out in UTC, so the calendar shows them right whatever zone the phone is in.
 // Each event keeps a stable UID: importing the file again updates the events instead of duplicating them (Apple, Outlook).
-import { D, I, me } from './store.js';
+import { D, I, me, forMe } from './store.js';
 import { activityTimes, departureTimes } from './tripstate.js';
 
 const utc = (d) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
@@ -40,7 +40,8 @@ function event({ uid, start, end, allDay, title, location, geo, description, url
 export function buildIcs() {
   const ev = [];
   for (const d of D.days) {
-    for (const a of d.activities) {
+    // someone else's flight, room or activity stays out of this phone's calendar
+    for (const a of d.activities.filter(forMe)) {
       const t = activityTimes(a, d);
       if (!t) continue;
       const p = a.placeId && I.place[a.placeId];
@@ -53,16 +54,16 @@ export function buildIcs() {
       }));
     }
     for (const c of d.cards || []) {
-      if (c.type !== 'departure') continue;
+      if (c.type !== 'departure' || !forMe(c)) continue;
       const { leave, airport, t } = departureTimes(c, d);
       const when = leave || airport;
       if (!when) continue;
-      ev.push(event({ uid: `go-${d.id}`, start: when, end: new Date(when.getTime() + 30 * 60000), alarm: 30,
+      ev.push(event({ uid: `go-${d.id}${c.travelers?.length ? '-' + c.travelers.join('-') : ''}`, start: when, end: new Date(when.getTime() + 30 * 60000), alarm: 30,
         title: leave ? 'Salir hacia el aeropuerto' : 'Estar en el aeropuerto', description: [c.title, t?.route, t?.service, c.note].filter(Boolean).join('\n') }));
     }
   }
   for (const l of D.lodging) {
-    if (!l.checkIn || !l.checkOut) continue;
+    if (!l.checkIn || !l.checkOut || !forMe(l)) continue;
     ev.push(event({ uid: `lodging-${l.id}`, allDay: true, start: l.checkIn, end: l.checkOut, title: `Hotel: ${l.name}`,
       location: [l.address, l.addressLocal].filter(Boolean).join(' · ') || l.area,
       geo: Number.isFinite(l.lat) ? [l.lat, l.lon] : null,

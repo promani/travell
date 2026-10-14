@@ -666,7 +666,7 @@
       "date": "2026-11-18",
       "cityId": "tokyo",
       "title": "Shanghai → Tokio",
-      "summary": "Vuelo 9C6217 15:00 → Narita 18:40. Cena tardía en Shinjuku.",
+      "summary": "Vuelo 9C6217 15:00 → Narita 18:40 (Facundo va en el CA919 de las 14:05, que llega 18:10). Cena tardía en Shinjuku.",
       "image": {
         "name": "d07-shanghai-tokio",
         "prompt": "Avión despegando de Shanghai rumbo a Tokio, con el skyline de Tokio y la Torre de Tokio al atardecer"
@@ -686,7 +686,28 @@
           "docTypes": [
             "pasaje"
           ],
-          "checklist": []
+          "checklist": [],
+          "travelers": [
+            "pehuen",
+            "sole"
+          ]
+        },
+        {
+          "type": "departure",
+          "icon": "plane-departure",
+          "title": "Hoy volás a Tokio",
+          "transportId": "t-ca919",
+          "airportLeadMinutes": 180,
+          "leaveHomeAt": "11:00",
+          "airportPlaceId": "p-pvg",
+          "note": "Hotel → Pudong T2: salir con 3 h de margen para un vuelo internacional (metro línea 2 / Maglev / DiDi). Pehuén y Sole salen una hora después hacia la misma terminal.",
+          "docTypes": [
+            "pasaje"
+          ],
+          "checklist": [],
+          "travelers": [
+            "facundo"
+          ]
         },
         {
           "type": "arrival",
@@ -762,6 +783,89 @@
               "title": "Visit Japan Web",
               "url": "https://www.vjw-lp.digital.go.jp/en/"
             }
+          ],
+          "travelers": [
+            "pehuen",
+            "sole"
+          ]
+        },
+        {
+          "type": "arrival",
+          "icon": "plane-arrival",
+          "title": "Llegada a Tokio",
+          "cityId": "tokyo",
+          "intro": "Aterrizás en Narita T1 a las 18:10; Pehuén y Sole llegan a la T3 a las 18:40. Mostrá el QR de Visit Japan Web, comprá Welcome Suica o cargá Suica en el celular y sacá yenes en un ATM de 7-Eleven o Japan Post. Para ir juntos al Airbnb (no tiene recepción): el Narita Express sale de la estación de la T1 y para en la T2, donde suben ellos.",
+          "options": [
+            {
+              "icon": "train",
+              "label": "Narita Express → Tokio + metro Tozai",
+              "recommended": true,
+              "detail": "N’EX hasta la estación de Tokio y línea Tozai desde Otemachi hasta Waseda (~15 min). Salida ~20:00.",
+              "cost": "¥3.330 + ~¥200",
+              "duration": "~1 h 40"
+            },
+            {
+              "icon": "train-tram",
+              "label": "Skyliner → Ueno + metro",
+              "detail": "Skyliner a Ueno y de Ueno-okachimachi la línea Oedo hasta Ushigome-Yanagicho.",
+              "cost": "~¥2.600 + ~¥250",
+              "duration": "~1 h 15"
+            }
+          ],
+          "lodgingId": "l02",
+          "map": {
+            "points": [
+              {
+                "placeId": "p-nrt",
+                "label": "Narita (NRT)"
+              },
+              {
+                "lodgingId": "l02",
+                "label": "Airbnb (zona)"
+              }
+            ],
+            "routes": [
+              {
+                "label": "Narita Express",
+                "color": "#e03131",
+                "dashed": true,
+                "path": [
+                  [
+                    35.772,
+                    140.3929
+                  ],
+                  [
+                    35.73,
+                    140.2
+                  ],
+                  [
+                    35.7,
+                    139.9
+                  ],
+                  [
+                    35.6812,
+                    139.7671
+                  ]
+                ]
+              }
+            ]
+          },
+          "links": [
+            {
+              "title": "Mapa del metro de Tokio (Tokyo Metro)",
+              "url": "https://www.tokyometro.jp/en/subwaymap/"
+            },
+            {
+              "title": "Narita → Tokio: opciones y tarifas",
+              "url": "https://thejapanode.com/guides/narita-airport-transport-guide"
+            },
+            {
+              "title": "Visit Japan Web",
+              "url": "https://www.vjw-lp.digital.go.jp/en/"
+            }
+          ],
+          "travelers": [
+            "facundo"
           ]
         }
       ],
@@ -785,6 +889,27 @@
           "placeId": "p-shtower"
         },
         {
+          "id": "A164",
+          "cityId": "shanghai",
+          "slot": "Mediodía",
+          "start": "11:00",
+          "end": "12:00",
+          "category": "traslado",
+          "priority": "imperdible",
+          "title": "Hotel → Pudong T2",
+          "detail": "Salir con 3 h de margen para un vuelo internacional (CA919 a las 14:05).",
+          "area": null,
+          "how": "Metro línea 2 / Maglev / DiDi",
+          "cost": null,
+          "reservation": null,
+          "status": null,
+          "link": null,
+          "placeId": null,
+          "travelers": [
+            "facundo"
+          ]
+        },
+        {
           "id": "A022",
           "cityId": "shanghai",
           "slot": "Mediodía",
@@ -800,7 +925,32 @@
           "reservation": null,
           "status": null,
           "link": null,
-          "placeId": null
+          "placeId": null,
+          "travelers": [
+            "pehuen",
+            "sole"
+          ]
+        },
+        {
+          "id": "A163",
+          "cityId": "tokyo",
+          "slot": "Tarde",
+          "start": "14:05",
+          "end": "18:10",
+          "category": "vuelo",
+          "priority": "imperdible",
+          "title": "Vuelo Air China CA919 PVG T2 → NRT T1",
+          "detail": "La Terminal 1 de Narita tiene estación de tren en el subsuelo (Narita Express y Keisei).",
+          "area": null,
+          "how": null,
+          "cost": null,
+          "reservation": "requerida",
+          "status": "reservado",
+          "link": null,
+          "placeId": "p-nrt",
+          "travelers": [
+            "facundo"
+          ]
         },
         {
           "id": "A023",
@@ -818,7 +968,11 @@
           "reservation": "requerida",
           "status": "reservado",
           "link": null,
-          "placeId": "p-nrt"
+          "placeId": "p-nrt",
+          "travelers": [
+            "pehuen",
+            "sole"
+          ]
         },
         {
           "id": "A024",

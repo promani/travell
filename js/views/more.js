@@ -4,7 +4,7 @@ import { exportBackup, importBackup } from '../share.js';
 import { uploads, uploadPending, uploadSoon } from '../upload.js';
 import { tileUrls, prefetchTiles } from '../map.js';
 import { esc, ic, fmtShort, fmtDate, toast, cap, download } from '../util.js';
-import { register, statusBadge, extLink, transportIcon, cat, bookingSite, lodgingOptions } from '../ui.js';
+import { register, statusBadge, extLink, transportIcon, cat, bookingSite, lodgingOptions, whoBadge } from '../ui.js';
 import { tripPhase } from '../tripstate.js';
 import { ticketBox, hasTicket, transportTicket, paintAttachments, freeUrls } from '../ticket.js';
 import { setupCard } from './people.js';
@@ -45,7 +45,7 @@ export function transport(_, ctx) {
   return `<header class="pagehead"><h1>${ic('train')} Transporte</h1><p class="muted">Cada pasaje con su código de reserva, el QR de la tarjeta de embarque o del tren (escaneado con la cámara), el link a la reserva y el PDF.</p></header>` + D.days.filter((d) => byDay[d.id]).map((d) => `
     <h3 class="grp"><a href="#/dia/${d.id}">Día ${d.n} · ${esc(fmtShort(d.date))}</a></h3>
     ${byDay[d.id].map((t) => `<article class="card trow2" id="tr-${esc(t.id)}"><div class="o-ic">${transportIcon(t.kind)}</div><div>
-      <b>${esc(t.route)}</b> ${statusBadge(t.status)}
+      <b>${esc(t.route)}</b> ${statusBadge(t.status)} ${whoBadge(t)}
       <small>${esc([t.medium, t.service].filter(Boolean).join(' · '))}</small>
       ${(t.depart || t.arrive) ? `<small>${ic('clock')} ${esc([t.depart, t.arrive].filter(Boolean).join(' → '))}</small>` : ''}
       ${t.price ? `<small>${ic('credit-card')} ${esc(t.price)}</small>` : ''}
@@ -60,7 +60,7 @@ export function lodging(_, ctx) {
   ctx.after(paintAttachments);
   return `<header class="pagehead"><h1>${ic('hotel')} Alojamientos</h1></header>
   <div class="row-actions"><button class="btn primary" data-act="lodging-new">${ic('plus')} Agregar alojamiento</button></div>` + D.lodging.map((l) => `
-    <article class="card"><div class="card-head"><h3>${esc(l.name)}</h3>${statusBadge(l.status)}</div>
+    <article class="card"><div class="card-head"><h3>${esc(l.name)}</h3><span>${whoBadge(l)} ${statusBadge(l.status)}</span></div>
       <p>${esc(I.city[l.cityId]?.name || '')}${l.area ? ' · ' + esc(l.area) : ''}</p>
       <p>${ic('calendar-day')} ${esc(fmtShort(l.checkIn))} → ${esc(fmtShort(l.checkOut))} · ${l.nights} noche${l.nights === 1 ? '' : 's'}${l.checkInTime ? ` · check-in ${esc(l.checkInTime)}` : ''}${l.checkOutTime ? ` · check-out ${esc(l.checkOutTime)}` : ''}</p>
       ${l.address ? `<p>${ic('map-location-dot')} ${esc(l.address)}</p>` : ''}

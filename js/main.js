@@ -1,5 +1,5 @@
 // Boot, hash router, event delegation, clock tick. Everything is static: no backend.
-import { loadData, D, I, now, checks, cols, bus, me, brandColor } from './store.js';
+import { loadData, D, I, now, checks, cols, bus, me, brandColor, rebuild } from './store.js';
 import { esc, $, $$, closeModal, openModal, toast, fmtDuration } from './util.js';
 import { actions } from './ui.js';
 import { tripPhase } from './tripstate.js';
@@ -191,7 +191,7 @@ setInterval(() => {
   setInterval(checkTripRev, 2 * 60 * 1000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) checkTripRev(); });
   onTripReload(() => { if (!document.querySelector('dialog[open]') && !document.activeElement?.matches('input, textarea, select')) route({ keepScroll: true }); });
-  bus.on('settings', (k) => { if (k === 'simOffset') route({ keepScroll: true }); if (k === 'brand') applyBrand(); });   // simulated date / app colour changed
+  bus.on('settings', (k) => { if (k === 'me') rebuild(); if (k === 'simOffset') route({ keepScroll: true }); if (k === 'brand') applyBrand(); });   // simulated date / app colour changed
   // data changed on another phone: redraw, unless the user is in the middle of a form
   bus.on('remote-change', () => { if (!document.querySelector('dialog[open]') && !document.activeElement?.matches('input, textarea, select')) route({ keepScroll: true }); });
   // weather: at most one download a day (the relay refreshes it daily); kept on the device for offline use

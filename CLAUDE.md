@@ -13,7 +13,7 @@
 ## IA: solo desde la app de Claude, por el MCP
 - **La app no tiene IA propia** (ni pantalla de "Compartido", ni lectura de confirmaciones, ni claves de IA). No agregarla.
 - La única forma en que una IA toca el viaje es el **MCP** del servidor (`server/mcp.mjs`, `POST /mcp`). Lo que se aplica ahí queda en Redis encima de `data/*.json` y les llega a todos los celulares sin deploy.
-- El MCP tiene que poder hacer **todo lo que se puede hacer en la app** con los datos del viaje: días, actividades, lugares, transportes, hoteles, documentos, viajeros, tareas, notas, recursos, reservas (códigos en cada registro; `tickets`: QR y link), gastos (`expenses`) y pasaportes (`passports`). Si se agrega una acción o una colección nueva a la app, se agrega también al MCP (`COLS` y validación en `server/tripdata.mjs`, reglas y ejemplos en `server/mcp.mjs`).
+- El MCP tiene que poder hacer **todo lo que se puede hacer en la app** con los datos del viaje: días, actividades, lugares, transportes, hoteles, documentos, viajeros, tareas, notas, recursos, reservas (códigos en cada registro; `tickets`: QR y link), gastos (`expenses`) y pasaportes (`passports`). Lo que hace solo una parte del grupo (el vuelo o la habitación de uno) lleva `travelers: [ids]` en el propio registro; sin el campo es de todos. Si se agrega una acción o una colección nueva a la app, se agrega también al MCP (`COLS` y validación en `server/tripdata.mjs`, reglas y ejemplos en `server/mcp.mjs`).
 - Lo que queda fuera del MCP: fotos y adjuntos (PDF, capturas; se cargan desde la app), la ubicación del GPS y las marcas personales de cada celular.
 
 ### Flujo: cargar una reserva

@@ -258,6 +258,7 @@ sequenceDiagram
 - `qr.js` lee códigos con `BarcodeDetector` si el navegador lo tiene, y si no con jsQR (`vendor/jsqr`); dibuja los QR con qrcode-generator (`vendor/qrcode`). Las dos se cargan solo al usarlas y quedan en el caché offline.
 - `documents.json` solo tiene lo no modelado. `migrateDocuments()` mueve una vez los códigos (`docCodes`) y adjuntos de los documentos viejos a su comprobante, hotel o pasaporte.
 - Alojamientos: `bookingUrl` es el link a la reserva (Booking, Trip.com…); `link` sigue siendo el sitio del hotel.
+- **Lo que es solo de algunos viajeros** lleva `travelers: [ids]` (sin el campo es de todos): un vuelo o una habitación de uno, una actividad aparte, una tarjeta del día (`days[].cards`). Si el grupo se separa se carga un registro por parte (ej. `t04` para Pehuén y Sole, `t-ca919` para Facundo, con una tarjeta de salida y una de llegada para cada uno). Cada celular (`me()`, `forMe()` en `js/store.js`) muestra sus tarjetas, toma su alojamiento para la noche y su vuelo para el cambio de huso, saltea lo ajeno en "Ahora / sigue" y en el calendario, y ve lo de los demás atenuado con la etiqueta "Solo Facundo". Un celular sin nombre ve todo. Las actividades y los alojamientos tienen el campo "Quiénes" en su formulario.
 
 ### Fotos y adjuntos en R2
 

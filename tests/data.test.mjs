@@ -13,7 +13,7 @@ await loadData();
 test('loads the trip and the extra places file', () => {
   assert.equal(D.days.length, 24);
   assert.ok(I.place['p-bund'] && I.place['p-e-skytree'], 'places.json + places-extra.json');
-  assert.equal(D.days.reduce((n, d) => n + d.activities.length, 0), 136);
+  assert.equal(D.days.reduce((n, d) => n + d.activities.length, 0), 138);
 });
 
 test('every night that is not on a plane has a lodging', () => {
@@ -24,14 +24,34 @@ test('every night that is not on a plane has a lodging', () => {
 });
 
 test('deleting a lodging creates a "missing lodging" suggestion, restoring removes it', () => {
+  assert.equal(I.day.d11.lodgingId, 'l10');
+  cols.del('lodging', 'l10');
+  assert.equal(I.day.d11.lodgingId, null);
+  assert.ok(suggestions().some((s) => s.key === 'gap:2026-11-22'));
+  assert.ok(overriddenBase().some((o) => o.col === 'lodging' && o.id === 'l10' && o.deleted));
+  cols.reset('lodging', 'l10');
+  assert.equal(I.day.d11.lodgingId, 'l10');
+  assert.ok(!suggestions().some((s) => s.key === 'gap:2026-11-22'));
+});
+
+test('records for some travelers only: each phone gets its own flight, room and activities', () => {
+  const { rebuild } = store;
+  const flightOf = () => departureTimes(I.day.d07.cards.filter(store.forMe).find((c) => c.type === 'departure'), I.day.d07).t.id;
+  try {
+    settings.set('me', 'facundo'); rebuild();
+    assert.equal(I.day.d14.lodgingId, 'l04');
+    assert.equal(flightOf(), 't-ca919');
+    assert.equal(activityNow(I.day.d07, localInstant('2026-11-18', '17:00')).current.id, 'A163');
+    assert.equal(store.whoLabel(I.transport['t-ca919']), 'Solo Facundo');
+    settings.set('me', 'sole'); rebuild();
+    assert.equal(I.day.d14.lodgingId, 'l11');
+    assert.equal(flightOf(), 't04');
+    assert.equal(activityNow(I.day.d07, localInstant('2026-11-18', '17:00')).current.id, 'A023');
+    assert.equal(store.whoLabel(I.transport.t04), 'Pehuén y Sole');
+  } finally { settings.set('me', null); rebuild(); }
+  // a phone that hasn't said who it is sees everything; the night goes to the booked room
   assert.equal(I.day.d14.lodgingId, 'l04');
-  cols.del('lodging', 'l04');
-  assert.equal(I.day.d14.lodgingId, null);
-  assert.ok(suggestions().some((s) => s.key === 'gap:2026-11-25'));
-  assert.ok(overriddenBase().some((o) => o.col === 'lodging' && o.id === 'l04' && o.deleted));
-  cols.reset('lodging', 'l04');
-  assert.equal(I.day.d14.lodgingId, 'l04');
-  assert.ok(!suggestions().some((s) => s.key === 'gap:2026-11-25'));
+  assert.ok(store.forMe(I.transport['t-ca919']) && store.forMe(I.transport.t04));
 });
 
 test('a new activity is placed by start time and links its place', () => {
@@ -43,11 +63,11 @@ test('a new activity is placed by start time and links its place', () => {
 });
 
 test('editing a JSON task keeps it in place and marks it edited', () => {
-  cols.put('tasks', { ...I.task.k06, status: 'hecho', assignee: 'v2' });
-  assert.equal(I.task.k06.status, 'hecho');
-  assert.equal(I.task.k06.edited, true);
-  // the task covered lodging l04 (still "pendiente") -> suggestion to complete the lodging data
-  assert.ok(suggestions().some((s) => s.key === 'fix:lodging:l04'));
+  cols.put('tasks', { ...I.task.k27, status: 'hecho', assignee: 'v2' });
+  assert.equal(I.task.k27.status, 'hecho');
+  assert.equal(I.task.k27.edited, true);
+  // the task covered lodging l10 (still "pendiente") -> suggestion to complete the lodging data
+  assert.ok(suggestions().some((s) => s.key === 'fix:lodging:l10'));
 });
 
 test('requirements are filtered by the countries of the trip and can be dismissed', () => {
