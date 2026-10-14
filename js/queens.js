@@ -1,6 +1,6 @@
 // Queens (like LinkedIn's): an 8×8 grid split in 8 coloured regions. Place one queen per row, column and region;
-// two queens never touch, not even diagonally. The puzzle of a date is the same on every phone (seeded by the date),
-// has a single solution and is solvable by logic, without guessing.
+// two queens never touch, not even diagonally. The puzzle of a date is the same on every phone (seeded by the date)
+// and has a single solution; easy layouts are skipped, and about half of the days need trying options.
 import { rng } from './tango.js';
 
 export const N = 8;
@@ -48,7 +48,7 @@ function regions(seeds, rnd) {
 //    other way round;
 //  - a candidate that would leave some row, column or region without candidates is cleared.
 // Returns the queens found (cell indexes) or null if it gets stuck or hits a contradiction.
-export function deduce(reg) {
+export function deduce(reg, { lookahead = true } = {}) {
   const cand = Array(CELLS).fill(true), queen = [];
   const groups = [];
   for (let r = 0; r < N; r++) groups.push([...Array(N)].map((_, c) => r * N + c));
@@ -80,7 +80,7 @@ export function deduce(reg) {
     }
     if (changed) continue;
     // a candidate that would empty another group
-    for (let q = 0; q < CELLS; q++) {
+    for (let q = 0; lookahead && q < CELLS; q++) {
       if (!cand[q]) continue;
       const gone = new Set([q, ...kills(q)]);
       if (groups.some((g) => !solvedGroup(g) && !g.includes(q) && open(g).every((i) => gone.has(i)))) { cand[q] = false; changed = true; }
@@ -90,7 +90,7 @@ export function deduce(reg) {
 }
 
 // Number of solutions, stopping at cap.
-function count(reg, cap) {
+export function count(reg, cap) {
   let n = 0;
   const go = (r, colMask, regMask, prev) => {
     if (r === N) { n++; return; }
@@ -116,18 +116,29 @@ const MIN_REGION = 3;   // a region of one or two cells gives its queen away too
 const size = (reg, k) => reg.filter((x) => x === k).length;
 const smallest = (reg) => Math.min(...[...Array(N).keys()].map((k) => size(reg, k)));
 
+/** How hard a puzzle is: 0 the simple rules solve it, 1 it needs looking one step ahead, 2 it needs trying options. */
+export const level = (reg) => (deduce(reg, { lookahead: false }) ? 0 : deduce(reg) ? 1 : 2);
+
 // Random regions around a random queen layout, then moves of border cells to a neighbouring region (keeping every
-// region in one piece and the queens where they are) while the count of solutions doesn't grow, until there is one
-// and the logic solver finds it.
+// region in one piece and the queens where they are) while the count of solutions doesn't grow. Once there is a single
+// solution the walk goes on among single-solution layouts until one isn't easy (the simple rules alone don't solve it);
+// about half of those need trying options. If none turns up, the hardest seen wins.
+const RATED = 25;   // single-solution layouts rated per date, at most
 export function puzzle(seed) {
   const rnd = rng('queens:' + seed);
-  for (let attempt = 0; attempt < 50; attempt++) {
+  let best = null, rated = 0;
+  for (let attempt = 0; attempt < 50 && rated < RATED; attempt++) {
     const sol = queens(rnd), reg = regions(sol, rnd), isQueen = new Set(sol);
     let score = count(reg, 200), checked = false;
-    for (let step = 0; step < 4000; step++) {
-      if (score === 1 && !checked) {   // the logic solver is the slow part: run it once per new layout
-        if (smallest(reg) >= MIN_REGION && deduce(reg)) return { regions: reg, solution: sol };
+    for (let step = 0; step < 4000 && rated < RATED; step++) {
+      if (score === 1 && !checked) {   // rating is the slow part: once per new layout
         checked = true;
+        if (smallest(reg) >= MIN_REGION) {
+          rated++;
+          const lv = level(reg);
+          if (!best || lv > best.lv) best = { lv, regions: reg.slice(), solution: sol.slice().sort((a, b) => a - b) };
+          if (lv >= 1) break;
+        }
       }
       const i = Math.floor(rnd() * CELLS);
       if (isQueen.has(i)) continue;
@@ -139,8 +150,10 @@ export function puzzle(seed) {
       const n = count(reg, 200);
       if (n >= 1 && (n < score || (n === score && (n > 1 || rnd() < 0.5)))) { score = n; checked = false; } else reg[i] = from;
     }
+    if (best?.lv >= 1) break;
   }
-  throw new Error('queens: no puzzle for ' + seed);
+  if (!best) throw new Error('queens: no puzzle for ' + seed);
+  return { regions: best.regions, solution: best.solution };
 }
 
 // ------------------------------------------------------------------ checking the player's board

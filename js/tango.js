@@ -1,6 +1,7 @@
 // Tango (like LinkedIn's): fill a 6×6 grid with suns (1) and moons (2). Every row and column has 3 of each, never
 // 3 equal cells in a row, '=' joins two equal cells and '×' two different ones. The puzzle of a date is the same on
-// every phone (seeded by the date), has a single solution and is solvable by plain logic, without guessing.
+// every phone (seeded by the date) and has a single solution; among several candidates the hardest is kept (about
+// half of the days need trying options).
 export const N = 6;
 const HALF = N / 2;
 
@@ -72,11 +73,42 @@ export function deduce(start, signs) {
   return g;
 }
 
-// ------------------------------------------------------------------ puzzle
-// Each neighbouring pair can carry a sign; clues are given cells and signs. Starting from the full set of clues in
-// random order, drop every clue the logic solver can do without. Fewer clues = harder, so it stops at a floor.
-export function puzzle(seed) {
-  const rnd = rng('tango:' + seed);
+// One step ahead: when a value in an empty cell leads the forced deductions to a contradiction, the cell takes the other
+// value. Returns the grid as far as it gets, or null on a contradiction.
+export function deduceAhead(start, signs) {
+  let g = deduce(start, signs);
+  for (let progress = true; g && progress;) {
+    progress = false;
+    for (let i = 0; i < N * N && !progress; i++) {
+      if (g[i]) continue;
+      for (const v of [1, 2]) {
+        const t = g.slice(); t[i] = v;
+        if (!deduce(t, signs)) { g[i] = 3 - v; g = deduce(g, signs); progress = true; break; }
+      }
+    }
+  }
+  return g;
+}
+const full = (g) => !!g && g.every(Boolean);
+
+/** Number of solutions, stopping at cap. */
+export function count(start, signs, cap = 2) {
+  const g = deduce(start, signs);
+  if (!g) return 0;
+  const i = g.indexOf(0);
+  if (i < 0) return mistakes(g, signs).size ? 0 : 1;
+  let n = 0;
+  for (const v of [1, 2]) { if (n >= cap) break; const t = g.slice(); t[i] = v; n += count(t, signs, cap - n); }
+  return n;
+}
+
+/** How hard a puzzle is: 0 forced deductions solve it, 1 it needs looking one step ahead, 2 it needs trying options. */
+export const level = (p) => (full(deduce(p.givens, p.signs)) ? 0 : full(deduceAhead(p.givens, p.signs)) ? 1 : 2);
+
+// One candidate. Each neighbouring pair can carry a sign; clues are given cells and signs. Starting from every cell and
+// a random third of the pairs as signs, in random order, drop every clue the solution stays unique without, keeping a
+// few signs (like LinkedIn's).
+function candidate(rnd) {
   const sol = solution(rnd);
   const pairs = [];
   for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
@@ -84,27 +116,35 @@ export function puzzle(seed) {
     if (c < N - 1) pairs.push([i, i + 1]);
     if (r < N - 1) pairs.push([i, i + N]);
   }
-  // candidate clues: every cell, plus a random third of the pairs as signs
   let clues = shuffle([
     ...sol.map((v, i) => ({ cell: i })),
     ...shuffle(pairs, rnd).slice(0, Math.round(pairs.length / 3)).map(([a, b]) => ({ a, b, eq: sol[a] === sol[b] })),
   ], rnd);
-  const solves = (cs) => {
-    const g = Array(N * N).fill(0);
-    for (const c of cs) if ('cell' in c) g[c.cell] = sol[c.cell];
-    const out = deduce(g, cs.filter((c) => 'a' in c));
-    return !!out && out.every(Boolean);
+  const build = (cs) => {
+    const givens = Array(N * N).fill(0);
+    for (const c of cs) if ('cell' in c) givens[c.cell] = sol[c.cell];
+    return { givens, signs: cs.filter((c) => 'a' in c).map(({ a, b, eq }) => ({ a, b, eq })), solution: sol };
   };
-  const FLOOR = 10, MIN_SIGNS = 3;   // keep it a few-minutes puzzle with some signs, like LinkedIn's
+  const MIN_SIGNS = 3;
   for (const c of clues.slice()) {
-    if (clues.length <= FLOOR) break;
     if ('a' in c && clues.filter((x) => 'a' in x).length <= MIN_SIGNS) continue;
-    const without = clues.filter((x) => x !== c);
-    if (solves(without)) clues = without;
+    const without = clues.filter((x) => x !== c), p = build(without);
+    if (count(p.givens, p.signs) === 1) clues = without;
   }
-  const givens = Array(N * N).fill(0);
-  for (const c of clues) if ('cell' in c) givens[c.cell] = sol[c.cell];
-  return { givens, signs: clues.filter((c) => 'a' in c).map(({ a, b, eq }) => ({ a, b, eq })), solution: sol };
+  return build(clues);
+}
+
+const TRIES = 15;
+// Several candidates per date; the hardest wins and, among equals, the one with fewer clues.
+export function puzzle(seed) {
+  const rnd = rng('tango:' + seed);
+  let best = null;
+  for (let t = 0; t < TRIES; t++) {
+    const p = candidate(rnd);
+    const score = level(p) * 100 - p.givens.filter(Boolean).length - p.signs.length;
+    if (!best || score > best.score) best = { p, score };
+  }
+  return best.p;
 }
 
 // ------------------------------------------------------------------ checking the player's grid

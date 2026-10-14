@@ -12,14 +12,19 @@ test('the puzzle of a date is the same every time and differs between dates', ()
   assert.notDeepEqual(tango.puzzle('2026-11-18').givens, tango.puzzle('2026-11-19').givens);
 });
 
-test('every puzzle is solvable by logic alone and matches its solution', () => {
+test('every puzzle has a single solution, its own, and almost none is an easy one', () => {
+  let easy = 0;
   for (let d = 1; d <= 60; d++) {
     const p = tango.puzzle(`2026-12-${d}`);
     assert.ok(tango.solved(p.solution, p.signs));
     assert.ok(p.signs.length >= 3);
-    assert.deepEqual(tango.deduce(p.givens, p.signs), p.solution, `day ${d}`);
+    assert.equal(tango.count(p.givens, p.signs, 3), 1, `day ${d}`);
+    const found = tango.deduceAhead(p.givens, p.signs);   // as far as logic gets, it agrees with the solution
+    found.forEach((v, i) => v && assert.equal(v, p.solution[i], `day ${d} cell ${i}`));
+    if (tango.level(p) === 0) easy++;
     p.givens.forEach((v, i) => v && assert.equal(v, p.solution[i]));
   }
+  assert.ok(easy <= 3, `${easy} easy ones out of 60`);
 });
 
 test('mistakes: three in a row, a full line with 4 of a kind and a broken sign', () => {
@@ -70,7 +75,8 @@ test('zip: same puzzle per date, its path solves it step by step, and the rules 
   if (zip.adjacent(start, +three)) assert.equal(zip.canStep([start], +three, p), false);   // numbers in order
 });
 
-test('queens: same puzzle per date, 8 connected regions of 3+ cells, a single solution the logic finds', () => {
+test('queens: same puzzle per date, 8 connected regions of 3+ cells, a single solution, almost never an easy one', () => {
+  let easy = 0;
   assert.deepEqual(queens.puzzle('2026-11-18'), queens.puzzle('2026-11-18'));
   const N = queens.N;
   for (let d = 1; d <= 30; d++) {
@@ -82,10 +88,14 @@ test('queens: same puzzle per date, 8 connected regions of 3+ cells, a single so
       while (todo.length) { const i = todo.pop(); for (const j of [i - N, i + N, i % N ? i - 1 : -1, i % N < N - 1 ? i + 1 : -1]) if (j >= 0 && j < N * N && reg[j] === k && !seen.has(j)) { seen.add(j); todo.push(j); } }
       assert.equal(seen.size, cells.length, `day ${d} region ${k} split`);
     }
-    assert.deepEqual(queens.deduce(reg), p.solution);
+    assert.equal(queens.count(reg, 3), 1, `day ${d}`);
+    const found = queens.deduce(reg);   // when logic alone gets there, it gets to the solution
+    if (found) assert.deepEqual(found, p.solution);
+    if (queens.level(reg) === 0) easy++;
     const marks = Array(N * N).fill(0); p.solution.forEach((i) => { marks[i] = 2; });
     assert.ok(queens.solved(marks, reg));
   }
+  assert.ok(easy <= 2, `${easy} easy ones out of 30`);
   const p = queens.puzzle('2026-11-18'), marks = Array(N * N).fill(0);
   marks[0] = 2; marks[N + 1] = 2;                                                   // touching diagonally
   assert.deepEqual([...queens.clashes(marks, p.regions)].sort((a, b) => a - b), [0, N + 1]);

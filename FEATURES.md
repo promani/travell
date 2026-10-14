@@ -215,11 +215,12 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
 ## 22. Juego del día ✅
 
 - Cuatro juegos por día, como los de LinkedIn, en **Más → Juego del día** (`#/juego`, `#/juego?g=zip|queens|patches`):
-  - **Tango** (`js/tango.js`): grilla de 6×6 con soles y lunas, 3 de cada uno por fila y columna, nunca tres iguales seguidos, `=` y `×` entre casillas. Una sola solución, se resuelve con lógica, sin adivinar.
+  - **Tango** (`js/tango.js`): grilla de 6×6 con soles y lunas, 3 de cada uno por fila y columna, nunca tres iguales seguidos, `=` y `×` entre casillas. Una sola solución; de 15 candidatos por día queda el más difícil.
   - **Zip** (`js/zip.js`): un camino que pasa por las 36 casillas, del 1 al 8 en orden, sin cruzar paredes. Se dibuja arrastrando el dedo (los tramos rectos se completan solos) y se vuelve atrás arrastrando o tocando el camino. Vale cualquier camino que cumpla las reglas.
-  - **Queens** (`js/queens.js`): 8×8 con 8 regiones de color; una reina por fila, columna y región, sin que se toquen. Se toca para marcar una cruz y otra vez para la reina; arrastrar marca varias cruces. Una sola solución, se resuelve con lógica.
-  - **Patches** (`js/patches.js`): dividir el 6×6 en rectángulos, uno por pista; la pista dice cuántas casillas tiene y/o su forma (cuadrado, ancho, alto). Se arrastra para dibujar un rectángulo y se toca para borrarlo. Una sola solución; de 60 candidatos por día queda el más difícil (más o menos la mitad de los días obliga a probar opciones).
+  - **Queens** (`js/queens.js`): 8×8 con 8 regiones de color; una reina por fila, columna y región, sin que se toquen. Se toca para marcar una cruz y otra vez para la reina; arrastrar marca varias cruces. Una sola solución; se descartan los tableros fáciles.
+  - **Patches** (`js/patches.js`): dividir el 6×6 en rectángulos, uno por pista; la pista dice cuántas casillas tiene y/o su forma (cuadrado, ancho, alto). Se arrastra para dibujar un rectángulo y se toca para borrarlo. Una sola solución; de 60 candidatos por día queda el más difícil.
 - El tablero está tapado hasta tocar **Iniciar**: cuenta regresiva de 4 segundos y recién ahí arranca el reloj. Al resolverlo, papel picado, el tablero rebota y el celular vibra.
+- Dificultad: ningún tablero sale de los fáciles (los que se resuelven con las reglas más simples). Más o menos la mitad de los días hay que pensar un paso adelante, y la otra mitad obliga a probar opciones.
 - Son los mismos para todos: se generan en el celular a partir de la fecha del viaje, sin internet.
 - En Inicio aparece una tarjeta hasta que todos resolvieron los cuatro ("te falta Zip", "Faltan Sole, Facundo (Zip)").
 - Ranking del día por juego y por tiempo (los tiempos de los demás se ven recién cuando lo resolvés) y récords del viaje por juego: días ganados, jugados, racha y mejor tiempo.
