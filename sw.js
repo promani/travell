@@ -2,7 +2,7 @@
 //  - app shell + data JSON: precached, then network-first (fresh when online, cached when not)
 //  - map tiles: cache-first, filled while browsing or by "Guardar zona offline"
 //  - AI-generated pictures (imgg host): stale-while-revalidate, filled the first time each one is seen
-const VERSION = 'v30';
+const VERSION = 'v31';
 const SHELL = `travell-shell-${VERSION}`;
 const TILES = 'travell-tiles-v1';
 const PICS = 'travell-pics-v1';
@@ -11,7 +11,7 @@ const MAX_TILES = 2500;
 
 const CORE = [
   './', 'index.html', 'manifest.webmanifest', 'css/app.css',
-  'js/main.js', 'js/util.js', 'js/store.js', 'js/geo.js', 'js/map.js', 'js/tripstate.js', 'js/nearby.js', 'js/ui.js',
+  'js/main.js', 'js/install.js', 'js/util.js', 'js/store.js', 'js/geo.js', 'js/map.js', 'js/tripstate.js', 'js/nearby.js', 'js/ui.js',
   'js/sync.js', 'js/upload.js', 'js/ics.js', 'js/ticket.js', 'js/qr.js', 'js/weather.js', 'js/suggest.js', 'js/share.js', 'js/money.js', 'js/views/search.js',
   'js/views/tasks.js', 'js/views/people.js', 'js/views/places.js', 'js/views/forms.js',
   'js/passport.js', 'js/views/passports.js', 'js/views/resources.js', 'js/views/reels.js', 'js/views/games.js', 'js/tango.js', 'js/zip.js', 'js/queens.js', 'js/patches.js', 'js/views/sim.js',

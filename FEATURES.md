@@ -159,6 +159,8 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
 ## 14. Offline e instalación ✅
 
 - Se instala como app (manifest con íconos e inicio en pantalla completa).
+- Quien la abre desde el navegador ve arriba el cartel **"Instalá la app"** (`js/install.js`). En Android trae el botón **Instalar**, que abre el instalador del navegador. En iPhone indica cómo hacerlo: Compartir → Agregar a inicio. Si se cierra, vuelve a aparecer a los 3 días. Con la app ya instalada no aparece.
+- Cuando sale una versión nueva aparece el cartel **"Nueva versión"** con el botón **Actualizar**, que recarga la app. Si estaba el de instalar, lo reemplaza.
 - Service worker: la app y los datos quedan en caché y los mapas se guardan a medida que se ven o con la precarga.
 - Aviso de **sin conexión** en el encabezado y mensajes al perder o recuperar la señal.
 - Almacenamiento persistente solicitado al guardar fotos o archivos.

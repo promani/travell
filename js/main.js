@@ -29,6 +29,7 @@ import './views/forms.js';
 import { startSync, needsCode } from './sync.js';
 import { startUploads } from './upload.js';
 import { refreshWeather } from './weather.js';
+import { offerInstall } from './install.js';
 
 const main = $('#app');
 let active = null, renderedToday = null;
@@ -214,12 +215,14 @@ setInterval(() => {
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       if (!hadController || $('#update-bar')) return;
       const bar = document.createElement('div');
-      bar.id = 'update-bar';
-      bar.innerHTML = '<span>Hay una versión nueva de la app.</span><button class="btn small" id="update-go">Actualizar</button>';
+      bar.id = 'update-bar'; bar.className = 'app-bar';
+      bar.innerHTML = '<span>Nueva versión</span><button class="btn small" id="update-go">Actualizar</button>';
+      $('#install-bar')?.remove();
       document.body.appendChild(bar);
       $('#update-go').onclick = () => location.reload();
     });
   }
+  offerInstall();
   window.addEventListener('online', () => toast('Volvió la conexión'));
   window.addEventListener('offline', () => toast('Sin conexión: seguís viendo todo lo guardado'));
 })();
