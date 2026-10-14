@@ -1,10 +1,10 @@
-// Travelers: who am I, location permission & sharing, where the others are, the travelers ABM, and group sync settings.
+// Travelers: the trip code gate, who am I, location permission & sharing, where the others are, the travelers ABM, and group sync.
 import { D, I, cols, me, settings, bus } from '../store.js';
 import { esc, ic, toast, copyText, fmtDist, haversine } from '../util.js';
 import { register, mapBox } from '../ui.js';
 import { gps, startGps, currentPosition, permissionState, onPosition } from '../geo.js';
 import { ago } from '../map.js';
-import { syncNow, syncState, syncConfigured, shareMyPosition, locationLink, otherPositions, defaultRelayUrl } from '../sync.js';
+import { syncNow, syncState, syncConfigured, shareMyPosition, locationLink, otherPositions, enterCode } from '../sync.js';
 import { exportShared, importShared } from '../share.js';
 import { passportCards } from './passports.js';
 import { paintAttachments, freeUrls } from '../ticket.js';
@@ -21,6 +21,22 @@ export async function permBanner(el) {
     ? `<div class="note warn"><b>${ic('location-dot')} La ubicación está bloqueada</b><p>Habilitala en los permisos del sitio del navegador para ver lugares cercanos y compartir dónde estás.</p></div>`
     : `<div class="note perm"><b>${ic('location-dot')} Activá tu ubicación</b><p>Para ordenar los lugares por cercanía, cargar lugares desde donde estás y mostrarle al grupo dónde estás (solo si lo activás).</p>
        <div class="row-actions"><button class="btn primary small" data-act="perm-ask">Permitir</button></div></div>`;
+}
+
+/** First of all: the trip's code (5 letters and numbers). Every screen waits for it (see route() in main.js). */
+export function codeGate(_, ctx) {
+  ctx.title = 'Código del viaje';
+  ctx.after(() => document.getElementById('trip-code')?.focus());
+  return `<section class="onboard code-gate">
+    <div class="code-ic">${ic('lock')}</div>
+    <h1>Código del viaje</h1>
+    <p class="muted">Ingresá el código de 5 letras y números que te pasaron. Se pide una sola vez en este celular.</p>
+    <form class="form" data-submit="code-enter" autocomplete="off">
+      <input id="trip-code" name="code" class="code-input" maxlength="5" autocapitalize="characters" autocorrect="off" spellcheck="false" inputmode="text" aria-label="Código del viaje" placeholder="•••••" required>
+      <p class="code-err" id="code-err" hidden>Ese código no es. Probá de nuevo.</p>
+      <button class="btn primary" type="submit">Entrar ${ic('arrow-right')}</button>
+    </form>
+  </section>`;
 }
 
 /** True while this phone doesn't know who uses it: the app then shows the onboarding instead of any screen. */
@@ -46,8 +62,6 @@ export async function pendingSetup() {
   if (loc === 'denied') items.push({ ic: 'location-dot', title: 'Ubicación bloqueada', text: 'Habilitala en los permisos del sitio del navegador para ver lugares cercanos y compartir dónde estás.' });
   else if (loc !== 'granted') items.push({ ic: 'location-dot', title: 'Ubicación', text: 'Para ordenar lugares por cercanía y mostrarle al grupo dónde estás (solo si lo activás).',
     actions: '<button class="btn small primary" data-act="perm-ask">Permitir</button>' });
-  if (!syncConfigured()) items.push({ ic: 'arrows-rotate', title: 'Sincronizar con el grupo', text: 'Sin el código del grupo no ves lo que cargan los demás: tiempos del Juego del día, tareas, gastos, ubicaciones.',
-    actions: '<a class="btn small primary" href="#/viajeros#sync">Activar</a>' });
   if (syncConfigured() && 'Notification' in window && Notification.permission === 'default') {
     items.push({ ic: 'bell', title: 'Avisos', text: 'Para enterarte cuando alguien del grupo te asigna una tarea.',
       actions: '<button class="btn small primary" data-act="notif-ask">Permitir</button>' });
@@ -114,12 +128,8 @@ export function render(_, ctx) {
     <div class="row-actions"><button class="btn small" data-act="share-link" ${mine ? '' : 'disabled'}>${ic('share-from-square')} Mandar mi ubicación por link</button></div></section>
 
   <section class="card" id="sync"><h3>${ic('arrows-rotate')} Sincronizar con el grupo</h3>
-    <p class="hint">Opcional. Con un <b>relay</b> (servidor mínimo incluido en <code>server/relay.mjs</code>) los celulares comparten tareas, lugares, gastos, viajeros y ubicaciones. Los datos viajan <b>cifrados</b> con el código del grupo: el servidor no puede leerlos. Todos tienen que usar el mismo código.</p>
-    <form class="form" data-submit="sync-save">
-      <label class="field">URL del relay<input name="relayUrl" type="url" placeholder="https://mi-relay.example.com" value="${esc(settings.get('relayUrl', '') || defaultRelayUrl())}"></label>
-      <label class="field">Código del grupo (secreto)<input name="groupCode" autocomplete="off" spellcheck="false" placeholder="una frase larga que compartan" value="${esc(settings.get('groupCode', ''))}"></label>
-      <div class="row-actions"><button class="btn primary" type="submit">Guardar y sincronizar</button><button class="btn" type="button" data-act="sync-now">Sincronizar ahora</button></div>
-    </form>
+    <p class="hint">Los celulares del viaje comparten solos tareas, lugares, gastos, viajeros, ubicaciones y los tiempos del Juego del día. Viajan <b>cifrados</b> con el código del viaje: el servidor no puede leerlos.</p>
+    <div class="row-actions"><button class="btn" type="button" data-act="sync-now">${ic('arrows-rotate')} Sincronizar ahora</button></div>
     <p class="hint" id="sync-status">${esc(syncStatus())}</p>
     <h4>Sin servidor</h4>
     <p class="hint">Exportá un archivo con todo lo cargado en la app (tareas, lugares, gastos, viajeros…) y que el resto lo importe.</p>
@@ -157,14 +167,14 @@ register({
     if (navigator.share) { try { await navigator.share({ title: 'Mi ubicación', text, url: link }); return; } catch { /* cancelled */ } }
     copyText(link);
   },
-  'sync-save': (form) => {
-    const f = new FormData(form);
-    settings.set('relayUrl', (f.get('relayUrl') || '').trim()); settings.set('groupCode', (f.get('groupCode') || '').trim());
-    if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => null);
-    if (!syncConfigured()) return toast('Guardado: sin URL o código no se sincroniza');
-    syncNow().then(() => toast(syncState.error ? `No se pudo sincronizar: ${syncState.error}` : 'Sincronizado'));
+  'code-enter': async (form, _, app) => {
+    const err = form.querySelector('#code-err');
+    if (await enterCode(new FormData(form).get('code'))) { app.rerender(); syncNow(); return; }
+    err.hidden = false;
+    form.classList.remove('bad'); void form.offsetWidth; form.classList.add('bad');
+    form.querySelector('input').select();
   },
-  'sync-now': () => syncNow().then(() => toast(syncState.error ? `Error: ${syncState.error}` : syncConfigured() ? 'Sincronizado' : 'Configurá el relay primero')),
+  'sync-now': () => syncNow().then(() => toast(syncState.error ? `Error: ${syncState.error}` : syncConfigured() ? 'Sincronizado' : 'Falta el código del viaje')),
   'share-export': () => exportShared(),
   'share-import': async (el, _, app) => {
     const file = el.files[0]; el.value = '';

@@ -414,6 +414,14 @@ body.onboarding main { padding-bottom: var(--s6); }
 .onboard-pick:active { transform: scale(.98); } .onboard-pick b { flex: 1; } .onboard-pick em { font-style: normal; color: var(--muted); }
 @media (hover: hover) { .onboard-pick:hover { border-color: var(--pri); } }
 .onboard > .btn { width: 100%; } .onboard > .hint { text-align: center; margin-top: var(--s4); }
+.code-gate { text-align: center; } .code-ic { font-size: 2.4rem; color: var(--pri); margin-bottom: var(--s3); }
+.code-gate .form { display: flex; flex-direction: column; align-items: center; gap: var(--s3); }
+.code-input { width: 100%; max-width: 15rem; text-align: center; font: 700 2rem/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .45em; text-indent: .45em; text-transform: uppercase;
+  padding: var(--s3); border: 2px solid var(--line); border-radius: var(--r); background: var(--card); color: var(--text); }
+.code-input:focus { outline: none; border-color: var(--pri); }
+.code-gate .btn { width: 100%; max-width: 15rem; }
+.code-err { margin: 0; color: var(--bad); font-weight: 600; font-size: var(--fs-sm); }
+.code-gate .form.bad .code-input { border-color: var(--bad); animation: shake .3s; }
 
 .warn-line { color: var(--warn-ink); }
 .fa-spinner { animation: spin 1s linear infinite; } @keyframes spin { to { transform: rotate(360deg); } }

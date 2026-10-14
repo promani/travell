@@ -26,7 +26,7 @@ import { paintSimBar } from './views/sim.js';
 import { watchTheme } from './theme.js';
 import { checkTripRev, onTripReload } from './admin.js';
 import './views/forms.js';
-import { startSync } from './sync.js';
+import { startSync, needsCode } from './sync.js';
 import { startUploads } from './upload.js';
 import { refreshWeather } from './weather.js';
 
@@ -78,10 +78,11 @@ function route({ keepScroll = false } = {}) {
   const y = window.scrollY;
   cleanup();
   const { name, params, anchor } = parseHash();
-  // first run: nothing else until we know who uses this phone (a received location link still opens)
-  const onboarding = people.needsMe() && name !== 'ubicacion';
+  // first run: nothing until the trip code is in, then until we know who uses this phone (a received location link
+  // still opens once the code is in)
+  const locked = needsCode(), onboarding = locked || (people.needsMe() && name !== 'ubicacion');
   document.body.classList.toggle('onboarding', onboarding);
-  const view = onboarding ? people.onboarding : ROUTES[name] || ROUTES[''];
+  const view = locked ? people.codeGate : onboarding ? people.onboarding : ROUTES[name] || ROUTES[''];
   const ctx = { afters: [], cleanups: [], title: null, after(f) { this.afters.push(f); }, cleanup(f) { this.cleanups.push(f); } };
   active = ctx;
   try { main.innerHTML = view(params, ctx); }

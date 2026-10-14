@@ -303,6 +303,7 @@
     "places-extra.json"
   ],
   "sync": {
-    "relayUrl": "same-origin"
+    "relayUrl": "same-origin",
+    "codeCheck": "95c7bfd7c9fd9a4a76d6e3a790fb2a0df5b623ff8a6d817d0c8354bc39ed282c"
   }
 }

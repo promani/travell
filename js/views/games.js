@@ -5,7 +5,6 @@ import { D, I, cols, kv, me, bus } from '../store.js';
 import { esc, ic, fmtShort, $ } from '../util.js';
 import { register } from '../ui.js';
 import { tripPhase } from '../tripstate.js';
-import { syncConfigured } from '../sync.js';
 import { who } from './tasks.js';
 import * as tango from '../tango.js';
 import * as zip from '../zip.js';
@@ -293,11 +292,9 @@ function bindPatches(board) {
 }
 
 // ------------------------------------------------------------------ page
-// Results only reach the other phones through the group sync: without it (or without saying who you are) the
-// ranking can only show this phone, so say so instead of letting it look like nobody else played.
+// Without saying who you are, this phone's times can't count in the ranking.
 export function shareHint() {
   if (!me()) return `<p class="tg-hint">${ic('circle-info')} Para entrar en el ranking, <a href="#/viajeros#quien">elegí quién sos</a> en este celular.</p>`;
-  if (!syncConfigured()) return `<p class="tg-hint">${ic('circle-info')} Para ver los tiempos de los demás (y que vean los tuyos), <a href="#/viajeros#sync">activá la sincronización del grupo</a> en Más → Viajeros, con el mismo código del grupo que el resto.</p>`;
   return '';
 }
 
@@ -377,7 +374,7 @@ export function homeCard() {
   const lines = others.length ? [`Falta${others.length > 1 ? 'n' : ''} ${others.join(', ')}`] : [];
   const href = mineLeft.length ? `#/juego?g=${pending.find((x) => x.miss.some((t) => t.id === me())).k}` : '#/juego';
   return `<a class="card tg-home${mineLeft.length ? ' due' : ''}" href="${href}">${ic('puzzle-piece')}<div><b>Juego del día${mineLeft.length ? `: te ${mineLeft.length > 1 ? 'faltan' : 'falta'} ${esc(mineLeft.join(' y '))}` : ''}</b>
-    <small>${esc(syncConfigured() ? lines.join(' · ') || 'Solo faltás vos' : 'Activá la sincronización del grupo para ver quién ya jugó')}</small></div><em>›</em></a>`;
+    <small>${esc(lines.join(' · ') || 'Solo faltás vos')}</small></div><em>›</em></a>`;
 }
 
 // Confetti over the page and a bounce of the board when the game is solved.

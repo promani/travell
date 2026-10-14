@@ -243,7 +243,8 @@ sequenceDiagram
   B->>B: descifra, merge (gana updatedAt), rebuild, aviso "te asignaron…"
 ```
 
-- **Clave**: PBKDF2-SHA256 (150 000 iteraciones), aplicado al código del grupo con la sal `travell:<tripId>`, que da una clave AES-GCM de 256 bits.
+- **Código del viaje**: 5 letras y números que cada celular ingresa una vez, en la pantalla de entrada (`codeGate` en `js/views/people.js`; `route()` en `main.js` no muestra nada más hasta tenerlo). `trip.json` → `sync.codeCheck` guarda solo su hash, SHA-256(`travell-code:<tripId>:<código>`). Con el código correcto queda guardado como clave de la sincronización (`settings.groupCode`) y la app abre; si cambia `codeCheck`, todos lo vuelven a ingresar. No hay campo para cambiarlo a mano: todos los celulares del viaje caen en el mismo grupo.
+- **Clave**: PBKDF2-SHA256 (150 000 iteraciones), aplicado al código del viaje con la sal `travell:<tripId>`, que da una clave AES-GCM de 256 bits.
 - **Id del grupo**: `gid` = SHA-256(`travell-group:<tripId>:<código>`), primeros 16 bytes. El relay nunca recibe el código.
 - El relay guarda, por grupo, el último registro de cada `(colección, id)` con un número de secuencia, y lo persiste en `RELAY_DATA/<gid>.json`. Ve los nombres de colección, los ids y las fechas, pero no el contenido.
 - **Cliente** (`sync.js`): sube lo que cambió desde el último envío y baja desde un cursor por grupo. Sincroniza cada 60 s con la app visible, a los 2,5 s de un cambio local, al volver a la app y al recuperar la conexión. Si el relay se reinicia y pierde la secuencia, el cliente vuelve a bajar todo.
@@ -352,7 +353,7 @@ Las pruebas de interfaz (dos celulares, sincronización, offline) se corrieron c
 - No hay analytics, cookies ni llamadas a terceros salvo tiles, links que el usuario abre y el relay que él mismo configure.
 - Fotos y adjuntos (incluidos escaneos de pasaportes) se suben sin cifrar a R2: quien tenga acceso al bucket los puede ver.
 - La ubicación se comparte solo si el usuario lo activa, y viaja cifrada.
-- El código del grupo es la única protección: tiene que ser largo y no publicarse. Cambiarlo crea otro grupo.
+- El código del viaje es toda la seguridad, a propósito: es corto (5 caracteres) para que sea fácil de pasar, así que alguien con la app y tiempo podría adivinarlo probando contra el hash. No va escrito en el repo, solo su hash. La pantalla del código tapa la app, pero los `data/*.json` los sirve el servidor sin pedirlo. Cambiar el código crea otro grupo, que arranca vacío.
 - El relay valida tamaños (2 MB por pedido, 256 KB por registro, 50 000 registros por grupo) pero no tiene autenticación: cualquiera que adivine un `gid` podría llenar ese grupo con basura, aunque no leerlo.
 - Los códigos y los datos del pasaporte quedan en el dispositivo (los adjuntos no: ver arriba). Conviene no subirlos al JSON público si el sitio está publicado.
 

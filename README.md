@@ -46,7 +46,7 @@ Después se le pasa una reserva (PDF, captura, mail, link) o se le pide "cambiá
 ```bash
 docker build -t travell . && docker run -p 3000:3000 -v travell-data:/data travell
 ```
-`server/relay.mjs` sirve la PWA (solo `index.html`, `css/`, `js/`, `data/`, `icons/`, `vendor/`, `sw.js` y el manifest) y la sincronización en el mismo puerto (`PORT`, 3000 por defecto). Como `trip.json` tiene `"sync": {"relayUrl": "same-origin"}`, en la app solo hay que cargar el código del grupo. Sirve para Dokploy o cualquier plataforma que construya desde el `Dockerfile`.
+`server/relay.mjs` sirve la PWA (solo `index.html`, `css/`, `js/`, `data/`, `icons/`, `vendor/`, `sw.js` y el manifest) y la sincronización en el mismo puerto (`PORT`, 3000 por defecto). Como `trip.json` tiene `"sync": {"relayUrl": "same-origin"}`, cada celular solo tiene que ingresar el código del viaje (5 letras y números) la primera vez. Sirve para Dokploy o cualquier plataforma que construya desde el `Dockerfile`.
 
 ## Sincronización opcional (relay)
 ```bash
