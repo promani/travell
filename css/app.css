@@ -495,3 +495,15 @@ body.onboarding main { padding-bottom: var(--s6); }
 .mate-sug { display: flex; align-items: center; gap: var(--s3); text-decoration: none; color: inherit; }
 .mate-sug > span { font-size: 2rem; line-height: 1; } .mate-sug div { flex: 1; min-width: 0; } .mate-sug b { display: block; }
 .mate-sug small { color: var(--muted); } .mate-sug em { font-style: normal; font-size: 1.4rem; color: var(--muted); }
+/* Zip: cells under a path drawn in SVG; the board takes the finger (no scrolling while dragging) */
+.zp-board { position: relative; touch-action: none; user-select: none; -webkit-user-select: none; }
+.zp-cell { aspect-ratio: 1; background: var(--card); display: flex; align-items: center; justify-content: center; }
+.zp-cell.on { background: color-mix(in srgb, var(--pri) 16%, var(--card)); }
+.zp-cell { position: relative; }
+.zp-cell.wall-r::after, .zp-cell.wall-b::before { content: ''; position: absolute; z-index: 2; background: var(--text); border-radius: 2px; }
+.zp-cell.wall-r::after { top: -3px; bottom: -3px; right: -4px; width: 5px; } .zp-cell.wall-b::before { left: -3px; right: -3px; bottom: -4px; height: 5px; }
+.zp-num { position: relative; z-index: 3; width: 62%; aspect-ratio: 1; border-radius: 50%; background: var(--text); color: var(--card); display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+.zp-num.done { background: var(--pri); color: var(--pri-ink); }
+.zp-path { position: absolute; inset: 3px; width: calc(100% - 6px); height: calc(100% - 6px); pointer-events: none; z-index: 1; }
+.zp-path polyline { fill: none; stroke: var(--pri); stroke-width: .34; stroke-linecap: round; stroke-linejoin: round; opacity: .85; }
+.tg-tabs { margin-bottom: 0; }

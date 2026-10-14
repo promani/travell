@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { installBrowserStubs } from './helpers.mjs';
 import * as tango from '../js/tango.js';
+import * as zip from '../js/zip.js';
 
 test('the puzzle of a date is the same every time and differs between dates', () => {
   assert.deepEqual(tango.puzzle('2026-11-18'), tango.puzzle('2026-11-18'));
@@ -48,4 +49,21 @@ test('a missed day breaks the streak', async () => {
   const a = D.travelers[0].id;
   const s = standings([{ game: 'tango', date: '2026-11-15', traveler: a, ms: 1 }, { game: 'tango', date: '2026-11-16', traveler: a, ms: 1 }], '2026-11-18');
   assert.equal(s.find((x) => x.id === a).streak, 0);
+});
+
+test('zip: same puzzle per date, its path solves it step by step, and the rules hold', () => {
+  assert.deepEqual(zip.puzzle('2026-11-18'), zip.puzzle('2026-11-18'));
+  for (let d = 1; d <= 60; d++) {
+    const p = zip.puzzle(`2026-12-${d}`);
+    assert.equal(new Set(p.solution).size, 36);
+    assert.equal(Object.keys(p.nums).length, p.count);
+    assert.ok(zip.solved(p.solution, p), `day ${d}`);
+    const path = [p.solution[0]];
+    for (const x of p.solution.slice(1)) { assert.ok(zip.canStep(path, x, p)); path.push(x); }
+  }
+  const p = zip.puzzle('2026-11-18');
+  const start = p.solution[0], three = Object.keys(p.nums).find((i) => p.nums[i] === 3);
+  assert.equal(zip.solved([...p.solution].reverse(), p), false);              // has to start at 1
+  assert.equal(zip.canStep([start], start, p), false);                          // never twice the same cell
+  if (zip.adjacent(start, +three)) assert.equal(zip.canStep([start], +three, p), false);   // numbers in order
 });

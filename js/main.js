@@ -193,6 +193,7 @@ setInterval(() => {
   setInterval(checkTripRev, 2 * 60 * 1000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) checkTripRev(); });
   onTripReload(() => { if (!document.querySelector('dialog[open]') && !document.activeElement?.matches('input, textarea, select')) route({ keepScroll: true }); });
+  bus.on('rerender', () => route({ keepScroll: true }));   // a screen finished something (e.g. a solved game)
   bus.on('settings', (k) => { if (k === 'me') rebuild(); if (k === 'simOffset') route({ keepScroll: true }); if (k === 'brand') applyBrand(); });   // simulated date / app colour changed
   // data changed on another phone: redraw, unless the user is in the middle of a form
   bus.on('remote-change', () => { if (!document.querySelector('dialog[open]') && !document.activeElement?.matches('input, textarea, select')) route({ keepScroll: true }); });
