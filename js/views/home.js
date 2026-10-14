@@ -7,6 +7,7 @@ import { departureCard, checklistCard, heroImg, renderCards, actRow, notesCard, 
 import { openTasks, taskRow } from './tasks.js';
 import { suggestions } from '../suggest.js';
 import { weatherLine } from '../weather.js';
+import { mateSuggestion } from './mate.js';
 import { homeCard as gameCard } from './games.js';
 import { paintAttachments, freeUrls } from '../ticket.js';
 
@@ -72,6 +73,7 @@ export function render(_, ctx) {
         ${rows.map((a) => actRow(a, { current: a === current, next: a === next })).join('')}</section>`;
     }
     h += notesCard(day, { title: 'Notas de hoy', compact: true });
+    h += mateSuggestion(day);
   }
   if (st.phase !== 'post') h += gameCard();
 
