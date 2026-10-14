@@ -334,7 +334,7 @@ export function render(params, ctx) {
   const cover = !mine && !state.started;
   const startBox = counting ? '<span class="tg-count">…</span>' : `<button class="btn primary" data-act="game-start">${ic('play')} Iniciar</button>`;   // the board stays hidden until "Iniciar" and the countdown
 
-  const tabs = KEYS.map((k) => `<a class="chip${k === game ? ' on' : ''}" href="#/juego?g=${k}" ${k === game ? 'aria-current="page"' : ''}>${ic(GAMES[k].icon)} ${esc(GAMES[k].label)}${solvedByMe(k, date) ? ` ${ic('check')}` : ''}</a>`).join('');
+  const tabs = KEYS.map((k) => `<a class="chip${k === game ? ' on' : ''}${solvedByMe(k, date) ? ' done' : ''}" href="#/juego?g=${k}" ${k === game ? 'aria-current="page"' : ''}${solvedByMe(k, date) ? ` aria-label="${esc(GAMES[k].label)}, resuelto"` : ''}>${ic(GAMES[k].icon)} ${esc(GAMES[k].label)}</a>`).join('');
   return `<header class="pagehead"><h1>${ic('puzzle-piece')} Juego del día</h1>
     <p class="muted">Los juegan todos, los mismos cada día; gana el más rápido.</p>
     <nav class="chips tg-tabs" aria-label="Juegos">${tabs}</nav></header>
