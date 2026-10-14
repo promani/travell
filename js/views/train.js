@@ -1,7 +1,7 @@
 // Entrenar: short mind-training exercises (memory, attention, flexibility) for whoever doesn't feel like Mate.
-// Unlike the Juego del día there is no ranking, score history or "your level": a few minutes to clear the head.
+// Unlike the Juego del día there is no ranking between travelers: each phone keeps its own history of sessions.
 // Each exercise adapts quietly (the next session starts where the last one left off, kept on this phone).
-import { esc, ic } from '../util.js';
+import { esc, ic, fmtShort, isoDate, hhmm, deviceTz } from '../util.js';
 import * as camino from '../camino.js';
 import * as clasificar from '../clasificar.js';
 import * as eco from '../eco.js';
@@ -21,12 +21,35 @@ export const EXERCISES = {
 const KEY = 'travell-train';
 const levels = () => { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; } };
 const saveLevel = (id, lv) => { try { localStorage.setItem(KEY, JSON.stringify({ ...levels(), [id]: lv })); } catch { /* private mode: start from zero next time */ } };
-const CLOSING = ['Listo. Respirá hondo y seguí.', 'Buen rato para la cabeza.', 'Mente despejada, a seguir viaje.', 'Bien ahí. Un poco cada día rinde.'];
+
+// History of sessions on this phone: { [id]: [{ at, hits, total, cut? }] }, newest last. A session left with
+// "Terminar" is kept but marked, and doesn't count for the best score.
+const HIST = 'travell-train-history', KEEP = 200;
+const history = (id) => { try { return JSON.parse(localStorage.getItem(HIST))?.[id] || []; } catch { return []; } };
+function record(id, entry) {
+  try {
+    const all = JSON.parse(localStorage.getItem(HIST)) || {};
+    all[id] = [...(all[id] || []), entry].slice(-KEEP);
+    localStorage.setItem(HIST, JSON.stringify(all));
+  } catch { /* private mode: nothing kept */ }
+}
+export const best = (h) => h.filter((r) => !r.cut).reduce((b, r) => (!b || r.hits > b.hits ? r : b), null);
+const when = (at) => { const d = new Date(at), tz = deviceTz(); return `${fmtShort(isoDate(d, tz))} ${hhmm(d, tz)}`; };
+
+function historyHtml(id, latest) {
+  const h = history(id);
+  if (!h.length) return '';
+  const top = best(h);
+  return `<div class="tr-hist"><h4>${ic('clock-rotate-left')} Historial${top ? ` · mejor: ${top.hits}` : ''}</h4>
+    <table class="tr-hist-t"><tbody>${h.slice(-10).reverse().map((r) => `<tr class="${r === top ? 'best' : ''}${r.at === latest ? ' now' : ''}">
+      <td>${esc(when(r.at))}</td><td><b>${r.hits}</b> de ${r.total}${r === top ? ` ${ic('star')}` : ''}${r.cut ? ' <small>(cortado)</small>' : ''}</td></tr>`).join('')}</tbody></table>
+    ${h.length > 10 ? `<p class="hint">${h.length} sesiones en total.</p>` : ''}</div>`;
+}
 
 function listHtml() {
   return `<header class="pagehead"><h1>${ic('brain')} Entrenar</h1>
-    <p class="muted">Ejercicios cortos para despejar y entrenar la cabeza en un vuelo, un tren o una espera. Sin puntajes ni rankings: jugá un rato y seguí.</p></header>
-  <nav class="menu">${Object.entries(EXERCISES).map(([id, x]) => `<a href="#/entrenar?g=${id}"><span>${ic(x.icon)}</span><div><b>${esc(x.label)}</b><small>${esc(x.blurb)} · ${esc(x.skill)}</small></div><em>›</em></a>`).join('')}
+    <p class="muted">Ejercicios cortos para despejar y entrenar la cabeza en un vuelo, un tren o una espera. Cada celular guarda tu historial.</p></header>
+  <nav class="menu">${Object.entries(EXERCISES).map(([id, x]) => `<a href="#/entrenar?g=${id}"><span>${ic(x.icon)}</span><div><b>${esc(x.label)}</b><small>${esc(x.blurb)} · ${esc(x.skill)}${best(history(id)) ? ` · mejor: ${best(history(id)).hits}` : ''}</small></div><em>›</em></a>`).join('')}
     <a href="#/mate"><span>${ic('mug-hot')}</span><div><b>Mate</b><small>Más de reflejos: cebá antes de que lleguen al termo</small></div><em>›</em></a></nav>`;
 }
 
@@ -42,6 +65,7 @@ function session(id) {
       <div class="tr-icon">${ic(x.icon)}</div><h2>${esc(x.label)}</h2><p class="muted">${esc(x.skill)}</p>
       <ul class="tr-how">${x.how.map((h) => `<li>${esc(h)}</li>`).join('')}</ul>
       <button class="btn primary tr-go" data-tr="start">${ic('play')} Empezar</button>
+      ${historyHtml(id)}
     </section>`;
   };
   const start = () => {
@@ -66,18 +90,24 @@ function session(id) {
     if (t >= x.seconds * 1000) finish();
   };
   const stop = () => { clearInterval(clock); clock = 0; if (game) { saveLevel(id, game.level()); game.destroy(); game = null; } };
-  function finish() {
+  function finish(cut = false) {
+    if (!game) return;
     stop();
+    const at = Date.now(), prev = best(history(id));
+    if (total) record(id, { at, hits, total, ...(cut ? { cut: true } : {}) });
+    const top = !cut && total && (!prev || hits > prev.hits);
     el.innerHTML = `<section class="card tr-card tr-done">
-      <div class="tr-icon">${ic('spa')}</div><h2>${esc(CLOSING[Math.floor(Math.random() * CLOSING.length)])}</h2>
-      ${total ? `<p class="muted">${hits} de ${total} bien en ${esc(x.label)}.</p>` : ''}
-      <div class="row-actions"><button class="btn primary" data-tr="start">${ic('rotate-right')} Otra vez</button><a class="btn" href="#/entrenar">Otros ejercicios</a></div>
+      <div class="tr-icon">${ic(top ? 'star' : x.icon)}</div>
+      <h2>${total ? `${hits} de ${total} bien` : esc(x.label)}</h2>
+      ${top && prev ? `<p class="tr-best">${ic('arrow-trend-up')} ¡Tu mejor puntaje! Antes: ${prev.hits}</p>` : ''}
+      <div class="row-actions"><button class="btn primary" data-tr="start">${ic('rotate-right')} Volver a intentar</button><a class="btn" href="#/entrenar">Otros ejercicios</a></div>
+      ${historyHtml(id, at)}
     </section>`;
   }
   el.addEventListener('click', (e) => {
     const a = e.target.closest('[data-tr]')?.dataset.tr;
     if (a === 'start') start();
-    else if (a === 'stop') finish();
+    else if (a === 'stop') finish(true);
   });
   intro();
   return { id, el, destroy: stop };

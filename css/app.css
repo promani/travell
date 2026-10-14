@@ -610,3 +610,9 @@ body.onboarding main { padding-bottom: var(--s6); }
   .cs-bin, .ec-btns .btn { min-height: 6rem; }
   .cm-grid { width: min(100%, 58vh); }
 }
+.tr-best { margin: 0; font-weight: 700; color: var(--ok); }
+.tr-hist { width: min(100%, 24rem); text-align: left; margin-top: var(--s2); }
+.tr-hist-t { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); font-variant-numeric: tabular-nums; }
+.tr-hist-t td { padding: var(--s1) var(--s2); border-top: 1px solid var(--line); } .tr-hist-t td:last-child { text-align: right; }
+.tr-hist-t td small { display: inline; } .tr-hist-t .fa-star { color: var(--acc); }
+.tr-hist-t tr.now td { background: color-mix(in srgb, var(--pri) 10%, transparent); }
