@@ -1,6 +1,7 @@
 // Sonidos del mate, a la Tapper: sintetizados con Web Audio (ondas cuadradas y ruido, como el arcade), sin
 // archivos. El chorro mientras se ceba, el mate que se desliza, el cliente que lo agarra y el que sale por
-// la puerta, el vacío que vuelve y se atrapa, el vidrio que se rompe, la propina, la vida extra y, al vaciar
+// la puerta, el vacío que vuelve y se atrapa, el vidrio que se rompe, la propina, la vida extra, la risa y la
+// fanfarria del villano y, al vaciar
 // la barra, la primera frase de "Oh! Susanna" (Stephen Foster, 1848, dominio público), que suena en Tapper.
 // El silencio se recuerda en localStorage. createSound() devuelve funciones que nunca fallan: sin Web Audio
 // (o antes del primer toque) no suenan y listo.
@@ -139,6 +140,18 @@ export function createSound() {
       tone(N.G6, 0, 0.06, { vol: 0.5 })
       tone(N.C7, 0.07, 0.3, { vol: 0.5 })
       tune([['C5', 1], ['E5', 1], ['G5', 1], ['C6', 1], ['G5', 1], ['C6', 2]], 0.09, { vol: 0.35 })
+    },
+    // entra el villano: una risa grave, "ja ja ja" bajando
+    villainLaugh() {
+      for (let i = 0; i < 4; i++) {
+        tone(150 - i * 14, i * 0.17, 0.13, { type: 'sawtooth', vol: 0.5, to: 105 - i * 10 })
+        tone(75 - i * 7, i * 0.17, 0.13, { type: 'square', vol: 0.25 })
+      }
+    },
+    // sacaron al villano por la puerta: fanfarria
+    villainOut() {
+      tone(700, 0, 0.22, { vol: 0.4, to: 140 })
+      tune([[null, 2], ['G4', 1], ['C5', 1], ['E5', 1], ['G5', 3], ['E5', 1], ['G5', 5]], 0.08, { vol: 0.5 })
     },
     // vida extra
     extraLife() { tune([['C5', 1], ['E5', 1], ['G5', 1], ['C6', 3]], 0.07) },

@@ -13,6 +13,10 @@
 //     100 por vacío atrapado, 1.000 por la primera pantalla y 500 más por cada nivel, y las propinas. Vida extra a los 20.000 y cada 50.000.
 //   - Juntar una propina arranca el show (las bailarinas del original): todos dejan de avanzar unos segundos,
 //     aunque siguen agarrando mates. Queda afuera la ronda bonus de las latas.
+//   - El villano 👺 (propio, no está en Tapper): cada cliente que entra tiene un 5% de chance de serlo, como mucho
+//     uno por nivel (si se pierde una vida, no vuelve en ese nivel). Avanza 1,6 veces más rápido y no se frena con
+//     el show; con el mate retrocede la mitad y sólo sale si lo agarra en el primer sexto de la barra. Sacarlo da
+//     1.000 puntos y siempre deja una propina grande 💰 de 2.000, que también arranca el show. Valores en VILLAIN_*.
 // Controles en pantalla: la cruz (↑ ↓ barra, ← → caminar) y el botón Cebar (mantener y soltar). Con teclado:
 // ↑ ↓ (W S), ← → (A D), Espacio cebar, P o Esc pausa, M sonido, Enter jugar de nuevo.
 // Se juega en vertical (la barra arriba, los controles abajo) y en horizontal (la cruz a la izquierda y Cebar a
@@ -30,6 +34,15 @@ const TIP_POINTS = 500
 const SCREEN_POINTS = 1000, SCREEN_STEP = 500 // bonus por vaciar la barra: 1.000 en el nivel 1, 1.500 en el 2…
 const TIP_CHANCE = 0.12 // probabilidad de que un cliente deje propina al agarrar el mate
 const SHOW_TIME = 3 // segundos que los clientes se frenan después de juntar una propina: una bailarina por segundo
+const OUT_POINTS = 50 // por cliente que sale por la puerta
+// el villano
+const VILLAIN_FACE = '👺'
+const VILLAIN_CHANCE = 0.05 // probabilidad de que el que entra sea el villano (como mucho uno por nivel)
+const VILLAIN_SPEED = 1.6 // veces la velocidad de los clientes del nivel; no se frena con el show
+const VILLAIN_PUSH = 0.5 // retrocede esta parte de lo que retrocede un cliente al agarrar el mate
+const VILLAIN_OUT = 1 / 6 // sale por la puerta sólo si agarra el mate en este primer tramo de la barra
+const VILLAIN_POINTS = 1000 // al salir por la puerta
+const VILLAIN_TIP = 2000 // la propina grande 💰 que deja siempre al salir
 // emojis de busto (se les ven los hombros), no sólo la cara
 const CLIENTS = ['🧑‍💼', '👩‍💼', '👨‍🔧', '👩‍🔬', '👨‍🏫', '👩‍💻', '🧑‍🎤', '👷', '🧑‍🚀', '👩‍🌾']
 const BARTENDER = '🧙‍♂️'
@@ -53,11 +66,17 @@ function writeRecord(n) { try { localStorage.setItem(RECORD_KEY, String(n)) } ca
 // lógica no cambia (x lógica entre X0 y X1, mismas velocidades): sólo el dibujo aprieta la barra a lo ancho,
 // y como los clientes avanzan a los tirones, una barra más corta se sigue jugando igual.
 let VW = W, VH = H, SP = 1 // ancho y alto dibujados, tamaño de los emojis
+// del lado del termo: RIGHT, del final de la barra de adelante al borde; GAP, del final de la barra al cebador
+let RIGHT = W - X1, GAP = KEG - X1
 function layout(boxW, boxH) {
   const aspect = boxW / boxH
   if (aspect >= 1.2) { VW = Math.min(W, Math.max(480, Math.round(H * aspect))); VH = H }
   else { VW = 480; VH = Math.min(1100, Math.round(VW / aspect)) }
   SP = Math.min(1.5, Math.max(1, (VH - TOP - 14) / ROWS / 68))
+  // en vertical los termos van contra el borde derecho (el de adelante a unos pocos píxeles) y lo que se gana
+  // alarga la barra y separa un poco más al cebador
+  if (aspect >= 1.2) { RIGHT = W - X1; GAP = KEG - X1 }
+  else { GAP = 56; RIGHT = 6 + 6 * SP + 34 + GAP }
 }
 const TOP = 112 // debajo del marcador y de las bailarinas
 const rowH = () => (VH - TOP - 14) / ROWS
@@ -68,8 +87,9 @@ const SHIFT_LEFT = 14, SHIFT_RIGHT = 34 // cuánto se acorta cada barra hacia el
 function px(r, x) {
   const back = ROWS - 1 - r // 0 adelante, 3 al fondo
   const k = VW / W // en vertical el escalonado también se achica, si no la barra del fondo queda cortita
-  const a = X0 + back * SHIFT_LEFT * k, b = VW - (W - X1) - back * SHIFT_RIGHT * k
-  if (x > X1) return b + (x - X1)
+  const a = X0 + back * SHIFT_LEFT * k, b = VW - RIGHT - back * SHIFT_RIGHT * k
+  if (x > KEG) return b + GAP + (x - KEG)
+  if (x > X1) return b + ((x - X1) * GAP) / (KEG - X1)
   return a + ((x - X0) * (b - a)) / (X1 - X0)
 }
 
@@ -245,7 +265,9 @@ export function mountMate(host, { onExit } = {}) {
         const row = g.rows[free[Math.floor(Math.random() * free.length)]]
         row.doorT = 0.7 // la puerta se abre mientras entra
         sound.door()
-        row.clients.push({ x: X0 - 10, face: CLIENTS[Math.floor(Math.random() * CLIENTS.length)], drink: 0, push: 0, out: false, t: Math.random() })
+        const villain = g.villainLevel !== g.level && Math.random() < VILLAIN_CHANCE
+        if (villain) { g.villainLevel = g.level; sound.villainLaugh() } // como mucho uno por nivel: no vuelve aunque se pierda una vida
+        row.clients.push({ x: X0 - 10, face: villain ? VILLAIN_FACE : CLIENTS[Math.floor(Math.random() * CLIENTS.length)], villain, drink: 0, push: 0, out: false, t: Math.random() })
         g.toSpawn -= 1
       }
       g.spawnT = g.spawnEvery * (0.7 + Math.random() * 0.6)
@@ -261,13 +283,17 @@ export function mountMate(host, { onExit } = {}) {
         } else {
           // avanzan a los tirones: un rato caminan, un rato esperan; con el show de la propina se frenan
           c.t += dt
-          if (g.showT <= 0 && c.t % 1.1 < 0.65) c.x += g.walk * 1.7 * dt
+          if ((g.showT <= 0 || c.villain) && c.t % 1.1 < 0.65) c.x += g.walk * 1.7 * (c.villain ? VILLAIN_SPEED : 1) * dt
         }
         if (c.x >= X1 - 18) return loseLife('¡Un cliente llegó al termo sin su mate!', 'angry')
       }
       // los que salieron por la puerta
       const gone = row.clients.filter((c) => c.x < X0 - 25)
-      if (gone.length) { addScore(50 * gone.length); sound.out(); row.clients = row.clients.filter((c) => c.x >= X0 - 25) }
+      if (gone.length) {
+        addScore(gone.reduce((n, c) => n + (c.villain ? VILLAIN_POINTS : OUT_POINTS), 0))
+        gone.some((c) => c.villain) ? sound.villainOut() : sound.out()
+        row.clients = row.clients.filter((c) => c.x >= X0 - 25)
+      }
       for (const m of row.full) {
         m.x -= 380 * dt
         // lo agarra el cliente más cercano al cebador que no esté tomando ni retrocediendo
@@ -275,9 +301,15 @@ export function mountMate(host, { onExit } = {}) {
         if (target && m.x <= target.x + 14) {
           m.done = true
           sound.grab()
-          if (target.x < X0 + (X1 - X0) / 3) target.push = target.x - X0 + 40 // en el primer tercio: sale por la puerta
-          else { target.push = g.push; target.drink = 1.5 }
-          if (Math.random() < TIP_CHANCE) row.tips.push({ x: target.x + 10, t: 6 }) // a veces deja propina
+          if (target.villain) {
+            // el villano sólo sale si lo agarra muy cerca de la puerta, y entonces deja siempre la propina grande
+            if (target.x < X0 + (X1 - X0) * VILLAIN_OUT) { target.push = target.x - X0 + 40; row.tips.push({ x: Math.max(X0 + 30, target.x + 10), t: 6, big: true }) }
+            else { target.push = g.push * VILLAIN_PUSH; target.drink = 1.5 }
+          } else {
+            if (target.x < X0 + (X1 - X0) / 3) target.push = target.x - X0 + 40 // en el primer tercio: sale por la puerta
+            else { target.push = g.push; target.drink = 1.5 }
+            if (Math.random() < TIP_CHANCE) row.tips.push({ x: target.x + 10, t: 6 }) // a veces deja propina
+          }
         } else if (m.x <= X0) return loseLife(`Un ${drink === 'mate' ? 'mate' : 'vaso'} llegó a la puerta sin nadie`, 'crash')
       }
       row.full = row.full.filter((m) => !m.done)
@@ -293,7 +325,7 @@ export function mountMate(host, { onExit } = {}) {
       for (const tip of row.tips) {
         tip.t -= dt
         // juntar una propina arranca el show (las bailarinas del original): todos dejan de avanzar un rato
-        if (g.row === r && Math.abs(g.bx - tip.x) < 22) { tip.done = true; addScore(TIP_POINTS); g.showT = SHOW_TIME; sound.tip() }
+        if (g.row === r && Math.abs(g.bx - tip.x) < 22) { tip.done = true; addScore(tip.big ? VILLAIN_TIP : TIP_POINTS); g.showT = SHOW_TIME; sound.tip() }
       }
       row.tips = row.tips.filter((tip) => !tip.done && tip.t > 0)
     }
@@ -352,7 +384,7 @@ export function mountMate(host, { onExit } = {}) {
       ctx.globalAlpha = 0.45
       for (const e of row.empty) emoji(D().icon, e.x, 0, 18)
       ctx.globalAlpha = 1
-      for (const tip of row.tips) emoji('💵', tip.x, 2, 18)
+      for (const tip of row.tips) emoji(tip.big ? '💰' : '💵', tip.x, 2, tip.big ? 22 : 18)
       // termo (o canilla) al final de cada barra
       ctx.fillStyle = D().jug
       ctx.beginPath(); ctx.roundRect(px(r, KEG + 34) - 6 * s, y - 22 * s, 12 * s, 34 * s, 4 * s); ctx.fill()
