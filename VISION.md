@@ -31,7 +31,7 @@ Nació para un viaje concreto (China y Japón, noviembre–diciembre 2026), plan
 6. **Privacidad donde importa, no en todo.** La ubicación se comparte solo si cada uno la activa. Las fotos y los adjuntos se respaldan en la nube (R2), sin cifrar.
    El cifrado entre celulares se va a limitar a lo que a un agente le da igual: la ubicación del GPS, las marcas personales de cada celular y los resultados del Juego del día. Lo que es el viaje en sí (actividades, lugares, tareas, gastos, recursos) tiene que poder verlo y cambiarlo un agente por el MCP, igual que en la app. Por ahora el cifrado sigue como está, y no se suma a nada nuevo que sea parte del viaje.
 7. **Juegos como ritual, no como producto.** Un rato por día, el mismo desafío para todo el grupo, y la charla de quién lo hizo más rápido. Los juegos tienen que:
-   - resolverse con lógica, sin adivinar, y tener una sola solución cuando el juego lo pide;
+   - tener una sola solución cuando el juego lo pide, y no ser tan sencillos: que alguno obligue a probar opciones está bien, suma dificultad;
    - generarse en el celular a partir de la fecha, así funcionan sin internet;
    - arrancar con **Iniciar**: el tablero está tapado y hay una cuenta regresiva de 4 segundos, para que el tiempo sea parejo para todos;
    - festejar cuando se resuelven.

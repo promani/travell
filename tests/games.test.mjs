@@ -91,15 +91,19 @@ test('queens: same puzzle per date, 8 connected regions of 3+ cells, a single so
   assert.deepEqual([...queens.clashes(marks, p.regions)].sort((a, b) => a - b), [0, N + 1]);
 });
 
-test('patches: same puzzle per date, a single solution found by logic that tiles the board, every clue says something', () => {
+test('patches: same puzzle per date, a single solution that tiles the board, rarely an easy one, every clue says something', () => {
   assert.deepEqual(patches.puzzle('2026-11-18'), patches.puzzle('2026-11-18'));
+  let easy = 0;
   for (let d = 1; d <= 60; d++) {
     const p = patches.puzzle(`2026-12-${d}`);
     assert.equal(patches.count(p.clues, 3), 1, `day ${d}`);
-    assert.deepEqual(patches.deduce(p.clues), p.solution, `day ${d}: solvable by logic`);
+    const found = patches.deduce(p.clues);   // when logic alone gets there, it gets to the solution
+    if (found) assert.deepEqual(found, p.solution, `day ${d}`);
+    if (patches.level(p.clues) === 0) easy++;
     assert.ok(patches.solved(p.solution, p));
     assert.ok(p.clues.every((k) => k.area != null || k.shape != null));
   }
+  assert.ok(easy <= 3, `${easy} easy ones out of 60`);
   const p = patches.puzzle('2026-11-18');
   assert.equal(patches.solved(p.solution.slice(1), p), false);                                   // a hole
   const big = { r: 0, c: 0, w: 6, h: 6 };

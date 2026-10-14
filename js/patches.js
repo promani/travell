@@ -1,6 +1,7 @@
 // Patches (like LinkedIn's): split a 6×6 grid in rectangles ("patches"). Every patch holds exactly one clue; the
 // clue tells its number of cells and/or its shape (square, wide, tall). The puzzle of a date is the same on every
-// phone (seeded by the date), has a single solution and is solvable by logic, without guessing.
+// phone (seeded by the date) and has a single solution; among several candidates the hardest is kept, which may
+// need trying options.
 import { rng } from './tango.js';
 
 export const N = 6;
@@ -83,7 +84,7 @@ export function count(clues, cap = 2) {
 //  - a cell only one clue can reach is that clue's: it keeps only the rectangles over that cell;
 //  - a rectangle that would leave some cell or some other clue with no way out is dropped (one step ahead).
 // Returns the rectangles (one per clue) or null if it gets stuck.
-export function deduce(clues) {
+export function deduce(clues, { lookahead = true } = {}) {
   let cand = candidates(clues).map((list) => list.map((rect) => ({ rect, cells: cellsOf(rect) })));
   const overlaps = (x, y) => x.cells.some((i) => y.cells.includes(i));
   const reach = (cs) => {   // for each cell, the clues that can still cover it
@@ -108,7 +109,7 @@ export function deduce(clues) {
     }
     if (changed) continue;
     // one step ahead: place a rectangle and see if every other clue and every cell still has a way
-    for (let n = 0; n < cand.length; n++) {
+    for (let n = 0; lookahead && n < cand.length; n++) {
       if (cand[n].length < 2) continue;
       keep(n, (x) => {
         const rest = cand.map((list, m) => (m === n ? [x] : list.filter((y) => !overlaps(x, y))));
@@ -119,24 +120,40 @@ export function deduce(clues) {
   return cand.every((list) => list.length === 1) ? cand.map((list) => list[0].rect) : null;
 }
 
-// Start with full clues (size and shape) in a random cell of each patch, then drop sizes and shapes while the
-// solution stays unique and the logic solver still finds it. Every clue keeps at least one of the two.
-export function puzzle(seed) {
-  const rnd = rng('patches:' + seed);
+// One candidate: full clues (size and shape) in a random cell of each patch, then drop sizes and shapes while the
+// solution stays unique. Sizes go first (they give away more). Every clue keeps at least one of the two.
+function candidate(rnd) {
   for (;;) {
     const rects = tiling(rnd);
     const clues = rects.map((rect) => { const cells = cellsOf(rect); return { cell: cells[Math.floor(rnd() * cells.length)], area: rect.w * rect.h, shape: shapeOf(rect) }; });
-    const logical = () => count(clues) === 1 && deduce(clues) !== null;
-    if (!logical()) continue;
-    for (const [n, key] of shuffle(clues.flatMap((_, n) => [[n, 'area'], [n, 'shape']]), rnd)) {
+    if (count(clues) !== 1) continue;
+    const keys = shuffle(clues.flatMap((_, n) => [[n, 'area'], [n, 'shape']]), rnd).sort((a, b) => (a[1] === 'area' ? 0 : 1) - (b[1] === 'area' ? 0 : 1));
+    for (const [n, key] of keys) {
       const k = clues[n], other = key === 'area' ? 'shape' : 'area';
       if (k[other] == null) continue;
       const keep = k[key];
       k[key] = null;
-      if (!logical()) k[key] = keep;
+      if (count(clues) !== 1) k[key] = keep;
     }
     return { clues, solution: rects };
   }
+}
+
+/** How hard a puzzle is: 0 the simple rules solve it, 1 it needs looking one step ahead, 2 it needs trying options. */
+export const level = (clues) => (deduce(clues, { lookahead: false }) ? 0 : deduce(clues) ? 1 : 2);
+const TRIES = 60;
+
+// Several candidates per date; the hardest wins (needing to try options is fine: it adds difficulty), and among
+// equals, the one that tells the least.
+export function puzzle(seed) {
+  const rnd = rng('patches:' + seed);
+  let best = null;
+  for (let t = 0; t < TRIES; t++) {
+    const p = candidate(rnd);
+    const score = level(p.clues) * 100 + p.clues.reduce((n, k) => n + (k.area == null) + (k.shape == null), 0);
+    if (!best || score > best.score) best = { p, score };
+  }
+  return best.p;
 }
 
 // ------------------------------------------------------------------ checking the player's patches
