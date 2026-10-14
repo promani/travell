@@ -48,14 +48,28 @@ function writeRecord(n) { try { localStorage.setItem(RECORD_KEY, String(n)) } ca
 // filas están a la misma distancia; la profundidad la dan las barras escalonadas (la de arriba, la del
 // fondo, es un poco más corta: se acorta más del lado derecho, el del termo, que del de la puerta). La lógica
 // usa x lógica entre X0 y X1; sólo el dibujo proyecta cada barra.
+// La pantalla dibujada se adapta a la caja: en horizontal es la de siempre (960 × 400); en vertical es más
+// angosta y alta (480 de ancho y todo el alto que haya), con las filas más separadas y todo más grande. La
+// lógica no cambia (x lógica entre X0 y X1, mismas velocidades): sólo el dibujo aprieta la barra a lo ancho,
+// y como los clientes avanzan a los tirones, una barra más corta se sigue jugando igual.
+let VW = W, VH = H, SP = 1 // ancho y alto dibujados, tamaño de los emojis
+function layout(boxW, boxH) {
+  const aspect = boxW / boxH
+  if (aspect >= 1.2) { VW = Math.min(W, Math.max(480, Math.round(H * aspect))); VH = H }
+  else { VW = 480; VH = Math.min(1100, Math.round(VW / aspect)) }
+  SP = Math.min(1.5, Math.max(1, (VH - TOP - 14) / ROWS / 68))
+}
 const TOP = 112 // debajo del marcador y de las bailarinas
-const ROW_H = (H - TOP - 14) / ROWS
-const rowY = (r) => TOP + r * ROW_H + ROW_H / 2
+const rowH = () => (VH - TOP - 14) / ROWS
+const rowY = (r) => TOP + r * rowH() + rowH() / 2
 const SHIFT_LEFT = 14, SHIFT_RIGHT = 34 // cuánto se acorta cada barra hacia el fondo, de cada lado
-// x lógica → x en pantalla para la barra r
+// x lógica → x en pantalla para la barra r: la barra (X0..X1) se estira o aprieta al ancho dibujado; lo que
+// queda antes (la puerta) y después (el termo, el cebador) se dibuja a su tamaño
 function px(r, x) {
   const back = ROWS - 1 - r // 0 adelante, 3 al fondo
-  const a = X0 + back * SHIFT_LEFT, b = X1 - back * SHIFT_RIGHT
+  const k = VW / W // en vertical el escalonado también se achica, si no la barra del fondo queda cortita
+  const a = X0 + back * SHIFT_LEFT * k, b = VW - (W - X1) - back * SHIFT_RIGHT * k
+  if (x > X1) return b + (x - X1)
   return a + ((x - X0) * (b - a)) / (X1 - X0)
 }
 
@@ -99,7 +113,7 @@ export function mountMate(host, { onExit } = {}) {
           <button type="button" data-mate-key="down" aria-label="Barra de abajo">${fa('caret-down')}</button>
         </div>
         <button type="button" class="mate-serve" data-mate-serve><span data-mate-serve-icon></span><b data-mate-serve-label></b></button>
-        <p class="mate-turn">${fa('rotate')} Girá el celular para jugar más grande</p>
+        <p class="mate-turn">${fa('rotate')} Girá el celular para jugar en horizontal</p>
       </div>
     </div>
   </div>`
@@ -295,13 +309,13 @@ export function mountMate(host, { onExit } = {}) {
   }
 
   function draw() {
-    ctx.clearRect(0, 0, W, H) // fondo transparente: se ve el de la página
+    ctx.clearRect(0, 0, VW, VH) // fondo transparente: se ve el de la página
     // show de la propina: tres bailarinas arriba al medio que se van de a una por segundo
     if (g.showT > 0) {
       ctx.font = '40px serif'
       ctx.textBaseline = 'middle'
       ctx.textAlign = 'center'
-      ctx.fillText('💃'.repeat(Math.ceil(g.showT)), W / 2, 52)
+      ctx.fillText('💃'.repeat(Math.ceil(g.showT)), VW / 2, 52)
     }
     // marcador (más grande que en el original: en el celular la pantalla se achica)
     ctx.fillStyle = ink
@@ -313,10 +327,10 @@ export function mountMate(host, { onExit } = {}) {
     ctx.fillText(`Récord ${Math.max(record, g.score)}`, 16, 80)
     ctx.textAlign = 'right'
     ctx.font = '26px serif'
-    ctx.fillText(D().icon.repeat(Math.max(0, g.lives)), W - 16, 26)
+    ctx.fillText(D().icon.repeat(Math.max(0, g.lives)), VW - 16, 26)
     ctx.textAlign = 'center'
     for (let r = 0; r < ROWS; r++) {
-      const y = rowY(r), s = 1
+      const y = rowY(r), s = SP
       const a = px(r, X0), b = px(r, X1)
       const emoji = (txt, x, dy, size) => { ctx.font = `${Math.round(size * s)}px serif`; ctx.fillText(txt, px(r, x), y + dy * s) }
       // barra de madera
@@ -344,7 +358,7 @@ export function mountMate(host, { onExit } = {}) {
       ctx.beginPath(); ctx.roundRect(px(r, KEG + 34) - 6 * s, y - 22 * s, 12 * s, 34 * s, 4 * s); ctx.fill()
     }
     // cebador: en el termo o caminando por su barra
-    const cy = rowY(g.row), cs = 1, cx = px(g.row, g.bx)
+    const cy = rowY(g.row), cs = SP, cx = px(g.row, g.bx)
     ctx.font = `${Math.round(32 * cs)}px serif`
     ctx.fillText(BARTENDER, cx, cy - 8 * cs)
     if (g.fill) {
@@ -366,14 +380,27 @@ export function mountMate(host, { onExit } = {}) {
       : [g.msg, '']
     // velo del color de fondo de la página (no blanco), para que no se vea un recuadro
     ctx.fillStyle = veilColor()
-    ctx.fillRect(0, 0, W, H)
+    ctx.fillRect(0, 0, VW, VH)
     ctx.fillStyle = ink
     ctx.textAlign = 'center'
+    // en vertical la pantalla es angosta: el texto se parte en renglones
+    const lines = (txt, font, max) => {
+      ctx.font = font
+      const out = []
+      for (const w of String(txt).split(' ')) {
+        const cur = out.length ? `${out[out.length - 1]} ${w}` : w
+        if (out.length && ctx.measureText(cur).width <= max) out[out.length - 1] = cur
+        else out.push(w)
+      }
+      return txt ? out : []
+    }
+    const big = lines(text[0], '700 34px system-ui, sans-serif', VW - 40), small = lines(text[1], '22px system-ui, sans-serif', VW - 40)
+    let y = VH / 2 - ((big.length * 40 + small.length * 28) / 2) + 20
     ctx.font = '700 34px system-ui, sans-serif'
-    ctx.fillText(text[0], W / 2, H / 2 - 18)
+    for (const l of big) { ctx.fillText(l, VW / 2, y); y += 40 }
     ctx.font = '22px system-ui, sans-serif'
     ctx.fillStyle = muted
-    ctx.fillText(text[1], W / 2, H / 2 + 24)
+    for (const l of small) { ctx.fillText(l, VW / 2, y); y += 28 }
   }
 
   function frame(t) {
@@ -389,16 +416,17 @@ export function mountMate(host, { onExit } = {}) {
     raf = requestAnimationFrame(frame)
   }
 
-  // el canvas ocupa todo lo que puede de su caja sin deformarse (960 × 400), en vertical y en horizontal
+  // el canvas ocupa toda su caja sin deformarse: la pantalla dibujada toma la forma de la caja (ver layout)
   function resize() {
     const box = screenEl.getBoundingClientRect()
     if (!box.width || !box.height) return
     const dpr = window.devicePixelRatio || 1
-    const scale = Math.min(box.width / W, box.height / H)
-    canvas.style.width = `${Math.floor(W * scale)}px`
-    canvas.style.height = `${Math.floor(H * scale)}px`
-    canvas.width = Math.round(W * scale * dpr)
-    canvas.height = Math.round(H * scale * dpr)
+    layout(box.width, box.height)
+    const scale = Math.min(box.width / VW, box.height / VH)
+    canvas.style.width = `${Math.floor(VW * scale)}px`
+    canvas.style.height = `${Math.floor(VH * scale)}px`
+    canvas.width = Math.round(VW * scale * dpr)
+    canvas.height = Math.round(VH * scale * dpr)
     ctx.setTransform(scale * dpr, 0, 0, scale * dpr, 0, 0)
     if (g) draw()
   }

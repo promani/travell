@@ -1,7 +1,7 @@
 // Mate (js/mate.js): the time killer for long flights, trains and waits. Full screen over the app, playable
 // upright or sideways. Suggested on days with a flight or a train (day view and Inicio).
 import { D, now, forMe } from '../store.js';
-import { esc, ic, fmtDuration } from '../util.js';
+import { esc, fmtDuration } from '../util.js';
 import { transportTimes } from '../tripstate.js';
 import { mountMate } from '../mate.js';
 
@@ -23,8 +23,7 @@ export function mateSuggestion(day) {
   if (!LONG.some((k) => kinds.has(k))) return '';
   const what = kinds.has('vuelo') ? 'el vuelo' : 'el tren';
   return `<div class="card mate-sug"><a class="mate-sug-main" href="#/mate"><span aria-hidden="true">🧉</span><div><b>Mate, para la espera</b>
-    <small>Un jueguito para ${esc(what)} o el aeropuerto: cebá mates antes de que los clientes lleguen al termo</small></div><em>›</em></a>
-    <a class="mate-sug-alt" href="#/entrenar">${ic('brain')} O algo más tranquilo: <b>Entrenar</b> la cabeza con ejercicios cortos ›</a></div>`;
+    <small>Un jueguito para ${esc(what)} o el aeropuerto: cebá mates antes de que los clientes lleguen al termo</small></div><em>›</em></a></div>`;
 }
 
 // The game survives re-renders of this same screen (a sync or the weather redraw the current route): the mounted
