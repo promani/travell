@@ -439,6 +439,20 @@ body.onboarding main { padding-bottom: var(--s6); }
 .tg-sign.h { right: calc(-.525rem - 1.5px); top: calc(50% - .525rem); } .tg-sign.v { bottom: calc(-.525rem - 1.5px); left: calc(50% - .525rem); }
 .tg-time { font-variant-numeric: tabular-nums; font-weight: 700; }
 .tg-won { text-align: center; font-weight: 700; color: var(--ok); }
+.tg-stage { position: relative; }
+.tg-stage .tg-board { transition: filter .3s, opacity .3s; }
+.tg-stage.covered .tg-board { filter: blur(7px); opacity: .45; pointer-events: none; }
+.tg-start { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 3; }
+.tg-start .btn { font-size: 1.15rem; padding: .7rem 1.6rem; box-shadow: 0 6px 20px #0003; }
+.tg-count { font-size: 4.5rem; font-weight: 800; color: var(--pri); font-variant-numeric: tabular-nums; text-shadow: 0 2px 12px var(--card); animation: tg-count 1s ease-out both; }
+@keyframes tg-count { from { transform: scale(1.8); opacity: 0; } 30% { transform: scale(1); opacity: 1; } to { transform: scale(.9); opacity: .85; } }
+.tg-won { animation: tg-pop .5s cubic-bezier(.2, 1.6, .4, 1) both; }
+.tg-board.tg-cheer { animation: tg-cheer .9s ease-out; }
+@keyframes tg-pop { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes tg-cheer { 0% { transform: scale(1); box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 70%, transparent); } 35% { transform: scale(1.05); } 100% { transform: scale(1); box-shadow: 0 0 0 22px transparent; } }
+.tg-confetti { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 1000; }
+.tg-confetti i { position: absolute; top: -12px; width: 8px; height: 13px; border-radius: 2px; animation: tg-fall 2.4s cubic-bezier(.25, .6, .5, 1) both; }
+@keyframes tg-fall { to { transform: translate(var(--dx), 105vh) rotate(var(--r)); opacity: .9; } }
 .tg-card .row-actions { justify-content: center; }
 .tg-rules { font-size: var(--fs-sm); margin-top: var(--s2); } .tg-rules ul { padding-left: 1.2rem; margin: var(--s2) 0 0; }
 .tg-rank { list-style: none; margin: 0; padding: 0; } .tg-rank li { display: flex; align-items: center; gap: var(--s3); padding: var(--s2) 0; border-top: 1px solid var(--line); }

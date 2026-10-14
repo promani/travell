@@ -95,18 +95,18 @@ const GAMES = {
 const KEYS = Object.keys(GAMES);
 
 // ------------------------------------------------------------------ the game being played
-let state = null;   // { game, date, p, data, history, ms, since, won }
+let state = null;   // { game, date, p, data, history, ms, since, won, started, cheer }
 const saveKey = (game, date) => `game:${game}:${date}`;
 const elapsed = () => state.ms + (state.since ? performance.now() - state.since : 0);
 function persist() { kv.set(saveKey(state.game, state.date), { data: state.data, ms: Math.round(elapsed()) }); }
 function pause() { if (state?.since) { state.ms = elapsed(); state.since = 0; persist(); } }
-function resume() { if (state && !state.won && !state.since && !document.hidden) state.since = performance.now(); }
+function resume() { if (state?.started && !state.won && !state.since && !document.hidden) state.since = performance.now(); }
 function load(game, date) {
   if (state?.game === game && state.date === date) return;
   pause();
   const g = GAMES[game], p = g.puzzle(date), saved = kv.get(saveKey(game, date), null);
   const data = saved?.data ?? saved?.cells;   // older saves of Tango kept the grid as 'cells'
-  state = { game, date, p, data: g.valid(data, p) ? data : g.empty(p), history: [], ms: saved?.ms || 0, since: 0 };
+  state = { game, date, p, data: g.valid(data, p) ? data : g.empty(p), history: [], ms: saved?.ms || 0, since: 0, started: !!saved };
 }
 function paint() {
   const el = $('#tg-board'); if (el) el.innerHTML = GAMES[state.game].board();
@@ -114,7 +114,7 @@ function paint() {
 }
 function finish() {
   const ms = Math.round(elapsed());
-  state.ms = ms; state.since = 0; state.won = true; persist();
+  state.ms = ms; state.since = 0; state.won = true; state.cheer = true; persist();
   cols.put('games', { id: `${state.game}:${state.date}:${me()}`, game: state.game, date: state.date, traveler: me(), ms }, { rebuild: false });
   bus.emit('rerender');
 }
@@ -330,6 +330,9 @@ export function render(params, ctx) {
   if (game === 'zip') ctx.after(() => { const b = $('#tg-board'); if (b) bindZip(b); });
   if (game === 'queens') ctx.after(() => { const b = $('#tg-board'); if (b) bindQueens(b); });
   if (game === 'patches') ctx.after(() => { const b = $('#tg-board'); if (b) bindPatches(b); });
+  if (state.cheer) { state.cheer = false; ctx.after(celebrate); }
+  const cover = !mine && !state.started;
+  const startBox = counting ? '<span class="tg-count">…</span>' : `<button class="btn primary" data-act="game-start">${ic('play')} Iniciar</button>`;   // the board stays hidden until "Iniciar" and the countdown
 
   const tabs = KEYS.map((k) => `<a class="chip${k === game ? ' on' : ''}" href="#/juego?g=${k}" ${k === game ? 'aria-current="page"' : ''}>${ic(GAMES[k].icon)} ${esc(GAMES[k].label)}${solvedByMe(k, date) ? ` ${ic('check')}` : ''}</a>`).join('');
   return `<header class="pagehead"><h1>${ic('puzzle-piece')} Juego del día</h1>
@@ -339,7 +342,10 @@ export function render(params, ctx) {
     <div class="card-head"><h3>${esc(g.label)} · ${esc(fmtShort(date))}</h3><span class="tg-time" id="tg-time">${ic('stopwatch')} ${fmtMs(mine ? mine.ms : elapsed())}</span></div>
     <p class="hint">${esc(g.intro)}</p>
     ${mine ? `<p class="tg-won">${ic('champagne-glasses')} ¡Resuelto en ${fmtMs(mine.ms)}!</p>` : ''}
-    <div class="tg-board ${game === 'zip' ? 'zp-board' : game === 'queens' ? 'qn-board' : game === 'patches' ? 'pt-board' : ''}" id="tg-board">${g.board()}</div>
+    <div class="tg-stage${cover ? ' covered' : ''}" id="tg-stage">
+      <div class="tg-board ${game === 'zip' ? 'zp-board' : game === 'queens' ? 'qn-board' : game === 'patches' ? 'pt-board' : ''}" id="tg-board">${g.board()}</div>
+      ${cover ? `<div class="tg-start" id="tg-start">${startBox}</div>` : ''}
+    </div>
     ${mine ? '' : `<div class="row-actions"><button class="btn small" id="tg-undo" data-act="game-undo" ${state.history.length ? '' : 'disabled'}>${ic('rotate-left')} Deshacer</button>
       <button class="btn small" data-act="game-clear">${ic('eraser')} Borrar</button></div>`}
     <details class="tg-rules"><summary>Reglas</summary><ul>${g.rules}</ul></details>
@@ -365,7 +371,44 @@ export function homeCard() {
     <small>${esc(lines.join(' · ') || 'Solo faltás vos')}</small></div><em>›</em></a>`;
 }
 
+// Confetti over the page and a bounce of the board when the game is solved.
+const CONFETTI = ['#f59f00', '#4c6ef5', '#12b886', '#fa5252', '#be4bdb', '#fcc419'];
+function celebrate() {
+  $('#tg-board')?.classList.add('tg-cheer');
+  navigator.vibrate?.([60, 40, 120]);
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const box = document.createElement('div');
+  box.className = 'tg-confetti'; box.setAttribute('aria-hidden', 'true');
+  box.innerHTML = Array.from({ length: 70 }, (_, k) => `<i style="left:${Math.random() * 100}%;background:${CONFETTI[k % CONFETTI.length]};--dx:${(Math.random() - 0.5) * 30}vw;--r:${Math.round(Math.random() * 720 - 360)}deg;animation-delay:${(Math.random() * 0.5).toFixed(2)}s;animation-duration:${(1.8 + Math.random() * 1.2).toFixed(2)}s"></i>`).join('');
+  document.body.append(box);
+  setTimeout(() => box.remove(), 3800);
+}
+
+// "Iniciar": a 4-second countdown over the hidden board, then the clock starts.
+const COUNTDOWN = 4;
+let counting = null;
+function startCountdown() {
+  if (!state || state.started || state.won || counting) return;
+  const key = state.game + state.date;
+  let n = COUNTDOWN;
+  // looked up every tick: a re-render (a sync from another phone) may replace the overlay
+  const show = () => { const box = $('#tg-start'); if (box) box.innerHTML = `<span class="tg-count" aria-live="assertive">${n || '¡Ya!'}</span>`; };
+  show();
+  counting = setInterval(() => {
+    // left the page or changed game during the countdown: nothing starts
+    if (!$('#tg-start') || !state || state.game + state.date !== key) { clearInterval(counting); counting = null; return; }
+    n--;
+    show();
+    if (n > 0) return;
+    clearInterval(counting); counting = null;
+    state.started = true; persist(); resume();
+    $('#tg-stage')?.classList.remove('covered');
+    setTimeout(() => $('#tg-start')?.remove(), 350);
+  }, 1000);
+}
+
 register({
+  'game-start': startCountdown,
   'tango-tap': (el) => {
     if (!state || state.won || state.game !== 'tango') return;
     const i = +el.dataset.i;
@@ -377,5 +420,5 @@ register({
     persist(); paint();
   },
   'game-undo': () => { if (state?.history.length && !state.won) { state.data = state.history.pop(); persist(); paint(); } },
-  'game-clear': () => { if (!state || state.won) return; state.history.push(state.data.slice()); state.data = GAMES[state.game].empty(state.p); persist(); paint(); },
+  'game-clear': () => { if (!state?.started || state.won) return; state.history.push(state.data.slice()); state.data = GAMES[state.game].empty(state.p); persist(); paint(); },
 });
