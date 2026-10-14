@@ -24,7 +24,7 @@ export const I = {};
 async function getJSON(name, required) {
   try {
     const r = await fetch(`${DATA_BASE}/${name}`);
-    if (!r.ok) throw new Error(`${name}: HTTP ${r.status}`);
+    if (!r.ok) throw Object.assign(new Error(`${name}: HTTP ${r.status}`), { status: r.status });
     return await r.json();
   } catch (e) {
     if (required) throw e;

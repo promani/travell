@@ -1,10 +1,10 @@
-// Travelers: the trip code gate, who am I, location permission & sharing, where the others are, the travelers ABM, and group sync.
+// Travelers: who am I, location permission & sharing, where the others are, the travelers ABM, and group sync.
 import { D, I, cols, me, settings, bus } from '../store.js';
 import { esc, ic, toast, copyText, fmtDist, haversine } from '../util.js';
 import { register, mapBox } from '../ui.js';
 import { gps, startGps, currentPosition, permissionState, onPosition } from '../geo.js';
 import { ago } from '../map.js';
-import { syncNow, syncState, syncConfigured, shareMyPosition, locationLink, otherPositions, enterCode } from '../sync.js';
+import { syncNow, syncState, syncConfigured, shareMyPosition, locationLink, otherPositions } from '../sync.js';
 import { exportShared, importShared } from '../share.js';
 import { passportCards } from './passports.js';
 import { paintAttachments, freeUrls } from '../ticket.js';
@@ -21,22 +21,6 @@ export async function permBanner(el) {
     ? `<div class="note warn"><b>${ic('location-dot')} La ubicación está bloqueada</b><p>Habilitala en los permisos del sitio del navegador para ver lugares cercanos y compartir dónde estás.</p></div>`
     : `<div class="note perm"><b>${ic('location-dot')} Activá tu ubicación</b><p>Para ordenar los lugares por cercanía, cargar lugares desde donde estás y mostrarle al grupo dónde estás (solo si lo activás).</p>
        <div class="row-actions"><button class="btn primary small" data-act="perm-ask">Permitir</button></div></div>`;
-}
-
-/** First of all: the trip's code (5 letters and numbers). Every screen waits for it (see route() in main.js). */
-export function codeGate(_, ctx) {
-  ctx.title = 'Código del viaje';
-  ctx.after(() => document.getElementById('trip-code')?.focus());
-  return `<section class="onboard code-gate">
-    <div class="code-ic">${ic('lock')}</div>
-    <h1>Código del viaje</h1>
-    <p class="muted">Ingresá el código de 5 letras y números que te pasaron. Se pide una sola vez en este celular.</p>
-    <form class="form" data-submit="code-enter" autocomplete="off">
-      <input id="trip-code" name="code" class="code-input" maxlength="5" autocapitalize="characters" autocorrect="off" spellcheck="false" inputmode="text" aria-label="Código del viaje" placeholder="•••••" required>
-      <p class="code-err" id="code-err" hidden>Ese código no es. Probá de nuevo.</p>
-      <button class="btn primary" type="submit">Entrar ${ic('arrow-right')}</button>
-    </form>
-  </section>`;
 }
 
 /** True while this phone doesn't know who uses it: the app then shows the onboarding instead of any screen. */
@@ -166,13 +150,6 @@ register({
     const text = `${I.traveler[me()]?.name || 'Yo'} está acá (abrilo con la app del viaje): ${link}`;
     if (navigator.share) { try { await navigator.share({ title: 'Mi ubicación', text, url: link }); return; } catch { /* cancelled */ } }
     copyText(link);
-  },
-  'code-enter': async (form, _, app) => {
-    const err = form.querySelector('#code-err');
-    if (await enterCode(new FormData(form).get('code'))) { app.rerender(); syncNow(); return; }
-    err.hidden = false;
-    form.classList.remove('bad'); void form.offsetWidth; form.classList.add('bad');
-    form.querySelector('input').select();
   },
   'sync-now': () => syncNow().then(() => toast(syncState.error ? `Error: ${syncState.error}` : syncConfigured() ? 'Sincronizado' : 'Falta el código del viaje')),
   'share-export': () => exportShared(),

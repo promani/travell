@@ -1,5 +1,5 @@
 // Boot, hash router, event delegation, clock tick. Everything is static: no backend.
-import { loadData, D, I, now, checks, cols, bus, me, brandColor, rebuild } from './store.js';
+import { loadData, D, I, now, checks, cols, bus, me, brandColor, rebuild, settings } from './store.js';
 import { esc, $, $$, closeModal, openModal, toast, fmtDuration } from './util.js';
 import { actions } from './ui.js';
 import { tripPhase } from './tripstate.js';
@@ -26,7 +26,8 @@ import { paintSimBar } from './views/sim.js';
 import { watchTheme } from './theme.js';
 import { checkTripRev, onTripReload } from './admin.js';
 import './views/forms.js';
-import { startSync, needsCode } from './sync.js';
+import { startSync } from './sync.js';
+import { unlock, unlocked, savedCode } from './gate.js';
 import { startUploads } from './upload.js';
 import { refreshWeather } from './weather.js';
 import { offerInstall } from './install.js';
@@ -79,11 +80,10 @@ function route({ keepScroll = false } = {}) {
   const y = window.scrollY;
   cleanup();
   const { name, params, anchor } = parseHash();
-  // first run: nothing until the trip code is in, then until we know who uses this phone (a received location link
-  // still opens once the code is in)
-  const locked = needsCode(), onboarding = locked || (people.needsMe() && name !== 'ubicacion');
+  // first run: nothing else until we know who uses this phone (a received location link still opens)
+  const onboarding = people.needsMe() && name !== 'ubicacion';
   document.body.classList.toggle('onboarding', onboarding);
-  const view = locked ? people.codeGate : onboarding ? people.onboarding : ROUTES[name] || ROUTES[''];
+  const view = onboarding ? people.onboarding : ROUTES[name] || ROUTES[''];
   const ctx = { afters: [], cleanups: [], title: null, after(f) { this.afters.push(f); }, cleanup(f) { this.cleanups.push(f); } };
   active = ctx;
   try { main.innerHTML = view(params, ctx); }
@@ -180,10 +180,13 @@ setInterval(() => {
   try {
     await loadData();
   } catch (e) {
+    if (e.status === 401) return unlock($('#app'));   // the server wants the trip code (js/gate.js)
     $('#app').innerHTML = `<div class="card"><h3>No se pudieron cargar los datos del viaje</h3><p>${esc(e.message)}</p>
       <p>Abrí la app desde un servidor web (por ejemplo <code>python3 -m http.server</code>) y no con doble clic en el archivo.</p></div>`;
     return;
   }
+  unlocked();
+  if (savedCode() && settings.get('groupCode') !== savedCode()) settings.set('groupCode', savedCode());   // the trip code is the sync key
   document.title = D.trip.title;
   $('#brand').textContent = D.trip.title;
   applyBrand();

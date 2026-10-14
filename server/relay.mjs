@@ -11,6 +11,7 @@
 //   GET  /v1/files/:trip/(photos|files)/:name                 -> streams it back from R2
 //   DELETE /v1/files/:trip/(photos|files)/:name
 //   GET  /health
+//   POST /v1/code  { code }                                   -> sets the trip-code cookie when the code is right (else 401)
 //   GET  /data/<file>.json                                    -> the repo file with the admin changes applied (see tripdata.mjs)
 //   GET  /v1/trip/rev                                         -> { rev } of the admin changes, so the app knows when to reload
 //   Admin (Authorization: Bearer $ADMIN_API_KEY; disabled without it):
@@ -29,6 +30,9 @@
 // ADMIN_API_KEY protects every write to the trip data: the admin API and the MCP server (the only way an AI touches the trip).
 // TRIP_CHANGES=file keeps the admin changes in a file in RELAY_DATA even when REDIS_URL is set (local development).
 // Locally `npm start` loads them from .env.local.
+// The trip code (trip.json → sync.codeCheck, the SHA-256 of "travell-code:<tripId>:<CODE>"; TRIP_CODE_CHECK overrides it)
+// guards the trip itself: /data/*, /v1/trip/rev and /v1/weather answer 401 until the browser sent the code to
+// POST /v1/code, which leaves it in an HttpOnly cookie for a year. Without a codeCheck nothing is guarded.
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -75,9 +79,11 @@ function serveStatic(req, res, pathname) {
 fs.mkdirSync(DIR, { recursive: true });
 
 const DATA_DIR = path.join(STATIC || path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'), 'data');
-let weather = null, trip = null, managed = new Set();
+let weather = null, trip = null, managed = new Set(), tripId = '', codeCheck = process.env.TRIP_CODE_CHECK || '';
 try {
-  const tripJson = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'trip.json'), 'utf8')), tripId = tripJson.id;
+  const tripJson = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'trip.json'), 'utf8'));
+  tripId = tripJson.id;
+  codeCheck ||= tripJson.sync?.codeCheck || '';
   const redisUrl = process.env.TRIP_CHANGES === 'file' ? '' : process.env.REDIS_URL;
   trip = tripData({ dataDir: DATA_DIR, store: changeStore({ tripId, redisUrl, prefix: process.env.REDIS_KEY_PREFIX, dir: DIR }) });
   managed = new Set(managedFiles(tripJson));
@@ -122,6 +128,32 @@ const send = (res, status, obj) => {
   res.end(obj === undefined ? '' : JSON.stringify(obj));
 };
 
+// ------------------------------------------------------------------ trip code
+const COOKIE = 'travell_code';
+const normCode = (s) => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 32);
+const hashCode = (code) => crypto.createHash('sha256').update(`travell-code:${tripId}:${normCode(code)}`).digest();
+const codeRight = (code) => { const want = Buffer.from(codeCheck, 'hex'); return want.length === 32 && crypto.timingSafeEqual(hashCode(code), want); };
+const cookieCode = (req) => (/(?:^|;\s*)travell_code=([A-Za-z0-9]+)/.exec(req.headers.cookie || '') || [])[1] || '';
+const codeOk = (req) => !codeCheck || codeRight(cookieCode(req));
+const fails = new Map();   // ip -> { n, t }: a short code can be guessed, so wrong tries are slowed down
+const clientIp = (req) => String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket.remoteAddress || '';
+async function enterCode(req, res) {
+  const ip = clientIp(req), now = Date.now(), f = fails.get(ip);
+  if (f && now - f.t > 15 * 60000) fails.delete(ip);
+  if ((fails.get(ip)?.n || 0) >= 10) return send(res, 429, { error: 'demasiados intentos, probá en un rato' });
+  const body = await readBody(req, res, 1024);
+  if (!body) return;
+  if (!codeCheck || !codeRight(body.code)) {
+    fails.set(ip, { n: (fails.get(ip)?.n || 0) + 1, t: fails.get(ip)?.t || now });
+    return setTimeout(() => send(res, 401, { error: 'código incorrecto' }), 400);
+  }
+  fails.delete(ip);
+  const secure = req.headers['x-forwarded-proto'] === 'https' || req.socket.encrypted ? '; Secure' : '';
+  res.setHeader('set-cookie', `${COOKIE}=${normCode(body.code)}; Path=/; Max-Age=31536000; HttpOnly; SameSite=Strict${secure}`);
+  send(res, 200, { ok: true });
+}
+const guarded = (p) => p.startsWith('/data/') || p === '/v1/trip/rev' || p === '/v1/weather';
+
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, 'http://x');
   if (req.method === 'OPTIONS') return send(res, 204);
@@ -129,6 +161,8 @@ const server = http.createServer((req, res) => {
   const f = FILE_PATH.exec(url.pathname);
   if (f) return files(req, res, f.slice(1, 4).join('/'));
   if (url.pathname.startsWith('/v1/admin/') || url.pathname === '/mcp' || url.pathname.startsWith('/mcp/')) return admin(req, res, url);
+  if (url.pathname === '/v1/code' && req.method === 'POST') return enterCode(req, res);
+  if (guarded(url.pathname) && !codeOk(req)) return send(res, 401, { error: 'falta el código del viaje' });
   if (url.pathname === '/v1/trip/rev' && req.method === 'GET') return trip ? trip.rev().then((rev) => send(res, 200, { rev }), () => send(res, 503, { error: 'store' })) : send(res, 503, { error: 'no trip' });
   const df = /^\/data\/([\w.-]+\.json)$/.exec(url.pathname);
   if (df && STATIC && trip && managed.has(df[1]) && (req.method === 'GET' || req.method === 'HEAD')) return dataFile(req, res, df[1]);

@@ -16,24 +16,6 @@ export const defaultRelayUrl = () => { const u = BASE.trip?.sync?.relayUrl; retu
 const cfg = () => ({ url: (settings.get('relayUrl', '') || defaultRelayUrl()).trim().replace(/\/+$/, ''), code: (settings.get('groupCode', '') || '').trim() });
 export const relayBase = () => cfg().url;
 
-// The trip code: 5 letters and numbers asked once on each phone (people.js, codeGate). It is the whole security of
-// the app: it opens the screens and is the key the synced records are encrypted with. trip.json only has its
-// hash (sync.codeCheck), so the code itself is not in the app.
-export const normCode = (s) => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-export async function codeHash(code) {
-  const h = new Uint8Array(await crypto.subtle.digest('SHA-256', enc.encode(`travell-code:${BASE.trip.id}:${normCode(code)}`)));
-  return [...h].map((b) => b.toString(16).padStart(2, '0')).join('');
-}
-const codeCheck = () => BASE.trip?.sync?.codeCheck || '';
-/** True until this phone entered the trip's code (again, if the code changes). */
-export const needsCode = () => !!codeCheck() && settings.get('codeOk', '') !== codeCheck();
-/** Checks a code; when right, it becomes the sync key and the app opens. */
-export async function enterCode(code) {
-  if (!crypto?.subtle || (await codeHash(code)) !== codeCheck()) return false;
-  settings.set('groupCode', normCode(code));
-  settings.set('codeOk', codeCheck());
-  return true;
-}
 export const syncConfigured = () => { const c = cfg(); return !!(c.url && c.code); };
 
 let keyCache = { code: null, p: null };
