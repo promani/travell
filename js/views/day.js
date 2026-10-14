@@ -7,6 +7,7 @@ import { thumbsFor } from './photos.js';
 import { dayTotalText } from './expenses.js';
 import { resourcesForDay, resRow } from './resources.js';
 import { weatherLine } from '../weather.js';
+import { mateSuggestion } from './mate.js';
 
 let onlyMust = false;
 
@@ -129,6 +130,7 @@ export function render({ id }, ctx) {
 
   ${renderCards(day, ctx, { withLodging: false })}
   ${flights.map(flightCard).join('')}
+  ${mateSuggestion(day)}
   ${notesCard(day)}
 
   <section class="card">
