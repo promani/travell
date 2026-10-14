@@ -181,6 +181,8 @@ export function resolveChange(files, ch) {
     if (!ok) return { error: `gasto ${rid}: split es { mode: "equal", among: [ids] } o { mode: "exact", shares: { id: monto } }` };
     if (data.dayId && !(files['itinerary.json']?.days || []).some((d) => d.id === data.dayId)) return { error: `gasto ${rid}: el día ${data.dayId} no existe` };
   }
+  if (col === 'resources' && data.dayId && !(files['itinerary.json']?.days || []).some((d) => d.id === data.dayId)) return { error: `recurso ${rid}: el día ${data.dayId} no existe` };
+  if (col === 'resources' && data.kind === 'reel' && !/^https:\/\/([a-z0-9-]+\.)*(instagram|tiktok)\.com\//.test(data.url || '')) return { error: `recurso ${rid}: un reel lleva url de Instagram o TikTok` };
   if (col === 'passports' && !(files['travelers.json'] || []).some((t) => t.id === rid)) return { error: `pasaporte ${rid}: el id tiene que ser el de un viajero` };
   for (const k of ['birth', 'issued', 'expires']) if (col === 'passports' && data[k] != null && data[k] !== '' && !DATE.test(data[k])) return { error: `pasaporte ${rid}: ${k} tiene que ser AAAA-MM-DD` };
   return { record: { op: 'put', col, id: rid, data, label } };

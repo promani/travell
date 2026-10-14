@@ -190,6 +190,7 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
 ## 18. Recursos ✅
 
 - **Recursos** (Más → Recursos): enlaces, mapas del metro, guías, apps y trámites por ciudad, con enlace y/o imágenes y PDFs adjuntos que se ven sin internet. Vienen cargados los metros de Shanghai, Tokio y Pekín (enlace oficial: adjuntá una captura del mapa) y Visit Japan Web. Reemplaza a la vieja sección Enlaces (`#/enlaces` redirige acá). Las **fuentes consultadas** quedan plegadas al final. El día muestra los recursos de su ciudad.
+- **Reels** (`#/reels`, Más → Reels): links de Instagram o TikTok guardados como recursos (`kind: "reel"`, con `dayId`). Llegan desde el botón **Compartir → Travell** de Instagram o TikTok (`share_target` del manifest; Android con la app instalada, iPhone no lo permite) o pegando el link. Entran sin día; en Inicio aparece "N reels sin día" y en la pantalla de Reels se elige el día de cada uno, que después aparece en ese día. Tocarlo abre el reel en Instagram o TikTok.
 
 ## 19. Cheat sheet ✅
 - **Más → Cheat sheet** (`#/cheatsheet`; `#/frases` redirige): **phrases** para decir gracias, por favor, la cuenta, sin picante, ¿cuánto cuesta?, a esta dirección (taxi), emergencias, etc., en **mandarín** (hanzi + pinyin) y **japonés** (kana/kanji + romaji). Elige sola el idioma de la ciudad del día.

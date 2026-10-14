@@ -9,6 +9,7 @@ import { suggestions } from '../suggest.js';
 import { weatherLine } from '../weather.js';
 import { mateSuggestion } from './mate.js';
 import { homeCard as gameCard } from './games.js';
+import { homeCard as reelsCard } from './reels.js';
 import { paintAttachments, freeUrls } from '../ticket.js';
 
 const plural = (n, s, p) => `${n} ${n === 1 ? s : p}`;
@@ -75,7 +76,7 @@ export function render(_, ctx) {
     h += notesCard(day, { title: 'Notas de hoy', compact: true });
     h += mateSuggestion(day);
   }
-  if (st.phase !== 'post') h += gameCard();
+  if (st.phase !== 'post') h += reelsCard() + gameCard();
 
   if (st.phase !== 'post') {
     const mineOnly = !!me();

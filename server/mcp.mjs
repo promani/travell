@@ -58,6 +58,7 @@ const CHANGE_RULES = `Formato de cada cambio (es lo único que puede modificar e
 - Lo que hace solo una parte del grupo (el vuelo o la habitación de uno, una actividad aparte) lleva "travelers": [ids de viajeros]; sin ese campo es de todos. Si el grupo se separa (cada uno en su vuelo), cargá un registro por cada parte, cada uno con su travelers. Las tarjetas del día (days.cards, ej. la de salida al aeropuerto) también aceptan travelers. Cada celular muestra lo suyo primero y lo de los demás atenuado.
 - expenses: gastos compartidos. amount en la moneda de currency, paidBy y split con ids de viajeros, category: comida | transporte | alojamiento | entradas | compras | otros.
 - passports: id = id del viajero.
+- resources: enlaces, mapas, apps y guías ("kind": mapa | guia | app | traduccion | tramite | reel | enlace | fuente | otro), con cityId y/o dayId opcionales. Un reel es { "kind": "reel", "title", "url": link de Instagram o TikTok, "dayId": id del día o null si todavía no tiene día }.
 - Los archivos (PDF, capturas) no se suben por acá: guardá lo que dicen (código, horarios, link). La persona los adjunta desde la app si los quiere ver sin internet.
 - "label" describe el cambio para que la persona lo confirme, ej. "Marcar el vuelo MU746 como reservado".
 - No inventes datos: si algo no está en lo que te pasaron, no lo pongas.`;

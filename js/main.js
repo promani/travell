@@ -18,6 +18,7 @@ import * as phrases from './views/phrases.js';
 import './views/passports.js';
 import { ticketActions, migrateDocuments } from './ticket.js';
 import * as resources from './views/resources.js';
+import * as reels from './views/reels.js';
 import * as mate from './views/mate.js';
 import * as train from './views/train.js';
 import * as games from './views/games.js';
@@ -43,7 +44,7 @@ const ROUTES = {
   tareas: (p, c) => tasks.render(p, c), pendientes: (p, c) => tasks.render(p, c),
   viajeros: (p, c) => people.render(p, c), lugares: (p, c) => places.render(p, c),
   pasaportes: () => { setTimeout(() => location.replace('#/viajeros'), 0); return ''; },   // passports are now part of each traveler
-  recursos: (p, c) => resources.render(p, c), juego: (p, c) => games.render(p, c),
+  recursos: (p, c) => resources.render(p, c), reels: (p, c) => reels.render(p, c), juego: (p, c) => games.render(p, c),
   ubicacion: (p) => receiveLocation(p), buscar: (p, c) => search.render(p, c), mate: (p, c) => mate.render(p, c),
   entrenar: (p, c) => train.render(p, c),
   ajustes: (p, c) => { c.after(() => more.storageInfo(c)); return more.ajustes(); },
@@ -187,6 +188,7 @@ setInterval(() => {
   watchTheme();
   if (!location.hash) history.replaceState(null, '', '#/inicio');
   await migrateDocuments().catch((e) => console.warn('migrate', e));
+  reels.takeShare();   // opened from the share button of Instagram/TikTok
   route();
   startSync();
   startUploads();

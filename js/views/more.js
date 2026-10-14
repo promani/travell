@@ -18,6 +18,7 @@ export function menu(_, ctx) {
     ['#/viajeros', 'users', 'Viajeros', 'Pasaportes, quién sos, ubicación del grupo, sincronización'],
     ['#/docs', 'file-lines', 'Documentos', 'Visas, trámites de entrada, seguro'],
     ['#/recursos', 'book', 'Recursos', 'Enlaces, mapas del metro, guías y apps por ciudad'],
+    ['#/reels', 'clapperboard', 'Reels', 'Reels de Instagram o TikTok, compartidos desde el celular, cada uno en su día'],
     ['#/mate', 'mug-hot', 'Mate', 'Un jueguito para matar el tiempo en vuelos, trenes y esperas'],
     ['#/entrenar', 'brain', 'Entrenar', 'Camino, Clasificar y Eco: ejercicios cortos para despejar y entrenar la cabeza'],
     ['#/juego', 'puzzle-piece', 'Juego del día', 'Tango, Zip, Queens y Patches, los mismos para todos cada día, con ranking y récords'],
