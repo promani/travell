@@ -14,8 +14,8 @@
 //   - Juntar una propina arranca el show (las bailarinas del original): todos dejan de avanzar unos segundos,
 //     aunque siguen agarrando mates. Queda afuera la ronda bonus de las latas.
 //   - El villano 👺 (propio, no está en Tapper): cada cliente que entra tiene un 5% de chance de serlo, como mucho
-//     uno por nivel (si se pierde una vida, no vuelve en ese nivel). Avanza 1,6 veces más rápido y no se frena con
-//     el show; con el mate retrocede la mitad y sólo sale si lo agarra en el primer sexto de la barra. Sacarlo da
+//     uno por nivel (si se pierde una vida, no vuelve en ese nivel). Avanza 1,6 veces más rápido (también se frena con
+//     el show); con el mate retrocede un 70% y sólo sale si lo agarra en el primer cuarto de la barra. Sacarlo da
 //     1.000 puntos y siempre deja una propina grande 💰 de 2.000, que también arranca el show. Valores en VILLAIN_*.
 // Controles en pantalla: la cruz (↑ ↓ barra, ← → caminar) y el botón Cebar (mantener y soltar). Con teclado:
 // ↑ ↓ (W S), ← → (A D), Espacio cebar, P o Esc pausa, M sonido, Enter jugar de nuevo.
@@ -38,9 +38,9 @@ const OUT_POINTS = 50 // por cliente que sale por la puerta
 // el villano
 const VILLAIN_FACE = '👺'
 const VILLAIN_CHANCE = 0.05 // probabilidad de que el que entra sea el villano (como mucho uno por nivel)
-const VILLAIN_SPEED = 1.6 // veces la velocidad de los clientes del nivel; no se frena con el show
-const VILLAIN_PUSH = 0.5 // retrocede esta parte de lo que retrocede un cliente al agarrar el mate
-const VILLAIN_OUT = 1 / 6 // sale por la puerta sólo si agarra el mate en este primer tramo de la barra
+const VILLAIN_SPEED = 1.6 // veces la velocidad de los clientes del nivel; se frena con el show como todos
+const VILLAIN_PUSH = 0.7 // retrocede esta parte de lo que retrocede un cliente al agarrar el mate
+const VILLAIN_OUT = 1 / 4 // sale por la puerta sólo si agarra el mate en este primer tramo de la barra
 const VILLAIN_POINTS = 1000 // al salir por la puerta
 const VILLAIN_TIP = 2000 // la propina grande 💰 que deja siempre al salir
 // emojis de busto (se les ven los hombros), no sólo la cara
@@ -283,7 +283,7 @@ export function mountMate(host, { onExit } = {}) {
         } else {
           // avanzan a los tirones: un rato caminan, un rato esperan; con el show de la propina se frenan
           c.t += dt
-          if ((g.showT <= 0 || c.villain) && c.t % 1.1 < 0.65) c.x += g.walk * 1.7 * (c.villain ? VILLAIN_SPEED : 1) * dt
+          if (g.showT <= 0 && c.t % 1.1 < 0.65) c.x += g.walk * 1.7 * (c.villain ? VILLAIN_SPEED : 1) * dt
         }
         if (c.x >= X1 - 18) return loseLife('¡Un cliente llegó al termo sin su mate!', 'angry')
       }
