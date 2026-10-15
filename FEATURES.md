@@ -21,7 +21,7 @@ En todos los casos hay:
 
 - un **mapa con puntos de interés cercanos** y los **otros viajeros**, con una lista ordenada por distancia;
 - **Mis tareas** (asignadas a mí o sin asignar) y **💡 Te falta…** (sugerencias automáticas);
-- la primera vez, antes que cualquier pantalla, la pregunta **"¿Quién usa este celular?"** (onboarding); los permisos que faltan quedan en Más → Falta configurar.
+- la primera vez, antes que cualquier pantalla, la pregunta **"¿Quién usa este celular?"** (onboarding); los permisos (ubicación, compartir mi ubicación, avisos, guardado permanente) están en Más → Permisos.
 
 ## 2. Agenda de viaje ✅
 
@@ -138,9 +138,9 @@ Alta, baja y modificación sin tocar los JSON. Lo cargado se guarda en el celula
 
 - **¿Quién usa este celular?**: define "mis tareas" y de quién es la ubicación que se comparte. Se elige en un onboarding la primera vez que se abre la app (o "Soy otra persona" para sumarse) y se cambia en Viajeros.
 - **Permiso de ubicación**: la app lo pide con una explicación (banner en el inicio y en Viajeros). Si está bloqueado, explica cómo habilitarlo.
-- **Compartir mi ubicación** (opcional y desactivado por defecto): se actualiza cada ~2 minutos, o al moverse más de 50 m, mientras la app está abierta.
+- **Compartir mi ubicación** (opcional y desactivado por defecto), en **Más → Permisos** junto al resto de los permisos del celular: se actualiza cada ~2 minutos, o al moverse más de 50 m, mientras la app está abierta.
 - **Dónde está cada uno**: mapa y lista con "hace X min" y la distancia a vos. Los datos viejos se ven atenuados.
-- **Sin servidor**: "Mandar mi ubicación por link" (WhatsApp, etc.). Al abrir el link en otro celular con la app, esa ubicación queda registrada y se muestra en el mapa.
+- **Sin servidor**: "Mandar mi ubicación por link" (también en Más → Permisos) (WhatsApp, etc.). Al abrir el link en otro celular con la app, esa ubicación queda registrada y se muestra en el mapa.
 - ABM de viajeros con nombre y color.
 
 ## 12. Sincronización con el grupo (opcional) ✅

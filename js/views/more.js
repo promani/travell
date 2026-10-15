@@ -15,7 +15,7 @@ export function menu(_, ctx) {
   const items = [
     ['#/tareas', 'square-check', 'Tareas y sugerencias', 'Pendientes asignables a cada viajero y lo que falta'],
     ['#/fotos', 'camera', 'Fotos', 'Fotos por día, guardadas en el celular'],
-    ['#/viajeros', 'users', 'Viajeros', 'Pasaportes, quién sos, ubicación del grupo, sincronización'],
+    ['#/viajeros', 'users', 'Viajeros', 'Pasaportes, quién sos, dónde está cada uno, sincronización'],
     ['#/docs', 'file-lines', 'Documentos', 'Visas, trámites de entrada, seguro'],
     ['#/recursos', 'book', 'Recursos', 'Enlaces, mapas del metro, guías y apps por ciudad'],
     ['#/reels', 'clapperboard', 'Reels', 'Reels de Instagram o TikTok, compartidos desde el celular, cada uno en su día'],

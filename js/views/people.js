@@ -1,4 +1,4 @@
-// Travelers: who am I, location permission & sharing, where the others are, the travelers ABM, and group sync.
+// Travelers: who am I, the permissions card of "Más" (with sharing my location), where the others are, the travelers ABM, and group sync.
 import { D, I, cols, me, settings, bus } from '../store.js';
 import { esc, ic, toast, copyText, fmtDist, haversine } from '../util.js';
 import { register, mapBox } from '../ui.js';
@@ -59,11 +59,36 @@ export async function pendingSetup() {
   return items;
 }
 
+// The phone's permissions in "Más", granted or not, with sharing my location with the group among them.
+const done = (t) => `<small class="setup-ok">${ic('check')} ${t}</small>`;
+async function permissions() {
+  const loc = await permissionState(), mine = me(), sharing = settings.get('shareLocation', false);
+  const items = [{ ic: 'location-dot', title: 'Ubicación', text: loc === 'denied' ? 'Bloqueada: habilitala en los permisos del sitio del navegador para ver lugares cercanos y compartir dónde estás.' : 'Para ordenar lugares por cercanía y cargar lugares desde donde estás.',
+    actions: loc === 'granted' ? done('Permitida') : loc === 'denied' ? '' : '<button class="btn small primary" data-act="perm-ask">Permitir</button>' }];
+  items.push({ ic: 'tower-broadcast', title: 'Compartir mi ubicación', text: !mine ? 'Primero elegí quién sos en Viajeros.'
+      : `Con el grupo, cada ~2 min mientras la app está abierta. ${syncConfigured() ? 'Viaja cifrada.' : 'Sin sincronización, solo les llega si les mandás el link.'}`,
+    actions: `<label class="switch"><input type="checkbox" data-change="share-toggle" ${sharing ? 'checked' : ''} ${mine ? '' : 'disabled'} aria-label="Compartir mi ubicación con el grupo"><span></span></label>`,
+    more: mine ? `<button class="btn tiny" data-act="share-link">${ic('share-from-square')} Mandar mi ubicación por link</button>` : '' });
+  if ('Notification' in window) {
+    const n = Notification.permission;
+    items.push({ ic: 'bell', title: 'Avisos', text: n === 'denied' ? 'Bloqueados en el navegador.' : 'Para enterarte cuando alguien del grupo te asigna una tarea.',
+      actions: n === 'granted' ? done('Permitidos') : n === 'denied' ? '' : '<button class="btn small primary" data-act="notif-ask">Permitir</button>' });
+  }
+  try {
+    if (navigator.storage?.persisted) {
+      const ok = await navigator.storage.persisted();
+      items.push({ ic: 'floppy-disk', title: 'Guardado permanente', text: 'Evita que el navegador borre fotos y documentos si falta espacio.',
+        actions: ok ? done('Activado') : '<button class="btn small primary" data-act="persist-ask">Activar</button>' });
+    }
+  } catch { /* not supported */ }
+  return items;
+}
+
 export async function setupCard(el) {
   if (!el) return;
-  const items = await pendingSetup();
-  el.innerHTML = items.length ? `<section class="card"><h3>${ic('wrench')} Falta configurar</h3><ul class="setup">${items.map((it) => `<li><span class="o-ic">${ic(it.ic)}</span>
-    <div><b>${esc(it.title)}</b><small>${esc(it.text)}</small></div>${it.actions ? `<span class="setup-act">${it.actions}</span>` : ''}</li>`).join('')}</ul></section>` : '';
+  const items = await permissions();
+  el.innerHTML = `<section class="card"><h3>${ic('shield-halved')} Permisos</h3><ul class="setup">${items.map((it) => `<li><span class="o-ic">${ic(it.ic)}</span>
+    <div><b>${esc(it.title)}</b><small>${esc(it.text)}</small>${it.more || ''}</div>${it.actions ? `<span class="setup-act">${it.actions}</span>` : ''}</li>`).join('')}</ul></section>`;
 }
 
 function syncStatus() {
@@ -75,7 +100,7 @@ function syncStatus() {
 
 export function render(_, ctx) {
   ctx.title = 'Viajeros';
-  const mine = me(), sharing = settings.get('shareLocation', false);
+  const mine = me();
   const myPos = gps.pos;
   ctx.after(() => permBanner(document.getElementById('perm')));
   ctx.after(paintAttachments);
@@ -104,12 +129,6 @@ export function render(_, ctx) {
 
   <h2 class="grp">${ic('passport')} Pasaportes</h2>
   ${passportCards()}
-
-  <section class="card"><h3>${ic('tower-broadcast')} Compartir mi ubicación</h3>
-    <label class="check"><input type="checkbox" data-change="share-toggle" ${sharing ? 'checked' : ''} ${mine ? '' : 'disabled'}><span>Compartir mi ubicación con el grupo (se actualiza cada ~2 min mientras la app está abierta)</span></label>
-    ${mine ? '' : '<p class="hint">Primero elegí quién sos.</p>'}
-    <p class="hint">${syncConfigured() ? 'Se envía cifrada al grupo por la sincronización.' : 'Sin sincronización configurada, la ubicación solo llega a los demás si les mandás el link.'}</p>
-    <div class="row-actions"><button class="btn small" data-act="share-link" ${mine ? '' : 'disabled'}>${ic('share-from-square')} Mandar mi ubicación por link</button></div></section>
 
   <section class="card" id="sync"><h3>${ic('arrows-rotate')} Sincronizar con el grupo</h3>
     <p class="hint">Los celulares del viaje comparten solos tareas, lugares, gastos, viajeros, ubicaciones y los tiempos del Juego del día. Viajan <b>cifrados</b> con el código del viaje: el servidor no puede leerlos.</p>

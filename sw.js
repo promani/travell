@@ -2,7 +2,7 @@
 //  - app shell + data JSON: precached, then network-first (fresh when online, cached when not)
 //  - map tiles: cache-first, filled while browsing or by "Guardar zona offline"
 //  - AI-generated pictures (imgg host): stale-while-revalidate, filled the first time each one is seen
-const VERSION = 'v35';
+const VERSION = 'v36';
 const SHELL = `travell-shell-${VERSION}`;
 const TILES = 'travell-tiles-v1';
 const PICS = 'travell-pics-v1';
