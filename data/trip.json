@@ -143,6 +143,7 @@
     },
     {
       "id": "shanghai",
+      "tripcomCity": 2,
       "name": "Shanghai",
       "country": "China",
       "tz": "Asia/Shanghai",
@@ -167,6 +168,7 @@
     },
     {
       "id": "tokyo",
+      "tripcomCity": 228,
       "name": "Tokio",
       "country": "Japón",
       "tz": "Asia/Tokyo",
@@ -239,6 +241,7 @@
     },
     {
       "id": "nara",
+      "tripcomCity": 1175,
       "name": "Nara",
       "country": "Japón",
       "tz": "Asia/Tokyo",
@@ -275,6 +278,7 @@
     },
     {
       "id": "beijing",
+      "tripcomCity": 1,
       "name": "Pekín",
       "country": "China",
       "tz": "Asia/Shanghai",
@@ -287,6 +291,7 @@
     },
     {
       "id": "zhangjiajie",
+      "tripcomCity": 27,
       "name": "Zhangjiajie",
       "country": "China",
       "tz": "Asia/Shanghai",

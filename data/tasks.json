@@ -138,7 +138,7 @@
     "day": "d09",
     "status": "pendiente",
     "notes": "Se agota apenas sale.",
-    "assignee": null,
+    "assignee": "sole",
     "priority": "normal",
     "covers": [
       "transport:t06",
@@ -156,7 +156,7 @@
     "day": "d12",
     "status": "pendiente",
     "notes": "Feriado: se llena.",
-    "assignee": null,
+    "assignee": "sole",
     "priority": "normal",
     "covers": [
       "transport:t07",

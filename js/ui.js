@@ -32,7 +32,20 @@ export const resvBadge = (r) => r === 'requerida' ? '<span class="badge warn">Re
   : r === 'recomendada' ? '<span class="badge info">Reserva recomendada</span>' : '';
 export { extLink };
 /** The hotels being considered for a lodging not booked yet: [{ name, note, url }]. */
-export const lodgingOptions = (l) => (l.status !== 'reservado' && (l.options || []).length ? `<ul class="lodg-opts">${l.options.map((o) => `<li><b>${o.url ? extLink(o.url, o.name) : esc(o.name)}</b>${o.note ? ` <small>${esc(o.note)}</small>` : ''}</li>`).join('')}</ul>` : '');
+/** Trip.com hotel search for a lodging still to book: its city (trip.json → cities[].tripcomCity), dates and people. */
+export function lodgingSearchUrl(l) {
+  const city = I.city[l.cityId]?.tripcomCity;
+  if (!city || !l.checkIn || !l.checkOut) return null;
+  const adults = l.travelers?.length || D.travelers.length || 1;
+  return `https://www.trip.com/hotels/list?city=${city}&checkin=${l.checkIn.replace(/-/g, '/')}&checkout=${l.checkOut.replace(/-/g, '/')}&adult=${adults}&crn=1`;
+}
+export function lodgingOptions(l) {
+  if (l.status === 'reservado') return '';
+  const search = lodgingSearchUrl(l), opts = l.options || [];
+  if (!search && !opts.length) return '';
+  return `<ul class="lodg-opts">${opts.map((o) => `<li><b>${o.url ? extLink(o.url, o.name) : esc(o.name)}</b>${o.note ? ` <small>${esc(o.note)}</small>` : ''}</li>`).join('')}
+    ${search ? `<li>${ic('magnifying-glass')} ${extLink(search, 'Buscar hoteles en Trip.com')} <small>para estas fechas</small></li>` : ''}</ul>`;
+}
 /** "Reserva en Booking.com" from a booking URL (the site's name, or a generic label). */
 export function bookingSite(url) {
   let host = '';
