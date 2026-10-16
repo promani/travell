@@ -375,6 +375,8 @@
     "title": "Hoteles Zhangjiajie: 2/12 en Wulingyuan y 3/12 cerca del aeropuerto",
     "when": "Ya",
     "day": "d21",
+    "status": "hecho",
+    "notes": "Reservados: Four Seasons Lai en Wulingyuan (1598742132654622) y XIADUO Hotel (1598742132652236).",
     "covers": [
       "lodging:l08",
       "lodging:l09"

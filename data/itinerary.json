@@ -2939,7 +2939,7 @@
         "name": "d21-zhangjiajie-tianmen",
         "prompt": "La Puerta del Cielo de la montaña Tianmen en Zhangjiajie, un arco natural en la roca entre nubes con la larga escalera que sube hasta él"
       },
-      "sleepsAt": "Wulingyuan (hotel a elegir)",
+      "sleepsAt": "Wulingyuan — Four Seasons Lai (lago Baofeng)",
       "lodgingId": "l08",
       "cards": [],
       "activities": [
@@ -3064,7 +3064,7 @@
         "name": "d22-zhangjiajie-wulingyuan",
         "prompt": "Pilares de piedra arenisca de Wulingyuan en Zhangjiajie entre la niebla, con pinos sobre las cumbres"
       },
-      "sleepsAt": "Zhangjiajie, cerca del aeropuerto (hotel a elegir)",
+      "sleepsAt": "Zhangjiajie centro — XIADUO Hotel",
       "lodgingId": "l09",
       "cards": [],
       "activities": [
@@ -3112,8 +3112,8 @@
           "end": "18:30",
           "category": "traslado",
           "priority": "imperdible",
-          "title": "Valijas y traslado al hotel cerca del aeropuerto",
-          "detail": "Del teleférico de Tianzi al hotel de Wulingyuan (~20 min) a buscar las valijas y DiDi al hotel cerca del aeropuerto, al lado del 72 Qilou (~45–50 min).",
+          "title": "Valijas y traslado al XIADUO Hotel",
+          "detail": "Del teleférico de Tianzi al hotel de Wulingyuan (~20 min) a buscar las valijas y DiDi al XIADUO Hotel, en el centro de Zhangjiajie (~45–50 min).",
           "area": null,
           "how": "DiDi",
           "cost": "~¥100–150 (aprox.)",
@@ -3131,7 +3131,7 @@
           "category": "gastronomia",
           "priority": "opcional",
           "title": "Cena y una vuelta nocturna",
-          "detail": "El complejo 72 Qilou, al norte de la ciudad y a pasos del hotel, se ilumina de noche (16:30–23:00); cena en la zona. Mañana el aeropuerto queda a ~15 min.",
+          "detail": "El complejo 72 Qilou, al norte de la ciudad y a ~10 min en DiDi del hotel, se ilumina de noche (16:30–23:00); cena en la zona. Mañana el aeropuerto queda a ~15 min.",
           "area": null,
           "how": "A pie / DiDi",
           "cost": "Variable",
