@@ -57,7 +57,9 @@ function itemsFor(st) {
     const day = I.day[S.dayId];
     const ids = [...new Set(day.activities.map((a) => a.placeId).filter(Boolean))];
     list = ids.map((id) => I.place[id]).filter((p) => p && cats.has(p.category)).map((place) => ({ place, dist: gps.pos ? distance([gps.pos.lat, gps.pos.lon], [place.lat, place.lon]) : null }));
-    if (day.lodgingId) lodg = [I.lodging[day.lodgingId]];
+    // where you slept and where you sleep: on a moving day they are far apart, and both matter
+    lodg = D.lodging.filter((l) => l.checkOut === day.date || (l.checkIn <= day.date && day.date < l.checkOut));
+    if (day.lodgingId && !lodg.includes(I.lodging[day.lodgingId])) lodg.push(I.lodging[day.lodgingId]);
     usingGps = !!gps.pos;
   } else {
     list = D.places.filter((p) => cats.has(p.category)).map((place) => ({ place, dist: gps.pos ? distance([gps.pos.lat, gps.pos.lon], [place.lat, place.lon]) : null }));

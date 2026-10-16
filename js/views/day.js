@@ -76,11 +76,12 @@ function lodgingCard(day, ctx, { noTransfers }) {
   const outHtml = out.map((x) => `<p class="lodg-out ${forMe(x) ? '' : 'not-mine'}">${ic('suitcase-rolling')} Check-out · <b>${esc(x.name)}</b>${x.checkOutTime ? ` · ${esc(x.checkOutTime)}` : ''} ${whoBadge(x)}</p>`).join('');
   const missing = !main && !onPlane ? `<div class="note warn"><b>${ic('bed')} No hay hospedaje cargado para esta noche</b>
     <div class="row-actions"><button class="btn small" data-act="lodging-new" data-prefill='${esc(JSON.stringify({ checkIn: day.date, checkOut: next.date, cityId: day.cityId }))}'>${ic('plus')} Cargar hospedaje</button></div></div>` : '';
-  // a day without moving around: the map opens on the lodging, with the day's places around it
+  // a day without moving around: the lodging with the day's places around it, all in view (they can be far from it)
   const map = noTransfers && main && Number.isFinite(main.lat) ? mapBox(ctx, `lmap-${day.id}`, (m) => {
-    const places = [...new Set(day.activities.map((a) => a.placeId))].map((id) => I.place[id]).filter(Boolean);
-    m.setItems([{ kind: 'lodging', lodging: main }, ...places.map((p) => ({ kind: 'poi', place: p }))]);
-    m.setView(main.lat, main.lon, 14);
+    const places = [...new Set(day.activities.map((a) => a.placeId))].map((id) => I.place[id]).filter((p) => p && Number.isFinite(p.lat));
+    const lodgings = [...new Set([main, ...out])].filter((x) => Number.isFinite(x.lat));
+    m.setItems([...lodgings.map((x) => ({ kind: 'lodging', lodging: x })), ...places.map((p) => ({ kind: 'poi', place: p }))]);
+    m.fit();
   }, 'map-card') : '';
   return `<section class="card card-lodging"><h3>${ic('bed')} ${onPlane && !tonight.length ? 'Alojamiento' : 'Dónde dormís'}</h3>
     ${outHtml}${tonight.map((l) => lodgingBlock(l, day)).join('')}${missing}${map}</section>`;
@@ -138,7 +139,7 @@ export function render({ id }, ctx) {
       <div class="row-actions"><button class="btn small ${onlyMust ? 'on' : ''}" data-act="toggle-must">${ic('star')} Imperdibles</button>
       <button class="btn small primary" data-act="act-new" data-day="${day.id}">${ic('plus')} Actividad</button></div></div>
     <div class="timeline">${acts.map((a) => actRow(a, { current: a === current, next: a === nextA })).join('') || '<p class="muted">Sin actividades.</p>'}</div>
-    <p class="hint">Tocá una actividad para ver el detalle. El círculo ${ic('check')} la marca como hecha (se guarda en este dispositivo).</p>
+    <p class="hint">Tocá una actividad para verla en el mapa; la flecha ▾ abre el detalle. El círculo ${ic('check')} la marca como hecha (se guarda en este dispositivo).</p>
   </section>
 
   ${lodgingCard(day, ctx, { noTransfers })}
@@ -159,6 +160,7 @@ register({
     const open = more.hidden;
     more.hidden = !open; el.setAttribute('aria-expanded', String(open)); art.classList.toggle('open', open);
   },
+  'act-map': (el) => { location.hash = el.dataset.href; },
   'toggle-done': (el) => {
     const on = done.toggle(el.dataset.id);
     const art = el.closest('.act'); art.classList.toggle('is-done', on); el.setAttribute('aria-pressed', String(on));

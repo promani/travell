@@ -76,16 +76,19 @@ export function actRow(a, { current = false, next = false } = {}) {
   const isDone = done.has(a.id);
   const c = cat(a.category);
   const time = a.start ? `${esc(a.start)}${a.end ? `<small>${esc(a.end)}</small>` : ''}` : `<small>${esc(a.slot || '')}</small>`;
+  // with a place, tapping the activity opens the day's map on its pin; the ▾ opens the details
+  const place = a.placeId && I.place[a.placeId];
+  const mapHref = place && Number.isFinite(place.lat) ? `#/mapa?${a.dayId ? `day=${encodeURIComponent(a.dayId)}&` : ''}focus=${encodeURIComponent(place.id)}` : null;
   return `<article class="act ${isDone ? 'is-done' : ''} ${current ? 'is-now' : ''} ${next ? 'is-next' : ''} ${forMe(a) ? '' : 'not-mine'}" data-act-id="${esc(a.id)}">
     <button class="act-done" data-act="toggle-done" data-id="${esc(a.id)}" aria-label="Marcar como hecho" aria-pressed="${isDone}">${ic('check')}</button>
-    <div class="act-main" data-act="toggle-act" role="button" tabindex="0" aria-expanded="false">
+    <div class="act-main" ${mapHref ? `data-act="act-map" data-href="${esc(mapHref)}" role="link" aria-label="${esc(a.title)}: ver en el mapa"` : 'data-act="toggle-act" role="button" aria-expanded="false"'} tabindex="0">
       <div class="act-time">${time}</div>
       <div class="act-body">
         <div class="act-title"><span class="act-ic" style="--c:${c.color}">${icon(c.icon)}</span> ${esc(a.title)}</div>
         <div class="act-tags">${current ? '<span class="badge now">Ahora</span>' : next ? '<span class="badge next">Sigue</span>' : ''}${whoBadge(a)}
-          ${a.priority !== 'recomendado' ? prioBadge(a.priority) : ''}${a.source === 'app' ? '<span class="badge">nueva</span>' : ''}${a.status === 'reservado' ? statusBadge('reservado') : resvBadge(a.reservation)}</div>
+          ${a.priority !== 'recomendado' ? prioBadge(a.priority) : ''}${a.source === 'app' ? '<span class="badge">nueva</span>' : ''}${a.status === 'reservado' ? statusBadge('reservado') : resvBadge(a.reservation)}${mapHref ? `<span class="act-pin">${ic('location-dot')} ${esc(place.name)}</span>` : ''}</div>
       </div>
-      <span class="chev" aria-hidden="true">▾</span>
+      ${mapHref ? '<button class="chev" data-act="toggle-act" aria-expanded="false" aria-label="Ver detalle">▾</button>' : '<span class="chev" aria-hidden="true">▾</span>'}
     </div>
     <div class="act-more" hidden>
       ${a.detail ? `<p>${esc(a.detail)}</p>` : ''}
@@ -96,7 +99,7 @@ export function actRow(a, { current = false, next = false } = {}) {
         ${a.status && a.status !== 'reservado' ? `<dt>Estado</dt><dd>${statusBadge(a.status)}</dd>` : ''}
       </dl>
       <div class="row-actions">
-        ${a.placeId && I.place[a.placeId] ? `<a class="btn small" href="#/mapa?focus=${esc(a.placeId)}">${ic('map')} Ver en el mapa</a>` : ''}
+        ${mapHref ? `<a class="btn small" href="${esc(mapHref)}">${ic('map')} Ver en el mapa</a>` : ''}
         <button class="btn small" data-act="act-edit" data-id="${esc(a.id)}">${ic('pen')} Editar</button>
         ${a.link ? extLink(a.link, 'Más info') : ''}
       </div>

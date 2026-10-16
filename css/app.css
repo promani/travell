@@ -259,6 +259,8 @@ progress { width: 100%; accent-color: var(--pri); }
 :root[data-theme="dark"] .act-ic, :root[data-theme="dark"] .o-ic { color: color-mix(in srgb, var(--c, var(--pri)) 55%, #fff); } :root[data-theme="dark"] .act-ic { background: color-mix(in srgb, var(--c) 30%, transparent); }
 .o-ic { flex: none; min-width: 1.8rem; font-size: 1.25rem; line-height: 1.2; }
 .chev { color: var(--muted); transition: transform .15s; } .act.open .chev { transform: rotate(180deg); }
+button.chev { background: none; border: 0; font: inherit; cursor: pointer; min-width: 44px; min-height: 44px; margin: -10px -12px 0 0; }
+.act-pin { font-size: var(--fs-xs); color: var(--muted); display: inline-flex; gap: .25em; align-items: center; }
 .act-more { grid-column: 1 / -1; padding: var(--s2) 0 var(--s1) 2.6rem; font-size: var(--fs-sm); } .act-more p { margin: var(--s1) 0 var(--s2); }
 .act-more h4 { margin: var(--s3) 0 var(--s1); }
 /* activity details: label and value on one line (the general .kv stacks them) */
