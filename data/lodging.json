@@ -19,7 +19,8 @@
     "confirmation": "1598742132313369",
     "lat": 31.2245,
     "lon": 121.464,
-    "approx": true
+    "approx": true,
+    "bookingUrl": "https://www.trip.com/hotels/ctorderdetail?orderid=1598742132313369"
   },
   {
     "id": "l02",
@@ -175,14 +176,14 @@
     "nights": 2,
     "status": "reservado",
     "notes": "2 noches. El 2/12 se sale ~05:30 al aeropuerto (vuelo 08:00): pedir el check-out la noche anterior. Metro Gongrentiyuchang (Estadio de los Trabajadores), a ~840 m.",
-    "link": null,
+    "link": "https://www.trip.com/hotels/beijing-hotel-detail-110631132/super-8-premier-hotel",
     "address": "No. 003, Building 1, Sunshine City Community, 18 Xinzhong Street, Dongcheng District, Beijing",
     "addressLocal": "北京市东城区新中街18号 1号楼 003",
     "confirmation": "1598742132380421",
     "lat": 39.9368,
     "lon": 116.4362,
     "approx": true,
-    "bookingUrl": "https://www.trip.com/hotels/beijing-hotel-detail-110631132/super-8-premier-hotel"
+    "bookingUrl": "https://www.trip.com/hotels/ctorderdetail?orderid=1598742132380421"
   },
   {
     "id": "l08",
@@ -192,7 +193,7 @@
     "checkOutTime": "12:00",
     "nights": 1,
     "status": "reservado",
-    "link": null,
+    "link": "https://www.trip.com/hotels/zhangjiajie-hotel-detail-122145253/zhangjiajie-four-seasons-lai-riverside-resort-hotel/",
     "address": "Group 13, Baofeng Road Neighborhood Committee, Jundiping Street, Wulingyuan District, Zhangjiajie, Hunan (~100 m al noroeste del centro de visitantes del lago Baofeng)",
     "addressLocal": "张家界四季来·溪畔度假酒店(武陵源国家森林公园店)",
     "confirmation": "1598742132654622",
@@ -205,7 +206,7 @@
     "notes": "1 noche, lejos del aeropuerto: al lado de la entrada del Parque Forestal para entrar temprano el 3/12. El 3/12 se dejan las valijas en el hotel y se pasan a buscar al salir del parque.",
     "lat": 29.3395,
     "lon": 110.553,
-    "bookingUrl": "https://www.trip.com/hotels/zhangjiajie-hotel-detail-122145253/zhangjiajie-four-seasons-lai-riverside-resort-hotel/"
+    "bookingUrl": "https://www.trip.com/hotels/ctorderdetail?orderid=1598742132654622"
   },
   {
     "id": "l09",
@@ -215,7 +216,7 @@
     "checkOutTime": null,
     "nights": 1,
     "status": "reservado",
-    "link": null,
+    "link": "https://www.trip.com/hotels/zhangjiajie-hotel-detail-129788556/xiaduo-hotel/",
     "address": "15th floor, Building 3, Fuhua Jinxiu Residence, Tianmen Road, Guanliping Subdistrict, Yongding District, Zhangjiajie, Hunan",
     "addressLocal": null,
     "confirmation": "1598742132652236",
@@ -228,6 +229,6 @@
     "notes": "1 noche antes del vuelo de las 11:50 del 4/12. Piso 15 de un edificio de departamentos (Torre 3). A ~1,4 km del teleférico de Tianmen del centro y ~1,8 km de la estación de tren.",
     "lat": 29.122,
     "lon": 110.468,
-    "bookingUrl": "https://www.trip.com/hotels/zhangjiajie-hotel-detail-129788556/xiaduo-hotel/"
+    "bookingUrl": "https://www.trip.com/hotels/ctorderdetail?orderid=1598742132652236"
   }
 ]
