@@ -2636,7 +2636,7 @@
         "name": "d21-gran-muralla",
         "prompt": "Gran Muralla China en Mutianyu serpenteando por montañas con colores de otoño"
       },
-      "sleepsAt": "Pekín (hotel a reservar; sugerido Dongcheng)",
+      "sleepsAt": "Pekín — Super8 Hotel (Gongti / Sanlitun)",
       "lodgingId": "l07",
       "cards": [
         {
@@ -2675,7 +2675,7 @@
               },
               {
                 "lodgingId": "l07",
-                "label": "Hotel (zona)"
+                "label": "Super8 Hotel"
               }
             ],
             "routes": []
@@ -2792,7 +2792,7 @@
           "category": "gastronomia",
           "priority": "imperdible",
           "title": "Pato laqueado",
-          "detail": "El plato emblema de Pekín, en Siji Minfu (Dengshikou), a pasos del hotel: no toma reservas, anotarse en la lista de espera por WeChat al llegar.",
+          "detail": "El plato emblema de Pekín, en Siji Minfu (Dengshikou), a ~15 min en DiDi del hotel: no toma reservas, anotarse en la lista de espera por WeChat al llegar.",
           "area": "Dongcheng",
           "how": "DiDi / a pie",
           "cost": "~¥200–400 por persona (aprox.)",
@@ -2814,7 +2814,7 @@
         "name": "d22-ciudad-prohibida",
         "prompt": "Ciudad Prohibida de Pekín con techos amarillos y muros rojos vista desde el parque Jingshan"
       },
-      "sleepsAt": "Pekín (hotel a reservar; sugerido Dongcheng)",
+      "sleepsAt": "Pekín — Super8 Hotel (Gongti / Sanlitun)",
       "lodgingId": "l07",
       "cards": [],
       "activities": [

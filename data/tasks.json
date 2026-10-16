@@ -103,8 +103,8 @@
     "dueAt": null,
     "urgent": true,
     "day": "d19",
-    "status": "pendiente",
-    "notes": null,
+    "status": "hecho",
+    "notes": "Reservado: Super8 Hotel Gongti Sanlitun (reserva 1598742132380421).",
     "assignee": null,
     "priority": "alta",
     "covers": [
