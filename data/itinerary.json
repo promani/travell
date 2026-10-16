@@ -107,7 +107,7 @@
         "name": "d03-llegada-shanghai",
         "prompt": "Skyline de Pudong en Shanghai con la Torre Perla Oriental al atardecer, llegada a China"
       },
-      "sleepsAt": "Shanghai (hotel a reservar)",
+      "sleepsAt": "Shanghai — Jinzhen Hotel (Julu Road)",
       "lodgingId": "l01",
       "cards": [
         {
@@ -121,7 +121,7 @@
               "icon": "train",
               "label": "Maglev + metro línea 2",
               "recommended": true,
-              "detail": "Maglev PVG → Longyang Rd (8 min), combinar con metro línea 2 hasta Plaza del Pueblo (zona sugerida). Verificá el último servicio del Maglev (~21:40).",
+              "detail": "Maglev PVG → Longyang Rd (8 min), combinar con metro línea 2 hasta Nanjing West Road y ~10 min a pie al hotel (417 Julu Road). Verificá el último servicio del Maglev (~21:40).",
               "cost": "¥50 el Maglev + metro (aprox.)",
               "duration": "~1 h"
             },
@@ -149,7 +149,7 @@
               },
               {
                 "lodgingId": "l01",
-                "label": "Hotel (zona)"
+                "label": "Jinzhen Hotel"
               }
             ],
             "routes": [
@@ -203,6 +203,10 @@
                   [
                     31.2327,
                     121.4757
+                  ],
+                  [
+                    31.2294,
+                    121.4593
                   ]
                 ]
               }

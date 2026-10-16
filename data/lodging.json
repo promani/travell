@@ -2,8 +2,8 @@
   {
     "id": "l01",
     "cityId": "shanghai",
-    "name": "Hotel a reservar",
-    "area": "Centro (Plaza del Pueblo / Bund)",
+    "name": "Jinzhen Hotel (Huaihai Middle Road / Nanjing West Road)",
+    "area": "Julu Road, Huangpu (cerca de los metros Nanjing West Road y South Shaanxi Road)",
     "checkInDay": "d03",
     "checkIn": "2026-11-14",
     "checkOutDay": "d07",
@@ -11,27 +11,15 @@
     "checkInTime": null,
     "checkOutTime": null,
     "nights": 4,
-    "status": "pendiente",
+    "status": "reservado",
     "notes": "Llegada ~19:30–20:30; avisar llegada tarde.",
     "link": null,
-    "address": null,
-    "addressLocal": null,
-    "confirmation": null,
-    "lat": 31.2325,
-    "lon": 121.4755,
-    "approx": true,
-    "options": [
-      {
-        "name": "Boting Hotel Lujiazui",
-        "note": "Pudong, 640 Zhangyang Rd, a 600 m del metro Century Avenue (línea 2: directo a Nanjing Road y al Maglev)",
-        "url": "https://www.trip.com/w/rKaiAsrmjW2"
-      },
-      {
-        "name": "HanTing North Bund (Ningguo Road)",
-        "note": "Yangpu, 1665 Changyang Rd, a 100 m del metro Ningguo Road (línea 12)",
-        "url": "https://www.trip.com/w/scXTjvomjW2"
-      }
-    ]
+    "address": "5th Floor, Xinguang Building, No. 417 Julu Road, Huangpu, Shanghai",
+    "addressLocal": "上海市黄浦区巨鹿路417号（5楼）",
+    "confirmation": "1598742132313369",
+    "lat": 31.2245,
+    "lon": 121.464,
+    "approx": true
   },
   {
     "id": "l02",

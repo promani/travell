@@ -71,8 +71,8 @@
     "dueAt": null,
     "urgent": true,
     "day": "d03",
-    "status": "pendiente",
-    "notes": "Las opciones están en el alojamiento.",
+    "status": "hecho",
+    "notes": "Reservado: Jinzhen Hotel, 417 Julu Road (reserva 1598742132313369).",
     "assignee": null,
     "priority": "alta",
     "covers": [
