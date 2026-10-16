@@ -12,6 +12,7 @@
 //   DELETE /v1/files/:trip/(photos|files)/:name
 //   GET  /health
 //   POST /v1/code  { code }                                   -> sets the trip-code cookie when the code is right (else 401)
+//   GET  /v1/code                                             -> { code } back to a browser whose cookie holds it (else 401)
 //   GET  /data/<file>.json                                    -> the repo file with the admin changes applied (see tripdata.mjs)
 //   GET  /v1/trip/rev                                         -> { rev } of the admin changes, so the app knows when to reload
 //   Admin (Authorization: Bearer $ADMIN_API_KEY; disabled without it):
@@ -162,6 +163,9 @@ const server = http.createServer((req, res) => {
   if (f) return files(req, res, f.slice(1, 4).join('/'));
   if (url.pathname.startsWith('/v1/admin/') || url.pathname === '/mcp' || url.pathname.startsWith('/mcp/')) return admin(req, res, url);
   if (url.pathname === '/v1/code' && req.method === 'POST') return enterCode(req, res);
+  // the phone lost its localStorage (iOS wipes it after days without opening Safari) but kept the cookie: it needs
+  // the code back, it is the sync key
+  if (url.pathname === '/v1/code' && req.method === 'GET') return codeCheck && codeOk(req) ? send(res, 200, { code: cookieCode(req) }) : send(res, 401, { error: 'falta el código del viaje' });
   if (guarded(url.pathname) && !codeOk(req)) return send(res, 401, { error: 'falta el código del viaje' });
   if (url.pathname === '/v1/trip/rev' && req.method === 'GET') return trip ? trip.rev().then((rev) => send(res, 200, { rev }), () => send(res, 503, { error: 'store' })) : send(res, 503, { error: 'no trip' });
   const df = /^\/data\/([\w.-]+\.json)$/.exec(url.pathname);
@@ -177,10 +181,11 @@ const server = http.createServer((req, res) => {
 
   if (req.method === 'GET') {
     let since = Math.max(0, parseInt(url.searchParams.get('since') || '0', 10) || 0);
-    if (since > g.seq) since = 0;                                   // relay was reset: resend everything
+    const reset = since > g.seq;
+    if (reset) since = 0;                                           // relay was reset: resend everything, and ask the phone for all it has
     const all = [...g.recs.values()].filter((r) => r.seq > since).sort((a, b) => a.seq - b.seq);
     const page = all.slice(0, PAGE);
-    return send(res, 200, { seq: page.length ? page[page.length - 1].seq : g.seq, records: page, more: all.length > PAGE });
+    return send(res, 200, { seq: page.length ? page[page.length - 1].seq : g.seq, records: page, more: all.length > PAGE, ...(reset && { reset: true }) });
   }
   if (req.method !== 'POST') return send(res, 405, { error: 'method' });
 

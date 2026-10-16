@@ -1,7 +1,8 @@
-// Optional group sync through a tiny relay (server/relay.mjs).
-// Records are encrypted on the device with a key derived from the group code; the relay only stores ciphertext.
-// Without a relay everything keeps working locally; sharing falls back to links and export/import files.
+// Group sync through a tiny relay (server/relay.mjs). Not optional: every phone that got in with the trip code syncs.
+// Records are encrypted on the device with a key derived from the trip code; the relay only stores ciphertext.
+// Without a relay (the app opened from plain static files) everything keeps working locally.
 import { BASE, cols, kv, settings, me, bus, rebuild, EDITABLE, LOCAL_ONLY, I } from './store.js';
+import { savedCode, normCode } from './gate.js';
 import { onPosition, startGps } from './geo.js';
 import { haversine, toast } from './util.js';
 
@@ -13,10 +14,23 @@ const b64 = (u8) => btoa(String.fromCharCode(...u8));
 const unb64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
 /** trip.json → sync.relayUrl: "same-origin" when the app is served by server/relay.mjs (e.g. the Docker image). */
 export const defaultRelayUrl = () => { const u = BASE.trip?.sync?.relayUrl; return u === 'same-origin' ? location.origin : (u || ''); };
-const cfg = () => ({ url: (settings.get('relayUrl', '') || defaultRelayUrl()).trim().replace(/\/+$/, ''), code: (settings.get('groupCode', '') || '').trim() });
+const cfg = () => ({ url: (settings.get('relayUrl', '') || defaultRelayUrl()).trim().replace(/\/+$/, ''), code: savedCode() || (settings.get('groupCode', '') || '').trim() });
 export const relayBase = () => cfg().url;
 
 export const syncConfigured = () => { const c = cfg(); return !!(c.url && c.code); };
+
+// The phone kept the server's cookie but lost its localStorage (iOS clears it after days without opening Safari):
+// without the code it would stop syncing in silence, so ask the server for it back.
+let recovering = null;
+function recoverCode() {
+  if (cfg().code || !cfg().url) return Promise.resolve();
+  return recovering ||= fetch('v1/code', { cache: 'no-store' }).then((r) => (r.ok ? r.json() : null)).then((b) => {
+    const c = normCode(b?.code);
+    if (!c) return;
+    try { localStorage.setItem('travell-code', c); } catch { /* private mode */ }
+    settings.set('groupCode', c);
+  }).catch(() => null).finally(() => { recovering = null; });
+}
 
 let keyCache = { code: null, p: null };
 function groupKey(code) {
@@ -46,29 +60,39 @@ async function unseal(key, s) {
   return JSON.parse(dec.decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: u.slice(0, 12) }, key, u.slice(12))));
 }
 
+// The first sync after opening the app sends everything this phone has, not only what it thinks is new: if the relay
+// lost records (a redeploy before they were saved, a new volume) they come back from the phones that made them.
+// The relay ignores what it already has.
+let pushAll = true;
 let running = null;
 export function syncNow() {
-  if (!syncConfigured() || !navigator.onLine || !crypto?.subtle) return Promise.resolve();
+  if (!navigator.onLine || !crypto?.subtle) return Promise.resolve();
   if (running) return running;
-  syncState.running = true; bus.emit('sync');
   running = (async () => {
+    await recoverCode();
+    if (!syncConfigured()) return;
+    syncState.running = true; bus.emit('sync');
     const { url, code } = cfg();
     const { key, gid } = await groupKey(code);
     const api = `${url}/v1/${gid}/records`;
     const pushedKey = 'sync:pushed:' + gid, cursorKey = 'sync:cursor:' + gid;
     const pushed = kv.get(pushedKey, {});
 
-    // push what changed locally
-    const out = [];
-    for (const c of SYNCED) for (const r of cols.list(c)) if ((pushed[`${c}/${r.id}`] || 0) < (r.updatedAt || 0)) out.push({ c, r });
-    for (let i = 0; i < out.length; i += 100) {
-      const chunk = out.slice(i, i + 100);
-      const records = await Promise.all(chunk.map(async ({ c, r }) => ({ c, id: String(r.id), u: r.updatedAt, d: await seal(key, r) })));
-      const res = await fetch(api, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ records }) });
-      if (!res.ok) throw new Error(`relay ${res.status}`);
-      chunk.forEach(({ c, r }) => { pushed[`${c}/${r.id}`] = r.updatedAt; });
-      kv.set(pushedKey, pushed);
-    }
+    // push what changed locally (everything when pushAll)
+    const push = async () => {
+      const all = pushAll; pushAll = false;
+      const out = [];
+      for (const c of SYNCED) for (const r of cols.list(c)) if (all || (pushed[`${c}/${r.id}`] || 0) < (r.updatedAt || 0)) out.push({ c, r });
+      for (let i = 0; i < out.length; i += 100) {
+        const chunk = out.slice(i, i + 100);
+        const records = await Promise.all(chunk.map(async ({ c, r }) => ({ c, id: String(r.id), u: r.updatedAt || 0, d: await seal(key, r) })));
+        const res = await fetch(api, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ records }) });
+        if (!res.ok) { pushAll ||= all; throw new Error(`relay ${res.status}`); }
+        chunk.forEach(({ c, r }) => { pushed[`${c}/${r.id}`] = r.updatedAt; });
+        kv.set(pushedKey, pushed);
+      }
+    };
+    await push();
 
     // pull what others changed
     let since = kv.get(cursorKey, 0);
@@ -77,6 +101,7 @@ export function syncNow() {
       const res = await fetch(`${api}?since=${since}`);
       if (!res.ok) throw new Error(`relay ${res.status}`);
       const body = await res.json();
+      if (body.reset) pushAll = true;   // the relay started over: give it back what this phone has
       const byCol = {};
       for (const rec of body.records || []) {
         if (!SYNCED.includes(rec.c)) continue;
@@ -91,6 +116,7 @@ export function syncNow() {
       if (!body.more) break;
     }
     kv.set(cursorKey, since); kv.set(pushedKey, pushed);
+    if (pushAll) await push();
 
     if (Object.keys(changed).some((c) => EDITABLE.includes(c))) rebuild();
     if (changed.positions) bus.emit('positions');

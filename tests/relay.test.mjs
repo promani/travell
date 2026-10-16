@@ -37,6 +37,14 @@ test('last write wins and older writes are ignored', async () => {
   assert.equal(all.records.find((r) => r.id === 'a').d, 'x5');
 });
 
+test('a cursor ahead of the relay (it lost its data) gets everything and a reset, so the phone pushes all again', async () => {
+  const all = await (await fetch(`${base}/v1/${gid}/records?since=0`)).json();
+  assert.equal(all.reset, undefined);
+  const ahead = await (await fetch(`${base}/v1/${gid}/records?since=${all.seq + 100}`)).json();
+  assert.equal(ahead.reset, true);
+  assert.equal(ahead.records.length, all.records.length);
+});
+
 test('rejects bad group ids and invalid records', async () => {
   assert.equal((await fetch(`${base}/v1/nothex/records`)).status, 404);
   await post([{ c: 'BAD!', id: 'z', u: 1, d: 'q' }, { c: 'tasks', id: 'z', u: 'no', d: 'q' }]);

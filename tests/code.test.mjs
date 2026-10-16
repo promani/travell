@@ -52,6 +52,14 @@ test('the right code sets the cookie that opens the data', async () => {
   assert.equal((await res.json()).id, tripId);
 });
 
+test('a browser with the cookie can get the code back (it is the sync key); without it, no', async () => {
+  assert.equal((await fetch(`${base}/v1/code`)).status, 401);
+  assert.equal((await fetch(`${base}/v1/code`, { headers: { cookie: 'travell_code=XXXXX' } })).status, 401);
+  const r = await fetch(`${base}/v1/code`, { headers: { cookie: 'travell_code=T3ST5' } });
+  assert.equal(r.status, 200);
+  assert.equal((await r.json()).code, 'T3ST5');
+});
+
 test('too many wrong codes from one place are refused for a while', async () => {
   const codes = [];
   for (let i = 0; i < 11; i++) codes.push((await send(`BAD${i}`)).status);
