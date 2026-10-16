@@ -44,7 +44,7 @@ test('records for some travelers only: each phone gets its own flight, room and 
     assert.equal(activityNow(I.day.d07, localInstant('2026-11-18', '17:00')).current.id, 'A163');
     assert.equal(store.whoLabel(I.transport['t-ca919']), 'Solo Facundo');
     settings.set('me', 'sole'); rebuild();
-    assert.equal(I.day.d14.lodgingId, 'l11');
+    assert.equal(I.day.d14.lodgingId, 'l04');   // in Nara the three share Facundo's room
     assert.equal(flightOf(), 't04');
     assert.equal(activityNow(I.day.d07, localInstant('2026-11-18', '17:00')).current.id, 'A023');
     assert.equal(store.whoLabel(I.transport.t04), 'Pehuén y Sole');

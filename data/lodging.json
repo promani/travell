@@ -102,43 +102,14 @@
     "checkOutTime": null,
     "nights": 1,
     "status": "reservado",
-    "notes": "Habitación single con desayuno, a nombre de ROMANI/FACUNDO DR. Recibe la valija del takkyubin el 25/11. Tiene shuttle gratis (confirmar horarios). Tel. +81 742-32-3020.",
+    "notes": "Habitación con 2 camas y desayuno, a nombre de ROMANI/FACUNDO DR. Van los tres a esta habitación. Recibe la valija del takkyubin el 25/11. Tiene shuttle gratis (confirmar horarios). Tel. +81 742-32-3020.",
     "link": null,
     "address": "7-1-45 Omiya-cho, Nara 630-8115",
     "addressLocal": "奈良県奈良市大宮町7-1-45",
     "confirmation": "9097093265897",
     "lat": 34.6838,
     "lon": 135.816,
-    "approx": true,
-    "travelers": [
-      "facundo"
-    ]
-  },
-  {
-    "id": "l11",
-    "cityId": "nara",
-    "name": "Novotel Nara",
-    "area": "Omiya-cho (Kintetsu Shin-Omiya, ~8 min a pie)",
-    "checkInDay": "d14",
-    "checkIn": "2026-11-25",
-    "checkOutDay": "d15",
-    "checkOut": "2026-11-26",
-    "checkInTime": null,
-    "checkOutTime": null,
-    "nights": 1,
-    "status": "pendiente",
-    "notes": "Habitación para Pehuén y Sole (Facundo ya tiene la suya). Recibe la valija del takkyubin el 25/11. Tiene shuttle gratis (confirmar horarios). Tel. +81 742-32-3020.",
-    "link": null,
-    "address": "7-1-45 Omiya-cho, Nara 630-8115",
-    "addressLocal": "奈良県奈良市大宮町7-1-45",
-    "confirmation": null,
-    "lat": 34.6838,
-    "lon": 135.816,
-    "approx": true,
-    "travelers": [
-      "pehuen",
-      "sole"
-    ]
+    "approx": true
   },
   {
     "id": "l05",

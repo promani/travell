@@ -87,12 +87,12 @@
     "dueAt": null,
     "urgent": true,
     "day": "d14",
-    "status": "pendiente",
-    "notes": "Facundo ya tiene la suya (single con desayuno, reserva 9097093265897).",
+    "status": "hecho",
+    "notes": "Van los tres a la habitación de Facundo, que tiene 2 camas (reserva 9097093265897).",
     "assignee": null,
     "priority": "alta",
     "covers": [
-      "lodging:l11"
+      "lodging:l04"
     ],
     "source": "json"
   },
