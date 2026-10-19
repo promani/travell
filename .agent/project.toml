@@ -23,7 +23,7 @@ production = "Dokploy (travell.unab.dpdns.org): autodeploy al mergear a main."
 # ${SANDBOX_SECRET} es un valor aleatorio que vive solo en Dokploy: acá, el código del viaje del sandbox.
 [sandbox]
 secret_length = 5               # el código del viaje: 5 letras y números (js/gate.js)
-env = { TRIP_CODE = "${SANDBOX_SECRET}", TRIP_CHANGES = "file", WEATHER = "0" }
+env = { TRIP_CODE = "${SANDBOX_SECRET}", TRIP_CHANGES = "file" }   # con clima, como producción
 
 # Cómo entra QA: los pasos se corren antes de cada prueba y la sesión queda guardada (qa-browse).
 [qa]
