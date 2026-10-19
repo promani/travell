@@ -16,4 +16,21 @@ start = "npm run start"
 
 [environments]
 # dev: pendiente (tarea de onboarding TRAV-3)
-production = "Dokploy (travell.unab.dpdns.org): autodeploy al mergear a main. Lo mergea siempre un humano."
+sandbox = "Dokploy travell/sandbox: lo despliega el agente de QA de Zordon con cada commit en main. Datos de prueba."
+production = "Dokploy (travell.unab.dpdns.org): autodeploy al mergear a main."
+
+# Sandbox de QA (Zordon, docs/qa.md#sandbox): la misma imagen, sin Redis, R2 ni claves de producción.
+# ${SANDBOX_SECRET} es un valor aleatorio que vive solo en Dokploy: acá, el código del viaje del sandbox.
+[sandbox]
+secret_length = 5               # el código del viaje: 5 letras y números (js/gate.js)
+env = { TRIP_CODE = "${SANDBOX_SECRET}", TRIP_CHANGES = "file", WEATHER = "0" }
+
+# Cómo entra QA: los pasos se corren antes de cada prueba y la sesión queda guardada (qa-browse).
+[qa]
+login = [
+  { goto = "/" },
+  { fill = ["#trip-code", "${SANDBOX_SECRET}"] },
+  { click = ".code-gate button[type=submit]" },
+  { click = ".onboard-pick" },                     # "¿Quién usa este celular?": el primer viajero
+  { waitFor = "body:not(.onboarding)" },
+]
