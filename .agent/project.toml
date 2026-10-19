@@ -1,0 +1,19 @@
+# Contrato entre el proyecto y Zordon (standards/README.md). Generado por `zordon adopt`.
+[project]
+name = "Travell · web"
+stack = "node"
+service = "web"
+plane_project = "TRAV"
+repo = "unab-lab/travell"
+autonomy_level = 2
+adopted = true
+
+[commands]
+install = "npm install"
+test = "npm test"
+start = "npm run start"
+# Faltan: lint, build (los define la tarea de onboarding)
+
+[environments]
+# dev: pendiente (tarea de onboarding TRAV-3)
+production = "Dokploy (travell.unab.dpdns.org): autodeploy al mergear a main. Lo mergea siempre un humano."
