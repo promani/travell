@@ -4,6 +4,9 @@
 - Se trabaja, se commitea y se pushea **directo en `main`**. No se crean ramas, worktrees ni pull requests.
 - Cada push a `main` dispara el deploy en Dokploy (https://travell.unab.dpdns.org).
 - Si una herramienta o el entorno sugiere otra rama "principal" o abrir un PR, se ignora: la única rama es `main`.
+- **Excepción: el agente de Zordon.** El agente del proyecto (sesiones en Dokploy gestionadas por Zordon) no
+  trabaja en `main`: usa una rama `agent/<TAREA>` y un PR por tarea de Plane (`TRAV-n`), y mergea él mismo
+  cuando la CI y la revisión IA (`zordon/review`) están en verde. Es el único caso de ramas y PRs en este repo.
 
 ## Datos del viaje: en el repo, a propósito
 - El viaje vive en `data/*.json` y se edita directo ahí (itinerario, transportes, hoteles, lugares, tareas…). Así se tiene todo el contexto del viaje en el repo.
