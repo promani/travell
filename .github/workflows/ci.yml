@@ -1,16 +1,24 @@
-# Pipeline estándar de Zordon (standards/pipeline.md), generado por `zordon adopt`.
-name: ci
+# Gates de calidad de Zordon (standards/pipeline.md): corren en cada commit de cualquier rama.
+# Generado por `zordon gates sync`; no editar en el proyecto (la fuente vive en zordon/gates/).
+name: gates
 on:
-  pull_request:
   push:
-    branches: [main]
+    branches: ["**"]
 jobs:
-  check:
+  gates:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+        with:
+          fetch-depth: 0
+      - if: hashFiles('package.json') != ''
+        uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install
-      - run: npm test
+      - if: hashFiles('composer.json') != ''
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+      - run: python3 .agent/gates.py
+        env:
+          GATES_BEFORE: ${{ github.event.before }}
