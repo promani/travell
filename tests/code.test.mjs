@@ -66,3 +66,23 @@ test('too many wrong codes from one place are refused for a while', async () => 
   assert.equal(codes.at(-1), 429);
   assert.equal((await send('T3ST5')).status, 429, 'even the right one, until it cools down');
 });
+
+async function withRelay(extra, fn) {
+  const port = 20000 + Math.floor(Math.random() * 1000);
+  const env = { ...process.env, PORT: String(port), RELAY_DATA: fs.mkdtempSync(path.join(os.tmpdir(), 'relay-')), SERVE_STATIC: ROOT, WEATHER: '0', REDIS_URL: '', TRIP_CHANGES: 'file', TRIP_CODE_CHECK: '', TRIP_CODE: '', ...extra };
+  const p = spawn(process.execPath, ['server/relay.mjs'], { cwd: ROOT, env, stdio: 'ignore' });
+  try {
+    for (let i = 0; i < 50; i++) { try { if ((await fetch(`http://127.0.0.1:${port}/health`)).ok) break; } catch { /* starting */ } await new Promise((r) => setTimeout(r, 100)); }
+    await fn((code) => fetch(`http://127.0.0.1:${port}/v1/code`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ code }) }));
+  } finally { p.kill(); }
+}
+
+test('TRIP_CODE (plain) opens the gate without TRIP_CODE_CHECK, and beats trip.json', () => withRelay({ TRIP_CODE: 'AB12C' }, async (post) => {
+  assert.equal((await post('ab12c')).status, 200);
+  assert.equal((await post('OTRO1')).status, 401);
+}));
+
+test('TRIP_CODE_CHECK wins over TRIP_CODE', () => withRelay({ TRIP_CODE: 'AB12C', TRIP_CODE_CHECK: check }, async (post) => {
+  assert.equal((await post('T3ST5')).status, 200);
+  assert.equal((await post('AB12C')).status, 401);
+}));

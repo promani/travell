@@ -31,7 +31,8 @@
 // ADMIN_API_KEY protects every write to the trip data: the admin API and the MCP server (the only way an AI touches the trip).
 // TRIP_CHANGES=file keeps the admin changes in a file in RELAY_DATA even when REDIS_URL is set (local development).
 // Locally `npm start` loads them from .env.local.
-// The trip code (trip.json → sync.codeCheck, the SHA-256 of "travell-code:<tripId>:<CODE>"; TRIP_CODE_CHECK overrides it)
+// The trip code (trip.json → sync.codeCheck, the SHA-256 of "travell-code:<tripId>:<CODE>"; TRIP_CODE_CHECK overrides it,
+// and so does TRIP_CODE, the plain code, for a sandbox: TRIP_CODE_CHECK wins over TRIP_CODE, which wins over trip.json)
 // guards the trip itself: /data/*, /v1/trip/rev and /v1/weather answer 401 until the browser sent the code to
 // POST /v1/code, which leaves it in an HttpOnly cookie for a year. Without a codeCheck nothing is guarded.
 import http from 'node:http';
@@ -84,6 +85,7 @@ let weather = null, trip = null, managed = new Set(), tripId = '', codeCheck = p
 try {
   const tripJson = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'trip.json'), 'utf8'));
   tripId = tripJson.id;
+  if (!codeCheck && process.env.TRIP_CODE) codeCheck = crypto.createHash('sha256').update(`travell-code:${tripId}:${process.env.TRIP_CODE.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 32)}`).digest('hex');
   codeCheck ||= tripJson.sync?.codeCheck || '';
   const redisUrl = process.env.TRIP_CHANGES === 'file' ? '' : process.env.REDIS_URL;
   trip = tripData({ dataDir: DATA_DIR, store: changeStore({ tripId, redisUrl, prefix: process.env.REDIS_KEY_PREFIX, dir: DIR }) });

@@ -37,5 +37,6 @@ PWA de viaje offline (HTML + CSS + módulos ES, **sin framework ni build**) más
 - Si se agrega una acción o colección a la app, se agrega al MCP (`COLS` y validación en `server/tripdata.mjs`, reglas en `server/mcp.mjs`).
 - No cifrar nada nuevo que sea parte del viaje. No agregar IA a la app.
 - Imágenes: solo `name` + `prompt` en los datos (ver `CLAUDE.md`); nunca generarlas ni pedirlas a mano.
+- Código del viaje: el servidor lo valida contra un hash. Orden: `TRIP_CODE_CHECK` (SHA-256 de `travell-code:<tripId>:<CÓDIGO>`) > `TRIP_CODE` (el código en claro, p. ej. para el sandbox de QA) > `trip.json` → `sync.codeCheck`.
 - Rutas protegidas (`.agent/protected-paths`): `.github/workflows/`, `.agent/`, `Dockerfile`.
 - Cada push a `main` despliega en Dokploy (https://travell.unab.dpdns.org).
