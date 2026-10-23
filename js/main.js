@@ -168,6 +168,7 @@ function tick() {
   });
 }
 setInterval(() => {
+  if (!D.trip) return;   // still on the trip-code screen: nothing loaded yet
   tick();
   const { name } = parseHash();
   if ((name === '' || name === 'inicio') && tripPhase().today !== renderedToday) route({ keepScroll: true });
